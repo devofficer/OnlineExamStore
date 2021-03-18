@@ -1,0 +1,467 @@
+﻿@{
+    ViewBag.InitModule = "taskApp";
+    Layout = "~/Views/Shared/_SmartQuizLayout.cshtml";
+}
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+    }
+    });
+</script>
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+<script src="~/Scripts/jquery-2.1.1.min.js"></script>
+<style>
+    .flip-container {
+        margin-bottom: 5px;
+        min-height: 350px !important;
+        max-height: 1100px !important;
+    }
+
+        .flip-container .front {
+            padding: 5px;
+            min-height: 350px !important;
+            max-height: 1100px !important;
+        }
+
+    .cl-mcont .row {
+        margin-top: 0px;
+    }
+
+    .lead {
+        margin-bottom: 0px;
+    }
+
+    .list-group-item > .badge {
+        float: left;
+    }
+
+    .badge {
+        border-radius: 0px;
+    }
+</style>
+<link href="~/Content/bootstrap-combined.min.css" rel="stylesheet" />
+<script src="~/Scripts/angular/angular.js"></script>
+<script src="~/Scripts/angular/ngBootbox.min.js"></script>
+<script src="~/Scripts/angular/angular-route.min.js"></script>
+<link href="~/Content/loading-bar.css" rel="stylesheet" />
+<script src="~/Scripts/angular/loading-bar.min.js"></script>
+<script src="~/Scripts/angular-timer/angular-timer-all.min.js"></script>
+<script src="~/Scripts/angular-ui/ui-bootstrap-tpls.js"></script>
+<script src="~/Content/angular/smart-quiz/app-config.js"></script>
+<script src="~/Content/angular/smart-quiz/quiz-controller.js"></script>
+<script src="~/Content/angular/smart-quiz/quiz-factory.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "divMyTest"]);
+        //DISABLE F12 TO SEE THE SOURCE CODE
+        //jQuery(document).keydown(function (event) {
+        //    if (event.keyCode == 123) {
+        //        return false;
+        //    }
+        //    else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+        //        return false;  //Prevent from ctrl+shift+i
+        //    }
+        //    else if (event.keyCode == 116) {
+        //        return false;  //Prevent from ctrl+shift+i
+        //    }
+        //    else if (event.ctrlKey && event.keyCode == 82) {
+        //        return false;  //Prevent from ctrl+shift+i
+        //    }
+
+        //});
+        //DISABLE RIGHT CLICK
+        //jQuery(this).bind("contextmenu", function (e) {
+        //    e.preventDefault();
+        //});
+
+        //window.onbeforeunload = function () {
+        //    return "Unloading this page may lose data. What do you want to do..."
+        //    e.preventDefault();
+        //}
+        // toggleFullScreen(document.body);
+    });
+
+    function toggleFullScreen(elem) {
+        // ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+            if (elem.requestFullScreen) {
+                elem.requestFullScreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullScreen) {
+                elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+</script>
+<style>
+    /*#radio-demo {
+        max-width: 400px;
+        margin: 94px auto 0 auto;
+    }*/
+    *:fullscreen *:-ms-fullscreen,
+    *:-webkit-full-screen,
+    *:-moz-full-screen {
+        overflow: auto !important;
+    }
+
+    #radio-demo input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        -moz-opacity: 0;
+        -webkit-opacity: 0;
+        -o-opacity: 0;
+    }
+
+        #radio-demo input[type="radio"] + label {
+            position: relative;
+            padding: 0 0 0 0px;
+            font-size: 14px;
+            line-height: 25px;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+
+            #radio-demo input[type="radio"] + label:before {
+                content: "";
+                display: block;
+                position: absolute;
+                top: 5px;
+                height: 14px;
+                width: 14px;
+                background: white;
+                border: 1px solid gray;
+                box-shadow: inset 0px 0px 0px 2px white;
+                -webkit-box-shadow: inset 0px 0px 0px 2px white;
+                -moz-box-shadow: inset 0px 0px 0px 2px white;
+                -o-box-shadow: inset 0px 0px 0px 2px white;
+                -webkit-border-radius: 8px;
+                -moz-border-radius: 8px;
+                -o-border-radius: 8px;
+            }
+
+        #radio-demo input[type="radio"]:checked + label:before {
+            background: #ef8700;
+        }
+
+
+    .test-action-controls, .test-section-bar {
+        right:0px!important;
+    }
+    .test-content-container {
+         margin: 64px 0px 0 0; 
+    }
+    .complete-que-content {
+        padding: 0px 0;
+    }
+</style>
+<div class="container-fluid" ng-controller="QuizCtrl" data-ng-init="init(@Convert.ToInt32(HttpContext.Current.Request.RequestContext.RouteData.Values["id"]),1, false, 0)">
+    <div class="test-top-bar">
+        <div class="left-box">
+            <div class="time-control-details">
+                <div class="test-timer-play-pause">
+                    <canvas id="testTimerBg" width="48" height="48"></canvas>
+                    <canvas id="testTimer" width="48" height="48"></canvas>
+                    <button class="btn play-pause" ng-class="{'js-paused': isTimerPaused, 'js-submitted': isTestSubmitted}"
+                            ng-bootbox-custom-dialog="Are you sure you want to pause the test?"
+                            ng-bootbox-options="playPauseButtonOptions">
+                        <!--<i class="fa fa-play"></i>-->
+                        <i class="fa fa-pause"></i>
+                    </button>
+                </div>
+                <div class="time-name">
+                    <span class="time">
+                        <timer id="countdowntimer" countdown="duration" interval="1000"> {{hhours}}:{{mminutes}}:{{sseconds}}</timer>
+                    </span>
+                    <span class="name ng-binding">{{name}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="right-box">
+            <button class="btn rb-btn test-btn-style" ng-click="save(@Convert.ToInt32(HttpContext.Current.Request.RequestContext.RouteData.Values["id"]), (pageIndex + 1), true, 1)">SUBMIT TEST</button>
+            @*<button class="btn rb-btn test-btn-style"
+                    ng-bootbox-custom-dialog="Are you sure you want to submit the test?"
+                    ng-bootbox-options="submitTestOptions">
+                SUBMIT TEST
+            </button>*@
+        </div>
+    </div>
+    <div class="test-content-container ng-scope">
+        <div class="test-section-bar">
+            <div class="test-sections">
+                <div class="scroll-gradient left"></div>
+                <div class="ts-inner">
+                    <!-- ngRepeat: section in test.sections track by $index -->
+                    <div class="each ng-scope" ng-repeat="section in test.sections track by $index" ng-hide="test.sections.length ==1 &amp;&amp; section.title ==''">
+                        <button type="button" class="btn" ng-class="{'active' : selectedParentIndex -1 == $index}" ng-click="jumpToQuestion($index +1, 1)">
+                            <span class="name ng-binding">{{section.name}}</span>
+                        </button>
+                        <!-- conditional class "disabled"  on button-->
+                        <ul class="dropdown-menu question-states-menu">
+                            <li class="d-arrow"></li>
+                            <li class="skipped">
+                                <span class="icon"></span>Skipped<span class="count ng-binding">{{skippedCount($index)}}</span>
+                            </li>
+                            <li class="unseen">
+                                <span class="icon"></span>Unseen<span class="count ng-binding">30</span>
+                            </li>
+                            <li class="answered">
+                                <span class="icon"></span>Attempted<span class="count ng-binding">{{attemptedCount($index)}}</span>
+                            </li>
+                            <li class="marked"><span class="icon tb-icon tb-bookmark"></span>Marked for Review<span class="count ng-binding">{{bookmarkCount($index)}}</span></li>
+                        </ul>
+                    </div><!-- end ngRepeat: section in test.sections track by $index -->
+                </div>
+                <div class="scroll-gradient right"></div>
+            </div>
+        </div>
+        <div class="inner-container js-que-list-view" ng-class="{'js-que-ans-view':!isQuestionPaperVisible, 'js-que-list-view':isQuestionPaperVisible}">
+            <!--condition class " js-que-ans-view  js-que-list-view "-->
+            <div class="content-view test-question-list">
+                <!--test question list-->
+                <div class="row">
+                    <div class="col-xs-12 slim-scrollbar">
+                        <div class="list-content">
+                            <div ng-if="duration== 0">
+                                {{ message}}
+                            </div>
+                            <div ng-if="duration > 0">
+                                <div data-ng-if="subject == 'MATHEMATICS'">
+                                    <div ng-if="formatType == 'SQMA' && questions.length > 0">
+                                        <!-- code to render a objective type questions block-->
+                                        <p class="lead">
+                                            Q{{pageIndex}} | <span class="text-muted"> #{{ questions[0].questionId }}</span> &nbsp;
+                                            <span id="title" mathjax-bind="title"></span>
+                                        </p>
+
+                                        <label data-ng-repeat="question in questions" id="radio-demo">
+                                            <span ng-if="!isUndefinedOrNull(question.imagePath)">
+                                                <img ng-src="{{question.imagePath}}">
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>A.</label><input type="radio" name="radio-group" id="first-choice" ng-model="selected.option" value="A" />
+                                                <label for="first-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionA"></span></label>
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>B.</label>
+                                                <input type="radio" name="radio-group" id="second-choice" ng-model="selected.option" value="B" />
+                                                <label for="second-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionB"></span></label>
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>C.</label>
+                                                <input type="radio" name="radio-group" id="third-choice" ng-model="selected.option" value="C" />
+                                                <label for="third-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionC"></span></label>
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>D.</label>
+                                                <input type="radio" name="radio-group" id="fourth-choice" ng-model="selected.option" value="D" />
+                                                <label for="fourth-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionD"></span></label>
+                                                <br />
+                                            </span>
+                                            <span ng-show="question.optionE!=null">
+                                                <span class="form-inline">
+                                                    <label>E.</label>
+                                                    <input type="radio" name="radio-group" id="fifth-choice" ng-model="selected.option" value="E" />
+                                                    <label for="fifth-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionE"></span></label>
+                                                </span>
+                                            </span>
+                                        </label>
+                                      
+                                    </div>
+                                    <div ng-if="formatType == 'CP' && cquestions.length > 0">
+                                        <!-- code to render the comprehensive block -->
+                                        <p class="lead">Q{{pageIndex}}. <span id="title" mathjax-bind="title"></span></p>
+                                        <div data-ng-repeat="question in cquestions">
+                                            <p class="complete-que-content">Q{{question.index}}.{{question.title}}</p>
+                                            <label id="radio-demo">
+                                                <span class="form-inline">
+                                                    <label>A.</label><input type="radio" name="radio-group" id="first-choice" ng-model="question.userAnswer" value="A" />
+                                                    <label for="first-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionA"></span></label>
+                                                    <br />
+                                                </span>
+                                                <span class="form-inline">
+                                                    <label>B.</label>
+                                                    <input type="radio" name="radio-group" id="second-choice" ng-model="question.userAnswer" value="B" />
+                                                    <label for="second-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionB"></span></label>
+                                                    <br />
+                                                </span>
+                                                <span class="form-inline">
+                                                    <label>C.</label>
+                                                    <input type="radio" name="radio-group" id="third-choice" ng-model="question.userAnswer" value="C" />
+                                                    <label for="third-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionC"></span></label>
+                                                    <br />
+                                                </span>
+                                                <span class="form-inline">
+                                                    <label>D.</label>
+                                                    <input type="radio" name="radio-group" id="fourth-choice" ng-model="question.userAnswer" value="D" />
+                                                    <label for="fourth-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionD"></span></label>
+                                                    <br />
+                                                </span>
+                                                <span ng-show="question.optionE!=null">
+                                                    <span class="form-inline">
+                                                        <label>E.</label>
+                                                        <input type="radio" name="radio-group" id="fifth-choice" ng-model="question.userAnswer" value="E" />
+                                                        <label for="fifth-choice">&nbsp; &nbsp;&nbsp;<span mathjax-bind="question.optionE"></span></label>
+                                                    </span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!---If subject is not equal to Math--->
+                                <div data-ng-if="subject != 'MATHEMATICS'">
+                                    <div ng-if="formatType == 'SQMA' && questions.length > 0">
+                                        <!-- code to render a objective type questions block-->
+                                        <p class="complete-que-content">
+                                            Q{{pageIndex}} | <span class="text-muted"> #{{ questions[0].questionId }}</span> &nbsp;
+                                            <span id="title">{{title}}</span>
+                                        </p>
+                                        <label data-ng-repeat="question in questions" id="radio-demo" class="complete-que-content">
+                                            <span ng-if="!isUndefinedOrNull(question.imagePath)">
+                                                <img ng-src="{{question.imagePath}}">
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>A.</label><input type="radio" name="radio-group" id="first-choice" ng-model="selected.option" value="A" />
+                                                <label for="first-choice">&nbsp; &nbsp;&nbsp;{{question.optionA}}</label>
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>B.</label>
+                                                <input type="radio" name="radio-group" id="second-choice" ng-model="selected.option" value="B" />
+                                                <label for="second-choice">&nbsp; &nbsp;&nbsp;{{question.optionB}}</label>
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>C.</label>
+                                                <input type="radio" name="radio-group" id="third-choice" ng-model="selected.option" value="C" />
+                                                <label for="third-choice">&nbsp; &nbsp;&nbsp;{{question.optionC}}</label>
+                                                <br />
+                                            </span>
+                                            <span class="form-inline">
+                                                <label>D.</label>
+                                                <input type="radio" name="radio-group" id="fourth-choice" ng-model="selected.option" value="D" />
+                                                <label for="fourth-choice">&nbsp; &nbsp;&nbsp;{{question.optionD}}</label>
+                                                <br />
+                                            </span>
+                                            <span ng-show="question.optionE!=null">
+                                                <span class="form-inline">
+                                                    <label>E.</label>
+                                                    <input type="radio" name="radio-group" id="fifth-choice" ng-model="selected.option" value="E" />
+                                                    <label for="fifth-choice">&nbsp; &nbsp;&nbsp;{{question.optionE}}</label>
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div ng-if="formatType == 'CP' && cquestions.length > 0">
+                                        <!-- code to render the comprehensive block -->
+                                        <p class="complete-que-content">Q{{pageIndex}}. {{title}}</p>
+                                            <div data-ng-repeat="question in cquestions">
+                                                <p class="complete-que-content">Q{{question.index}}.{{question.title}}</p>
+                                                <div class="list-content ng-binding">
+                                                    <label id="radio-demo" class="complete-que-content">
+                                                        <span class="form-inline">
+                                                            <label>A.</label><input type="radio" name="radio-group" id="first-choice" ng-model="question.userAnswer" value="A" />
+                                                            <label for="first-choice">&nbsp; &nbsp;&nbsp;{{question.optionA}}</label>
+                                                            <br />
+                                                        </span>
+                                                        <span class="form-inline list-content">
+                                                            <label>B.</label>
+                                                            <input type="radio" name="radio-group" id="second-choice" ng-model="question.userAnswer" value="B" />
+                                                            <label for="second-choice">&nbsp; &nbsp;&nbsp;{{question.optionB}}</label>
+                                                            <br />
+                                                        </span>
+                                                        <span class="form-inline list-content">
+                                                            <label>C.</label>
+                                                            <input type="radio" name="radio-group" id="third-choice" ng-model="question.userAnswer" value="C" />
+                                                            <label for="third-choice">&nbsp; &nbsp;&nbsp;{{question.optionC}}</label>
+                                                            <br />
+                                                        </span>
+                                                        <span class="form-inline list-content">
+                                                            <label>D.</label>
+                                                            <input type="radio" name="radio-group" id="fourth-choice" ng-model="question.userAnswer" value="D" />
+                                                            <label for="fourth-choice">&nbsp; &nbsp;&nbsp;{{question.optionD}}</label>
+                                                            <br />
+                                                        </span>
+                                                        <span ng-show="question.optionE!=null">
+                                                            <span class="form-inline list-content">
+                                                                <label>E.</label>
+                                                                <input type="radio" name="radio-group" id="fifth-choice" ng-model="question.userAnswer" value="E" />
+                                                                <label for="fifth-choice">&nbsp; &nbsp;&nbsp;{{question.optionE}}</label>
+                                                            </span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="test-action-controls text-center">
+                    <button class="btn btn-info" ng-click="save(@Convert.ToInt32(HttpContext.Current.Request.RequestContext.RouteData.Values["id"]),(pageIndex - 1), false, 0)" ng-disabled="pageIndex==1">Prev Question</button>
+                    <button class="btn btn-info" ng-click="save(@Convert.ToInt32(HttpContext.Current.Request.RequestContext.RouteData.Values["id"]), (pageIndex + 1), false, 1)" ng-disabled="questionCount == pageIndex">Next Question</button>
+                    @*<button class="btn btn-success" ng-click="save(@Convert.ToInt32(HttpContext.Current.Request.RequestContext.RouteData.Values["id"]), (pageIndex + 1), true, 1)">Submit</button>*@
+                    @*<button type="button" class="btn btn-gray-1 text-uppercase" ng-click="isQuestionPaperVisible = !isQuestionPaperVisible">Back</button>*@
+                </div>
+            </div>
+            @*<div class="content-view test-question-view">
+             
+            </div>*@
+        </div>
+        </div>
+        
+
+        @*<div class="row">
+            <div class="col-md-12">
+                <div class="page-head" data-ng-show="pageIndex > 0">
+                    <div class="row">
+                        <div class="col-md-4"><h3>{{name}}</h3></div>
+                        <div class="col-md-2 text-right">
+                            <span><strong> TOTAL QUESTIONS: <b style="color: #fff; font-size: 27px;" class="badge badge-info">{{ questionCount }}</b></strong></span>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <span><strong> TOTAL MARKS: <b style="color: #fff; font-size: 27px;" class="badge badge-info">{{ totalMarks }}</b></strong></span>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="#" id="lnkQuestionError" ng-click="openModel()" title="Report an error" class="text-muted text-capitalize">
+                                <span class="glyphicon glyphicon-alert"></span>&nbsp; REPORT
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+       
+
+
+    </div>
+
+
+
+
+
+

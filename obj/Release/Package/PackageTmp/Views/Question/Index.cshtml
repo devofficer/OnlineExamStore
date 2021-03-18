@@ -1,0 +1,262 @@
+﻿@model OnlineExam.Models.QuestionBankIndexViewModel
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@*<script type="text/javascript" src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>*@
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+    availableFonts: [],
+    preferredFonts: "TeX",
+    webFont:"",
+    imageFont:"",
+    undefinedFamily:"'Arial"
+    }
+    });
+</script>
+@*<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>*@
+@*<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {availableFonts: ["TeX"]}, MMLorHTML: {prefer: "HTML"}
+    });
+    MathJax.Hub.Register.StartupHook("HTML-CSS Jax Ready",function () {
+    var VARIANT = MathJax.OutputJax["HTML-CSS"].FONTDATA.VARIANT;
+    VARIANT["normal"].fonts.unshift("MathJax_SansSerif");
+    VARIANT["bold"].fonts.unshift("MathJax_SansSerif-bold");
+    VARIANT["italic"].fonts.unshift("MathJax_SansSerif-italic");
+    VARIANT["-tex-mathit"].fonts.unshift("MathJax_SansSerif-italic");
+    });
+</script>*@
+<style>
+        .MathJax {
+            font-size: 1.2em;
+            /*font-style: normal !important;*/
+        }
+
+        .MathJax_Display {
+            text-align: left !important;
+            display: inline !important;
+            margin: 0px !important;
+        }
+    </style>
+<style>
+    /*.MathJax {
+        font-size: 12px;
+    }*/
+    .btn {
+        margin-left: 0px;
+    }
+
+    .col-md-7 {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+    hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pager {
+        margin: 0px;
+    }
+
+        /*.pager li > a, .pager li > span {
+            padding: 15px 14px;
+        }*/
+
+        .pager li {
+            padding-right: 5px;
+        }
+
+    select.form-control {
+        height: 29px;
+        padding: 4px 5px;
+    }
+
+    input[type="checkbox"] {
+        margin: 2px 0 0;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('change', '[id*=ClassName]', function () {
+            $.getJSON('/Question/GetCategoriesByClassType/', { classType: $('[id*=ClassName]').val() },
+                function (data) {
+                    var items = '<option>Select Exam Category</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('[id*=ExamName]').html(items);
+                }
+            );
+        });
+
+        $(document).on('change', '[id*=ExamName]', function () {
+            $.getJSON('/Question/GetSubjectsByCategoryType/', { categoryType: $('[id*=ExamName]').val() },
+                function (data) {
+                    var items = '<option>Select Subject</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('[id*=Subject]').html(items);
+                }
+            );
+        });
+    });
+</script>
+<div class="page-head">
+    <h3>Question List</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Question List</li>
+    </ol>
+</div>
+@using (Html.BeginForm("Index", "Question", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal block-flat">
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.ClassName, Model.QuestionBankSearchViewModel.ClasseTypes, "Select Class", new { @class = "form-control" })
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.ExamName, Model.QuestionBankSearchViewModel.ExamTypes, "Select Category", new { @class = "form-control" })
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.Subject, Model.QuestionBankSearchViewModel.Subjects, "Select Subject", new { @class = "form-control" })
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.QuestionFormat, Model.QuestionBankSearchViewModel.QuestionFormats, "Select Format", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.Mark, Model.QuestionBankSearchViewModel.MarkList, "Mark", new { @class = "form-control" })
+            </div>
+            <div class="col-md-1">
+                <form class="form-inline">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(x => x.QuestionBankSearchViewModel.IsOnline) Online
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" value="Search" class="btn btn-success" title="Search">
+                    Search&nbsp;<i class="fa fa-search"></i>
+                </button>
+                <a href="@Url.Action("Create", "Question")" class="btn btn-primary" title="Add new record">Add New &nbsp;<span class="fa fa-plus-circle"></span></a>
+                <a href="@Url.Action("Index", "Question")" class="btn btn-warning" title="Refresh">Refresh&nbsp;<span class="fa fa-refresh"></span></a>
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.QuestionBankSearchViewModel.QuestionId, new { @class = "col-md-7" })
+                <div class="col-md-5">
+                    @Html.TextBoxFor(model => model.QuestionBankSearchViewModel.QuestionId, new { @class = "form-control" })
+                </div>
+            </div>
+            </div>
+        <div class="row">
+            <hr />
+        </div>
+
+        <div class="row">
+            <hr />
+        </div>
+        <div class="row">
+            <table class="table table-responsive table-hover table-condensed table-bordered">
+                <tr>
+                    <th>
+                        Question Details
+                    </th>
+                    <th style="width: 8%">Action</th>
+                </tr>
+
+                @foreach (var item in Model.QuestionBankList)
+                {
+                    <tr>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <td><strong>Q @Html.Raw(item.QuestionId).</strong></td>
+                                    <td>@Html.Raw(item.Decription)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Options:</strong></td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <strong>A.</strong>&nbsp;@Html.Raw(item.OptionA)
+                                            </div>
+                                            <div class="col-md-3"><strong>B.</strong>&nbsp;@Html.Raw(item.OptionB)</div>
+                                            <div class="col-md-3">
+                                                <strong>C.</strong>&nbsp;@Html.Raw(item.OptionC)
+                                            </div>
+                                            <div class="col-md-3">
+                                                <strong>D.</strong>&nbsp;@Html.Raw(item.OptionD)
+                                            </div>
+                                            @if (!string.IsNullOrWhiteSpace(item.OptionE))
+                                            {
+                                                <div class="col-md-3">
+                                                    <strong>E.</strong>&nbsp;@Html.Raw(item.OptionE)
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Detail:</strong></td>
+                                    <td>
+                                        <table class="table">
+                                            <tr>
+                                                <td><strong>Answer:</strong> [@Html.DisplayFor(x => item.AnswerOption)] &nbsp; @Html.Raw(item.AnswerDescription)</td>
+                                                @*<td><strong>Class Name:</strong> @Html.DisplayFor(x => item.ClassName)</td>*@
+                                                <td><strong>Exam Name:</strong> @Html.DisplayFor(x => item.ExamName)</td>
+                                                <td><strong>Subject:</strong> @Html.DisplayFor(x => item.Subject)</td>
+                                                <td><strong>Question Format:</strong> @Html.DisplayFor(x => item.QuestionFormat)</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Question", new { id = item.QuestionId })" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                            <a href="@Url.Action("Delete", "Question")" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                        </td>
+                    </tr>
+                }
+
+            </table>
+            @*<strong> Total Count:&nbsp;</strong>@Model.TotalItemCount,   &nbsp;&nbsp;<strong> Page</strong> @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }), PagedListRenderOptions.TwitterBootstrapPagerAligned)*@
+        </div>
+
+        <div class="row alert alert-block">
+            <div id="div1" class="form-inline">
+                <div class="pull-left">
+                    <strong> Total Count:&nbsp;</strong><span class="label label-warning"> @Model.QuestionBankList.TotalItemCount</span>   &nbsp;&nbsp;<strong> Page</strong> @(Model.QuestionBankList.PageCount < Model.QuestionBankList.PageNumber ? 0 : Model.QuestionBankList.PageNumber) of @Model.QuestionBankList.PageCount
+                </div>
+                <div class="pull-right">
+                    @using (Html.BeginForm("Index", "Question"))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.PageSize, Model.QuestionBankSearchViewModel.PageSizeList, htmlAttributes: new { @class = "form-control", onchange = "this.form.submit();" })
+                    }
+                </div>
+                <div id="div2" class="pull-right" style="padding-right:10px">
+                    @Html.PagedListPager(Model.QuestionBankList, page => Url.Action("Index", new { page, Model.QuestionBankSearchViewModel.CurrentFilter }), PagedListRenderOptions.TwitterBootstrapPagerAligned)
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

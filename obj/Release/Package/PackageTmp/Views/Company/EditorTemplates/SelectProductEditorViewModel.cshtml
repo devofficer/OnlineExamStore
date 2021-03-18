@@ -1,0 +1,29 @@
+﻿@model OnlineExam.Models.SelectProductEditorViewModel
+<tr>
+    <td style="text-align: center">
+
+        @Html.CheckBoxFor(model => model.Selected, new { @class = "checkbox" })
+        @Html.HiddenFor(model => model.ProductId)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.ProductCode)
+        @Html.HiddenFor(model => model.ProductCode)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Name)
+        @Html.HiddenFor(model => model.Name)
+        @Html.HiddenFor(model => model.Description)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Price)
+        @Html.HiddenFor(model => model.Price)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Tax)
+        @Html.HiddenFor(model => model.Tax)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.LineTotal)
+        @Html.HiddenFor(model => model.LineTotal)
+    </td>
+</tr>

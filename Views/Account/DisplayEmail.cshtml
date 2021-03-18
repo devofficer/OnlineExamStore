@@ -1,0 +1,21 @@
+
+<div class="cl-mcont">
+    <div class="block-flat">
+        <h4>Confirmation Email Sent</h4>
+        <hr />
+        <div>
+            @if (ViewBag.IsEmailSent == false)
+            {
+                <p>
+                    Your account has been created successfully. But for some technical reason, activation email has not been sent. To get the same, please contact Administrator.
+                </p>
+            }
+            else
+            {
+                <p>
+                    Please check your email and confirm your email address.
+                </p>
+            }
+        </div>
+    </div>
+</div>

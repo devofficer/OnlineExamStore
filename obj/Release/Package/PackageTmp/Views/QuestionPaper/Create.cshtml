@@ -1,0 +1,738 @@
+﻿@using Microsoft.Web.Mvc.Controls
+@using OnlineExam.Helpers
+@model OnlineExam.Models.QuestionFilterViewModel
+<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/angular/angular.js"></script>
+@*<script type="text/javascript" src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>*@
+
+<script type="text/javascript">
+    var questionPaperApp = angular.module("questionPaperApp", []);
+    questionPaperApp.controller("questionPaperController", function ($scope, $filter) {
+        $scope.totalSections = 0;
+        $scope.totalQuestions = 0;
+        $scope.totalMarks = 0;
+        $scope.totalDuration = 0;
+        $scope.paperDetail = [];
+        $scope.sectionCount = [];
+
+        $scope.isNullOrEmptyOrUndefined = function (value) {
+            if (value === "" || value === null || typeof value === "undefined") {
+                return true;
+            }
+        }
+        $scope.questionPaperSummary = function (row) {
+
+            $scope.count = 1;
+
+            var foundCount = $filter('filter')($scope.sectionCount, { section: row.Subject }, true)[0];
+            if (!$scope.isNullOrEmptyOrUndefined(foundCount)) {
+                $scope.count = foundCount.count = foundCount.count + 1;
+            } else {
+                $scope.sectionCount.push({
+                    section: row.Subject,
+                    count: 1
+                });
+            }
+
+            var foundItem = $filter('filter')($scope.paperDetail, { section: row.Subject }, true)[0];
+            if (!$scope.isNullOrEmptyOrUndefined(foundItem)) {
+                foundItem.marks = foundItem.marks + row.Mark;
+                foundItem.questionCount = $scope.count;
+                foundItem.duration = foundItem.duration + row.DurationInSecond;
+
+            } else {
+                $scope.paperDetail.push({
+                    section: row.Subject,
+                    questionCount: $scope.count,
+                    marks: row.Mark,
+                    duration: row.DurationInSecond
+                });
+            }
+
+            // SET TOTAL SECTIONS
+            $scope.totalSections = $scope.paperDetail.length;
+
+            // SET TOTAL QUESTIONS
+            $scope.totalQuestions = $scope.totalQuestions + 1;
+            // SET TOTAL MARKS
+            $scope.totalMarks = $scope.totalMarks + row.Mark;
+            // SET TOTAL DURATION
+            $scope.totalDuration = $scope.totalDuration + row.DurationInSecond;
+        }
+
+        $scope.convertSecIntoMins = function (duration) {
+            return parseInt(duration / 60, 10)
+        }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+    availableFonts: [],
+    preferredFonts: "TeX",
+    webFont:"",
+    imageFont:"",
+    undefinedFamily:"'Arial"
+    }
+    });
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, name]);
+</script>
+<script type="text/javascript"
+        src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<style>
+    thead {
+        background-color: #eff2f5;
+        /* color: #fff; */
+    }
+
+    .pager {
+        margin: 0px;
+    }
+
+        /*.pager li > a, .pager li > span {
+            padding: 15px 14px;
+        }*/
+
+        .pager li {
+            padding-right: 5px;
+        }
+
+    .btn {
+        margin-left: 0px;
+    }
+
+    hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .fixed-table-container tbody .selected td {
+        background-color: #DEF0D8;
+    }
+    /*td {
+        border: 1px #DDD solid;
+        padding: 5px;
+        cursor: pointer;
+    }*/
+    .btn-group {
+        margin-left: 0px;
+    }
+</style>
+
+<link href="~/Content/bootstrap-multiselect.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    function LoadQuestion(name) {
+        $.get('/QuestionPaper/GetQuestions', function (data) {
+            FillTable(name, data);
+        });
+    }
+
+    function FillTable(name, data) {
+        $('#' + name).bootstrapTable('destroy');
+        $('#' + name).bootstrapTable({
+            data: data,
+            //pagination: true,
+            //pageSize: 6,
+            pageList: [10, 20, 50],
+            //search: true,
+            //showColumns: true,
+            //showRefresh: true,
+            minimumCountColumns: 3,
+            clickToSelect: false
+        });
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, name]);
+    }
+    function detailFormatter(index, row) {
+        var html = [];
+        //debugger;
+        html.push("<table class=\"table  table-no-bordered\" data-show-header=\"false\">");
+        $.each(row, function (key, value) {
+
+
+            switch (key) {
+                case "ImagePath":
+                    if (value != null) {
+                        html.push('<tr><td colspan=\"6\"><p><strong>Read the passage given below and then answer the questions given below the passage. Some words may be highlighted for your attention. Pay careful attention.</strong></p><p><img src=\"http://localhost/QuizImages/Q1.png\"></p></td></tr>');
+                    }
+                    break;
+                case "Decription":
+                    html.push('<tr><td class=\"col-md-2\"><b>Description: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "OptionA":
+                    html.push('<tr><td class=\"col-md-2\"><b>OptionA: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "OptionB":
+                    html.push('<tr><td class=\"col-md-2\"><b>OptionB: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "OptionC":
+                    html.push('<tr><td class=\"col-md-2\"><b>OptionC: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "OptionD":
+                    html.push('<tr><td class=\"col-md-2\"><b>OptionD: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "OptionE":
+                    html.push('<tr><td class=\"col-md-2\"><b>OptionE: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "AnswerOption":
+                    html.push('<tr><td class=\"col-md-2\"><b>Answer Option: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+                case "Solution":
+                    html.push('<tr><td class=\"col-md-2\"><b>Solution: </b> </td><td colspan="5">' + value + '</td></tr>');
+                    break;
+            }
+
+        });
+        html.push("</table>");
+        return html.join('');
+        //alert(row.ImagePath);
+        //var detailDiv = $('<div></div>');
+        //detailDiv.append("<table class=\"table  table-no-bordered\"><thead><tr> <th>Question Id/Code: " + row.Id + " </th> <th>Subject: " + row.Subject + "</th><th>Duration: " + row.DurationInSecond + "</th><th>Mark: " + row.Mark + "</th></tr></thead>");
+        //if (row.ImagePath != null)
+        //{
+        //    detailDiv.append("<tr><td colspan=\"6\"><p><strong>Read the passage given below and then answer the questions given below the passage. Some words may be highlighted for your attention. Pay careful attention.</strong></p><p><img src=\"http://localhost/QuizImages/Q1.png\"></p></td></tr>");
+        //}
+        //detailDiv.append("<tr><td class=\"col-md-2\"><strong>Description</strong></td><td colspan=\"5\">" + row.Decription + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Option A</strong></td><td colspan=\"5\">" + row.OptionA + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Option B</strong></td><td colspan=\"5\">" + row.OptionB + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Option C</strong></td><td colspan=\"5\">" + row.OptionC + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Option D</strong></td><td colspan=\"5\">" + row.OptionD + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Option E</strong></td><td colspan=\"5\">" + row.OptionE + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Answer Option</strong></td><td colspan=\"5\">" + row.AnswerOption + "</td></tr>");
+        //detailDiv.append("<tr><td><strong>Solution</strong></td><td colspan=\"5\">" + row.Solution + "</td></tr>");
+        //detailDiv.append("</table>");
+        //return detailDiv.html();
+    }
+    $(document).ready(function () {
+
+        var selectedRecords = [];
+        var quesndata = '';
+        // LoadQuestion('QuestionTable');
+        FillTable('QuestionTablePaper', quesndata);
+
+        
+
+        //    $('#QuestionTable').bootstrapTable().on('check.bs.table', function (e, row) {
+        //        debugger;
+        //        console.log('Event: check.bs.table');
+        //        $('#QuestionTablePaper').show();
+        //        //$('#QuestionTablePaper').bootstrapTable('destroy');
+        //        alert('getSelections: ' + JSON.stringify(row));
+        //        alert('getSelections: ' + JSON.stringify($('#QuestionTable').bootstrapTable('getSelections')));
+        //        FillTable('QuestionTablePaper', $('#QuestionTable').bootstrapTable('getSelections'));
+        //    }).on('uncheck.bs.table', function (e, row) {
+        //        debugger;
+        //        console.log('Event: uncheck.bs.table');
+        //});
+
+        var $questionTablePaper = $('#QuestionTablePaper');
+        var $questionTable = $('#QuestionTable');
+        var paperDetail = [];
+        function questionPaperSummary(row) {
+            var foundSubject = $.grep(paperDetail, function (e) { debugger; return e.section === row.Subject; });
+            if (foundSubject.length > 0) {
+                //found
+                debugger;
+                foundSubject[0].marks = foundSubject[0].marks + row.Mark;
+            } else {
+                //not found
+                debugger;
+                paperDetail.push({
+                    section: row.Subject,
+                    questionCount: 0,
+                    marks: row.Mark,
+                    duration: 0
+                });
+            }
+            //alert(JSON.stringify(paperDetail));
+        }
+        // QUESTION CART GRID
+        $questionTablePaper.bootstrapTable()
+           // REMOVE ROW BY QUESTION ID
+           .on('uncheck.bs.table', function (e, row) {
+               $questionTablePaper.bootstrapTable('removeByUniqueId', row.QuestionId);
+               $questionTable.bootstrapTable('refresh');
+               $questionTable.bootstrapTable('uncheckBy', { field: 'QuestionId', values: [row.QuestionId] });
+           })
+           // REMOVE ALL ROWS
+           .on('uncheck-all.bs.table', function (e, row) {
+               $questionTablePaper.bootstrapTable('removeAll');
+               $questionTable.bootstrapTable('uncheckAll');
+           });
+
+        //
+        $questionTable.bootstrapTable()
+            // INSERT ROW ONE BY ONE
+            .on('check.bs.table', function (e, row) {
+                $questionTablePaper.show();
+                $questionTablePaper.bootstrapTable('append', row);
+                //alert("check.bs.table");
+                //questionPaperSummary(row);
+                angular.element('#questionSummary').scope().questionPaperSummary(row);
+                angular.element('#questionSummary').scope().$apply()
+            })
+            // INSERT ROW IN BULK
+             .on('check-all.bs.table', function (e, row) {
+                 debugger;
+                 $questionTablePaper.show();
+                 var data = $questionTable.bootstrapTable('getSelections');
+                 FillTable('QuestionTablePaper', $questionTable.bootstrapTable('getSelections'));
+                 //questionPaperSummary();
+             })
+            // REMOVE ROW BY QUESTION ID
+            .on('uncheck.bs.table', function (e, row) {
+                $questionTablePaper.bootstrapTable('removeByUniqueId', row.QuestionId);
+                //questionPaperSummary();
+            })
+            // REMOVE ALL ROWS
+            .on('uncheck-all.bs.table', function (e, row) {
+                $questionTablePaper.bootstrapTable('removeAll');
+                //questionPaperSummary();
+            });
+
+
+        $(document).on('change', '#SelectedClass', function () {
+            debugger;
+            $.getJSON('/Question/GetCategoriesByClassType/', { classType: $('#SelectedClass').val() },
+                function (data) {
+                    debugger;
+                    var items = '<option>Select Category</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#SelectedCategory').html(items);
+                }
+            );
+        });
+        $(document).on('change', '#SelectedCategory', function () {
+            $.getJSON('/Question/GetSubjectsByCategoryType/', { categoryType: $('#SelectedCategory').val() },
+                function (data) {
+                    var items = '<option>Select Subject</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#SelectedSubject').html(items);
+                }
+            );
+        });
+        // HAVE ADDED ON 24TH MARCH 2017
+        fillTopics();
+        function fillTopics() {
+            $('#SelectedTopic').multiselect({
+                nonSelectedText: 'Select Topics',
+                allSelectedText: 'All Selected',
+                selectAllName: true,
+                includeSelectAllOption: true,
+                numberDisplayed: 1,
+                buttonWidth: '100%'
+            });
+        }
+        
+        $(document).on('change', '#SelectedSubject', function () {
+            $.getJSON('/Question/GetTopicsBySubject/', { subject: $('#SelectedSubject').val() },
+                function (data) {
+                    var items = '';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#SelectedTopic').html(items);
+                    $("#SelectedTopic").multiselect('rebuild');
+                    fillTopics();
+                }
+            );
+        });
+        
+        
+        $('#btnRefresh').click(function () {
+            //debugger;
+            $('[id*=SelectedClass]').find('option:first').attr('selected', 'selected');
+            $('[id*=SelectedCategory]').find('option:first').attr('selected', 'selected');
+            $('[id*=SelectedSubject]').find('option:first').attr('selected', 'selected');
+
+            $('[id*=SelectedFormat]').find('option:first').attr('selected', 'selected');
+            $('[id*=SelectedMark]').find('option:first').attr('selected', 'selected');
+
+
+            if ($('[id*=IsOnline]').attr('checked')) {
+                $('[id*=IsOnline]').prop('checked', true);
+            } else {
+                $('[id*=IsOnline]').prop('checked', false);
+            }
+            $('#QuestionTablePaper').bootstrapTable('destroy');
+            $('#QuestionTable').bootstrapTable('destroy');
+            
+            $('#SelectedTopic').find('option').remove();
+            $("#SelectedTopic").multiselect('rebuild');
+            $("#SelectedTopic").multiselect();
+        });
+
+        $('#btnSearch, #btnAdd').click(function (e) {
+            var $btn = $(this).button('loading');
+            var isValid = true;
+            var questionFilterViewModel = {
+                "SelectedClass": $("#SelectedClass").val(),
+                "SelectedCategory": $("#SelectedCategory").val(),
+                "SelectedSubject": $("#SelectedSubject").val(),
+                "SelectedTopic": $("#SelectedTopic").val(),
+                "SelectedFormat": $("#SelectedFormat").val(),
+                "SelectedMark": $("#SelectedMark").val(),
+                "IsOnline": $('#IsOnline').is(":checked") ? true : false,
+                "IsTrial": $('#IsTrial').is(":checked") ? true : false,
+                "Name": $("#Name").val(),
+                "SelectedMinute": $("#SelectedMinute").val(),
+                "SelectedNoOfQuestions": $("#SelectedNoOfQuestions").val()
+            };
+            var command = "Search";
+            switch (e.currentTarget.id) {
+                case "btnSearch":
+                    command = "Search";
+                    //debugger;
+                    if ($('#SelectedClass').val() == "" || $('#SelectedClass').val() == "Select Class") //Class
+                    {
+                        isValid = false;
+                        alert("Please select Class.");
+                        $btn.button('reset');
+                        return isValid;
+                    }
+                    if ($('#SelectedCategory').val() == "" || $('#SelectedCategory').val() == "Select Category")  //Category
+                    {
+                        isValid = false;
+                        alert("Please select Category.");
+                        $btn.button('reset');
+                        return isValid;
+                    }
+                    if ($('#SelectedSubject').val() == "" || $('#SelectedSubject').val() == "Select Subject") //Subject
+                    {
+                        isValid = false;
+                        alert("Please select Subject.");
+                        $btn.button('reset');
+                        return isValid;
+                    }
+                    break;
+                case "btnAdd":
+                    command = "Create";
+                    if ($('#hdnIsACDAStoreUser').val() == "True") {
+                        debugger;
+                        quesndata = $('#QuestionTablePaper').bootstrapTable('getData');
+                        if (quesndata.length > 0) {
+
+                            $('#QuestionTablePaper').show();
+                            for (var i = 0; i < quesndata.length; i++) {
+                                delete quesndata[i].check;
+                            }
+                        } else {
+                            $('#QuestionTablePaper').hide();
+                            isValid = false;
+                            alert("Please select question(s).");
+                            $btn.button('reset');
+                        }
+                    }
+                    break;
+                case "btnRefresh":
+                    command = "Refresh";
+                    break;
+            }
+
+            if (command == "Create") {
+                //Class
+                if ($('#SelectedClass').val() == "") {
+                    $('#divSelectedClass').addClass('has-error has-feedback');
+                    $('#SelectedClass').focus();
+                    isValid = false;
+                } else {
+                    $('#divSelectedClass').removeClass('has-error has-feedback');
+                }
+                //Category
+                if ($('#SelectedCategory').val() == "") {
+                    $('#divSelectedCategory').addClass('has-error has-feedback');
+                    $('#SelectedCategory').focus();
+                    isValid = false;
+                } else {
+                    $('#divSelectedCategory').removeClass('has-error has-feedback');
+                }
+                //Subject
+                if ($('#SelectedSubject').val() == "") {
+                    $('#divSelectedSubject').addClass('has-error has-feedback');
+                    $('#SelectedSubject').focus();
+                    isValid = false;
+                } else {
+                    $('#divSelectedSubject').removeClass('has-error has-feedback');
+                }
+                //Format
+                //if ($('#SelectedFormat').val() == "") {
+                //    $('#divSelectedFormat').addClass('has-error has-feedback');
+                //    $('#SelectedFormat').focus();
+                //    isValid = false;
+                //} else {
+                //    $('#divSelectedFormat').removeClass('has-error has-feedback');
+                //}
+
+                //Name
+                if ($('#Name').val() == "") {
+                    $('#divName').addClass('has-error has-feedback');
+                    $('#Name').focus();
+                    isValid = false;
+                } else {
+                    $('#divName').removeClass('has-error has-feedback');
+                }
+                //Duration
+
+                //if ($('#SelectedMinute').val() == "") {
+                //    $('#divDuration').addClass('has-error has-feedback');
+                //    $('#SelectedMinute').focus();
+                //    isValid = false;
+                //} else {
+                //    $('#divDuration').removeClass('has-error has-feedback');
+                //}
+            }
+            if (command == "Create" && isValid == false) {
+                $btn.button('reset');//
+            }
+            if (isValid) {
+                 debugger;
+                $.ajax({
+                    url: '@Url.Action("Create", "QuestionPaper")',
+                    type: 'POST',
+                    async: true,
+                    data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, questionListViewModel: quesndata, command: command }),
+                    datatype: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        //debugger;
+                        //alert(data.success);
+                        //alert(data.output);
+                        if (data.success) {
+                            debugger;
+                            switch (e.currentTarget.id) {
+                                case "btnSearch":
+                                    if ($('#hdnIsACDAStoreUser').val() == "True" || '@CustomClaimsPrincipal.Current.CurrentRole' =="Teacher") {
+                                        if (data.output.length > 0) {
+                                            FillTable('QuestionTable', data.output);
+                                        } else {
+                                            $('#QuestionTable').bootstrapTable('destroy');
+                                            alert("No record found.");
+                                        }
+                                    } else {
+                                        debugger;
+                                        $('#divNoOfQuestions').html("Number of questions matching your search result:" + data.output.length);
+                                    }
+                                    break;
+                                case "btnAdd":
+                                    window.location.href = '@Url.Action("Index", "QuestionPaper")';
+                                    break;
+                                case "btnRefresh":
+                                    FillTable('QuestionTable', data.output);
+                                    break;
+                            }
+                        } else
+                            alert(data.errors);
+                    },
+                    error: function (data) {
+                        alert(data.responseText);
+                    },
+                    complete: function () {
+                        $btn.button('reset');
+                    }
+                });
+            }
+            return isValid;
+        });
+    });
+</script>
+<div class="page-head">
+    @*<h3>Create CBT/Standard CBT</h3>*@
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        @*<li>
+            <a href="@Url.Action("Index", "QuestionPaper")" title="CBT/Standard CBT">Custom CBT</a>
+        </li>*@
+        @if (!CustomClaimsPrincipal.Current.IsACDAStoreUser)
+        {
+            <li class="active">Custom CBT</li>}
+        else
+        {
+            <li class="active">Admin CBT</li>
+        }
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    
+    <div class="row">
+        <div class="col-md-2" id="divSelectedClass">
+            @Html.DropDownListFor(m => m.SelectedClass, Model.Classes, "Select Class", new { @class = "form-control" })
+        </div>
+        <div class="col-md-2" id="divSelectedCategory">
+            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Select Category", new { @class = "form-control" })
+        </div>
+        <div class="col-md-2" id="divSelectedSubject">
+            @Html.DropDownListFor(m => m.SelectedSubject, Model.Subjects, "Select Subject", new { @class = "form-control" })
+        </div>
+        <div class="col-md-2" id="divSelectedTopic">
+            @*@Html.DropDownListFor(m => m.SelectedTopic, Model.Topics, "Select Topic", new { @class = "form-control" })*@
+            @Html.DropDownListFor(x => x.SelectedTopic, Model.Topics, new { @class = "form-control", multiple="multiple" })
+        </div>
+        <div class="col-md-2" id="divSelectedFormat">
+            @Html.DropDownListFor(m => m.SelectedFormat, Model.Formats, "Select Format", new { @class = "form-control" })
+        </div>
+
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+        {
+            <div class="col-md-1">
+                @Html.DropDownListFor(m => m.SelectedMark, Model.Marks, "Select Mark", new { @class = "form-control" })
+            </div>
+            <div class="col-md-1">
+                <div class=" checkbox-inline">
+                    @Html.CheckBoxFor(m => m.IsOnline, Model.IsOnline) @Html.LabelFor(model => model.IsOnline)
+                </div>
+            </div>
+        }
+
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <button type="button" name="command" value="Search" id="btnSearch" data-loading-text="Searching..." class="btn btn-success" title="Search">
+                <i class="fa fa-search"></i>Search
+            </button>
+            <button type="button" name="command" value="Refresh" id="btnRefresh" class="btn btn-warning" title="Refresh">
+                <i class="fa fa-refresh"></i>Refresh
+            </button>
+        </div>
+        <div class="col-md-3" id="divName">
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "CBT Name" })
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
+        {
+            <div class="col-md-2" id="divDuration">
+                @Html.DropDownListFor(model => model.SelectedMinute, Model.Minutes, "Duration", new { @class = "form-control", @style = "width:auto" })
+                @Html.ValidationMessageFor(model => model.SelectedMinute)
+            </div>
+            <div class="col-md-1">
+                <div class=" checkbox-inline">
+                    @Html.CheckBoxFor(m => m.IsTrial, Model.IsTrial) @Html.LabelFor(model => model.IsTrial)
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-2">
+                @Html.DropDownListFor(m => m.SelectedNoOfQuestions, Model.NoOfQuestions, "Select No. Of Questions", new { @class = "form-control" })
+            </div>
+        }
+        <div class="col-md-1">
+            <button type="button" name="command" value="Create" id="btnAdd" class="btn btn-success" data-loading-text="Saving...">
+                <i class="fa fa-save"></i> Create CBT
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <hr />
+    </div>
+@if (CustomClaimsPrincipal.Current.IsACDAStoreUser || CustomClaimsPrincipal.Current.CurrentRole == "Teacher") { 
+    <div class="row">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#questionSummary">
+                        Click to exapand. Question Paper Summary
+                    </a>
+                </h4>
+            </div>
+            <div id="questionSummary" class="panel-collapse collapse in" ng-app="questionPaperApp" ng-controller="questionPaperController">
+                <div class="panel-body">
+                    <table class="table table-no-bordered">
+                        <thead><tr> <th class="col-md-3">Total Sections:<span class="badge badge-success">{{totalSections}}</span> </th> <th class="col-md-3">Total Ques Count: <span class="badge badge-warning">{{totalQuestions}}</span></th><th class="col-md-3">Total Marks:<span class="badge badge-primary">{{totalMarks}}</span></th><th class="col-md-3">Duration (Mins): <span class="badge badge-info">{{ convertSecIntoMins(totalDuration)}}</span></th></tr></thead>
+                    </table>
+                    <table class="table table-no-bordered">
+                        <thead><tr> <th>Sections</th> <th>Ques Count: </th><th>Marks:</th><th>Duration (Mins): </th></tr></thead>
+                        <tr ng-repeat="item in paperDetail">
+                            <td class="col-md-3">{{item.section}}</td>
+                            <td class="col-md-3">{{item.questionCount}}</td>
+                            <td class="col-md-3">{{item.marks}}</td>
+                            <td class="col-md-3">{{convertSecIntoMins(item.duration)}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+    <div class="row">
+        @Html.Hidden("hdnIsACDAStoreUser", CustomClaimsPrincipal.Current.IsACDAStoreUser)
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || CustomClaimsPrincipal.Current.CurrentRole =="Teacher")
+        {
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseThree">
+                            Click to exapand. Question Cart
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <table id="QuestionTablePaper" data-unique-id="QuestionId" data-show-columns="false" data-show-refresh="false"
+                               data-search="false" data-pagination="false"
+                               data-maintain-selected="true"
+                               data-detail-view="true" data-detail-formatter="detailFormatter">
+                            <thead>
+                                <tr>
+                                    <th data-field="check" data-checkbox="true" class="col-md-1"></th>
+                                    <th data-field="QuestionId" data-sortable="false" class="col-md-1">Question Id</th>
+                                    <th data-field="Decription" data-sortable="false">Description</th>
+                                    <th data-field="QuestionFormat" data-sortable="false" class="col-md-2">Question Format</th>
+                                    <th data-field="DurationInSecond" data-sortable="false" class="col-md-1">Duration (Sec)</th>
+                                    <th data-field="Subject" data-sortable="false" class="col-md-1">Subject</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFour">
+                            Click to exapand. Question List
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseFour" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <table id="QuestionTable" data-toggle="table"
+                               data-show-refresh="true"
+                               data-search="true"
+                               data-pagination="true"
+                               data-page-size="20"
+                               data-show-columns="true"
+                               data-maintain-selected="true"
+                               data-detail-view="true" data-detail-formatter="detailFormatter">
+                            <thead>
+                                <tr>
+                                    <th data-field="check" data-checkbox="true"></th>
+                                    @*<th data-field="Id" data-sortable="false">#</th>*@
+                                    <th data-field="QuestionId" data-sortable="false">Question Id</th>
+                                    <th data-field="Decription" data-sortable="false">Description</th>
+                                    <th data-field="QuestionFormat" data-sortable="false" class="col-md-2">Question Format</th>
+                                    <th data-field="DurationInSecond" data-sortable="false" class="col-md-1">Duration (Sec)</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="panel panel-info panel-heading">
+                <div class="panel-title"><div id="divNoOfQuestions">Number of questions matching your search result:NA</div> </div>
+            </div>
+        }
+    </div>
+</div>

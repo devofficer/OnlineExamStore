@@ -1,0 +1,275 @@
+﻿@model OnlineExam.Models.ViewModels.UploadExcelViewModel
+<style>
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            -moz-min-width: 100%;
+            -ms-min-width: 100%;
+            -o-min-width: 100%;
+            -webkit-min-width: 100%;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            -webkit-filter: alpha(opacity=0);
+            -moz-filter: alpha(opacity=0);
+            -o-filter: alpha(opacity=0);
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+</style>
+<link href="~/Content/iCheck/all.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.icheck.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //http://icheck.fronteed.com/
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-red',
+            radioClass: 'iradio_square-red',
+            increaseArea: '20%' // optional
+        });
+
+        $('#Format1').on('ifChecked', function () {
+            $("#Format2").iCheck('uncheck');
+            $("#Format3").iCheck('uncheck');
+            $("#TopicFormat").iCheck('uncheck');
+        });
+        $('#Format2').on('ifChecked', function () {
+            $("#Format1").iCheck('uncheck');
+            $("#Format3").iCheck('uncheck');
+            $("#TopicFormat").iCheck('uncheck');
+        });
+        $('#Format3').on('ifChecked', function () {
+            $("#Format1").iCheck('uncheck');
+            $("#Format2").iCheck('uncheck');
+            $("#TopicFormat").iCheck('uncheck');
+        });
+        $('#TopicFormat').on('ifChecked', function () {
+            $("#Format1").iCheck('uncheck');
+            $("#Format2").iCheck('uncheck');
+            $("#Format3").iCheck('uncheck');
+        });
+    });
+</script>
+<div class="page-head">
+    <h3>Upload Questions</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Upload Questions</li>
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    @using (Html.BeginForm("UploadExcel", "LinqToExcel", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="row">
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.File, new { type = "file", @class = "btn btn-default btn-file" })
+                @Html.ValidationMessageFor(x => x.File)
+            </div>
+            <div class="col-md-4">
+                <input type="submit" value="Upload" class="btn btn-flat btn-success" />
+                @Html.ActionLink("Download Template", "DownloadFile", "LinqToExcel", new { @class = "btn btn-flat btn-success" })
+            </div>
+            <div class="col-md-4">
+                Choose Format to Upload(ONLY ONE):<br />
+                @Html.CheckBoxFor(x => x.Format1, new { @onclick = "selectOnlyThis(this.id)" })
+                @Html.LabelFor(m => m.Format1)
+                @Html.CheckBoxFor(x => x.Format2, new { @onclick = "selectOnlyThis(this.id)" })
+                @Html.LabelFor(m => m.Format2)
+                @Html.CheckBoxFor(x => x.Format3, new { @onclick = "selectOnlyThis(this.id)" })
+                @Html.LabelFor(m => m.Format3)
+                @Html.CheckBoxFor(x => x.TopicFormat, new { @onclick = "selectOnlyThis(this.id)" })
+                @Html.LabelFor(m => m.TopicFormat)
+            </div>
+        </div>
+        if (Model.ErrorMsg != null || Model.SuccessMsg != null)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    @(Model.ErrorMsg != null ? Html.LabelFor(model => model.ErrorMsg, Model.ErrorMsg, new { @class = "btn-danger" }) : Html.LabelFor(model => model.SuccessMsg, Model.SuccessMsg, new { @class = "btn-success" }))
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model.InCompleteQuestions.Count > 0)
+                {
+                    @functions{
+                        public string GetClassFromLevel(string column, string value)
+                        {
+                            var className = "";
+                            switch (column)
+                            {
+                                case "Category":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "Subject":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "FormatType":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "QuestionText":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "AnswerOptionA":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "AnswerOptionB":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "AnswerOptionC":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "AnswerOptionD":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "CorrectAnswer":
+                                    className = string.IsNullOrWhiteSpace(value) ? "danger" : "";
+                                    break;
+                                case "Marks":
+                                    className = Convert.ToInt32(value) == 0 ? "danger" : "";
+                                    break;
+                                case "Time":
+                                    className = Convert.ToInt32(value) == 0 ? "danger" : "";
+                                    break;
+                                case "QuestionID":
+                                    className = Convert.ToInt32(value) == 0 ? "danger" : "";
+                                    break;
+                                default:
+                                    className = "";
+                                    break;
+                            }
+                            return className;
+                        }
+                    }
+                    <div>
+                        <strong>
+                            *Total Incomplete/Duplicate Question(s): <b style="color: #fff; font-size: 27px;" class="badge badge-danger">@Model.InCompleteQuestions.Count</b>
+                        </strong>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-responsive table-condensed table-hover">
+                            <tr>
+                                <th>
+                                    @Html.DisplayName("Question Id")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Category")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Subject")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Format Type")
+                                </th>
+                                @if (Model.Format3)
+                                {
+                                    <th>
+                                        @Html.DisplayName("Passage/Instruction Id")
+                                    </th>
+                                    <th>
+                                        @Html.DisplayName("Passage Text")
+                                    </th>
+                                }
+                                <th>
+                                    @Html.DisplayName("Question Text")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Option A")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Option B")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Option C")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Option D")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Correct Answer")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Mark")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Time")
+                                </th>
+                            </tr>
+                            @foreach (var item in Model.InCompleteQuestions)
+                            {
+                                <tr>
+                                    <td class="@GetClassFromLevel("QuestionID", Convert.ToString(item.QuestionID))">
+                                        @Html.DisplayFor(modelItem => item.QuestionID)
+                                    </td>
+                                    <td class="@GetClassFromLevel("Category", item.Category)">
+                                        @Html.DisplayFor(modelItem => item.Category)
+
+                                    </td>
+                                    <td class="@GetClassFromLevel("Subject", item.Subject)">
+                                        @Html.DisplayFor(modelItem => item.Subject)
+                                    </td>
+                                    <td class="@GetClassFromLevel("FormatType", item.FormatType)">
+                                        @Html.DisplayFor(modelItem => item.FormatType)
+                                    </td>
+                                    @if (Model.Format3)
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PassageInstructionID)
+                                        </td>
+                                        <td class="@GetClassFromLevel("PassageText", item.PassageText)">
+                                            @Html.DisplayFor(modelItem => item.PassageText)
+                                        </td>
+                                    }
+
+                                    <td class="@(Model.Format3 && !string.IsNullOrWhiteSpace( item.PassageText)? "": @GetClassFromLevel("QuestionText", item.QuestionText))">
+                                        @Html.DisplayFor(modelItem => item.QuestionText)
+                                    </td>
+                                    <td class="@(Model.Format3 && !string.IsNullOrWhiteSpace(item.PassageText) ? "" : @GetClassFromLevel("AnswerOptionA", item.AnswerOptionA))">
+                                        @Html.DisplayFor(modelItem => item.AnswerOptionA)
+                                    </td>
+                                    <td class="@(Model.Format3 && !string.IsNullOrWhiteSpace(item.PassageText) ? "" : @GetClassFromLevel("AnswerOptionB", item.AnswerOptionB))">
+                                        @Html.DisplayFor(modelItem => item.AnswerOptionB)
+                                    </td>
+                                    <td class="@(Model.Format3 && !string.IsNullOrWhiteSpace(item.PassageText) ? "" : @GetClassFromLevel("AnswerOptionC", item.AnswerOptionC))">
+                                        @Html.DisplayFor(modelItem => item.AnswerOptionC)
+                                    </td>
+                                    <td class="@(Model.Format3 && !string.IsNullOrWhiteSpace(item.PassageText) ? "" : @GetClassFromLevel("AnswerOptionD", item.AnswerOptionD))">
+                                        @Html.DisplayFor(modelItem => item.AnswerOptionD)
+                                    </td>
+                                    <td class="@(Model.Format3 && !string.IsNullOrWhiteSpace(item.PassageText) ? "" : @GetClassFromLevel("CorrectAnswer", item.CorrectAnswer))">
+                                        @Html.DisplayFor(modelItem => item.CorrectAnswer)
+                                    </td>
+                                    <td class="@GetClassFromLevel("Marks", Convert.ToString(item.Marks))">
+                                        @Html.DisplayFor(modelItem => item.Marks)
+                                    </td>
+                                    <td class="@GetClassFromLevel("Time", Convert.ToString(item.Time))">
+                                        @Html.DisplayFor(modelItem => item.Time)
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

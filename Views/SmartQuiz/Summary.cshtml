@@ -1,0 +1,819 @@
+﻿@model OnlineExam.Controllers.QuestionSummaryViewModel
+@{
+    ViewBag.Title = "Summary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    history.pushState(null, document.title, location.href);
+    window.addEventListener('popstate', function (event) {
+        history.pushState(null, document.title, location.href);
+    });
+    window.onhashchange = function () {
+        history.pushState(null, document.title, location.href);
+    }
+</script>
+<link href="~/Content/iCheck/all.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.icheck.min.js"></script>
+<style type="text/css">
+    .btn {
+        margin-left: 0px;
+    }
+
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+
+    .row {
+        margin-right: -25px;
+        margin-left: -25px;
+    }
+
+    .list-group-item > .badge {
+        float: left;
+    }
+
+    hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .list-group-item {
+        line-height: 20px;
+        padding: 10px 15px;
+    }
+
+
+
+
+    /*** DATA STATS ***/
+
+    @@media only screen and (max-device-height: 667px) {
+        p.que span {
+            margin-right: 0px !important;
+            width: 10px !important;
+        }
+
+        p.que {
+            margin: 0px !important;
+            padding: 7px 0px 7px 0px !important;
+            line-height: 20px !important;
+        }
+
+        .text-center {
+            text-align: left !important;
+        }
+
+        .cbt-header {
+            text-align: left !important;
+        }
+    }
+
+    p.que.full_width_p {
+        width: 100%;
+    }
+
+    p.que {
+        border: 1px solid #eee;
+        color: #1eb0bc;
+        display: block;
+        font-family: arial;
+        font-size: 20px;
+        /*line-height: 60px;
+        margin: 0 10px 10px 0;*/
+        padding: 7px 34px 7px 12px;
+        /*width: 49.4%;*/
+    }
+
+        p.que span {
+            background-image: url("../../images/score_card_icons_img.png");
+            background-position: 0 0;
+            background-repeat: no-repeat;
+            height: 60px;
+            /*margin-right: 10px;*/
+            margin-top: 0px;
+            vertical-align: middle;
+            /*width: 62px;*/
+        }
+
+    .total_que {
+        display: inline-block;
+        float: none;
+    }
+
+    p.que span.total_que {
+        background-position: 0 -6px;
+    }
+
+    p.que.color_style1 {
+        color: #29aae1;
+    }
+
+    p.que.color_style2 {
+        color: #fa7419;
+    }
+
+    p.que.color_style3 {
+        color: #a0c827;
+    }
+
+    p.que.color_style4 {
+        color: #bb69cf;
+    }
+
+    p.que.color_style5 {
+        color: #3bb14a;
+    }
+
+    p.que span.total_que {
+        background-position: 0 -6px;
+    }
+
+    p.que span.attempted_que {
+        background-position: -76px -2px;
+    }
+
+    p.que span.notattempted_que {
+        background-position: -149px -1px;
+    }
+
+    p.que span.corrected_que {
+        background-position: -222px -2px;
+    }
+
+    p.que span.incorrected_que {
+        background-position: -294px -1px;
+    }
+
+    p.que span.marks_icon1 {
+        background-position: 6px -84px;
+    }
+
+    p.que span.marks_icon2 {
+        background-position: -69px -75px;
+    }
+
+    p.que span.marks_icon3 {
+        background-position: -309px -78px;
+    }
+
+    p.que span.marks_icon4 {
+        background-position: -382px -78px;
+    }
+
+    p.que span.test_time {
+        background-position: -153px -78px;
+    }
+
+    p.que span.test_taken_time {
+        background-position: -233px -79px;
+    }
+
+    p.que span.no_students {
+        background-position: -355px -4px;
+    }
+
+    p.que span.my_rank {
+        background-position: -425px -5px;
+    }
+
+    .student_rank_div_m {
+        background: #fff;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 10px;
+        border: 1px solid #eee;
+    }
+
+        .student_rank_div_m h2 {
+            color: #fa7419;
+            font-size: 37px;
+            font-weight: bold;
+            line-height: 50px;
+            text-align: center;
+        }
+
+        .student_rank_div_m h3 {
+            color: #333;
+            font-size: 37px;
+            font-weight: normal;
+            line-height: 50px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+            .student_rank_div_m h3 span {
+                font-weight: bold;
+                color: #1eb0bc;
+            }
+
+        .student_rank_div_m h2 img {
+            margin-right: 12px;
+            margin-top: -25px;
+        }
+
+    .attempted_que {
+        display: inline-block;
+        float: none;
+    }
+
+    .notattempted_que {
+        display: inline-block;
+        float: none;
+    }
+
+    .corrected_que {
+        display: inline-block;
+        float: none;
+    }
+
+    .incorrected_que {
+        display: inline-block;
+        float: none;
+    }
+
+    .marks_icon1 {
+        display: inline-block;
+        float: none;
+    }
+
+    .marks_icon2 {
+        display: inline-block;
+        float: none;
+    }
+
+    .test_time {
+        display: inline-block;
+        float: none;
+    }
+
+    .test_taken_time {
+        display: inline-block;
+        float: none;
+    }
+
+    .cbt-header {
+        display: block;
+        font-size: 24px;
+    }
+</style>
+@*<link href="~/Content/google-meterial-design.css" rel="stylesheet" />*@
+@*<script src="https://code.highcharts.com/highcharts.js"></script>*@
+
+<script type="text/javascript">
+    window.MathJax = {
+        showProcessingMessages: true,
+        messageStyle: "none",
+        tex2jax: {
+            inlineMath: [['$', '$'], ["\\(", "\\)"]],
+            processEscapes: true
+        },
+        "fast-preview": { disabled: true },
+        CommonHTML: { linebreaks: { automatic: true } },
+        "HTML-CSS": { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } },
+        TeX: { noErrors: { disabled: true } },
+        MathMenu: {
+            styles: {
+                ".MathJax_Menu": { "z-index": 2001 }
+            }
+        },
+        AuthorInit: function () {
+            MathJax.Hub.Register.StartupHook("MathMenu Ready", function () { MathJax.Menu.BGSTYLE["z-index"] = 2000; });
+            MathJax.Hub.processSectionDelay = 0;
+        }
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML-full"></script>
+<script src="~/Scripts/highchart/highcharts.js"></script>
+@{
+    var unAttemptedQuestionCount = @Model.Summary.TotalQuestions - @Model.Summary.TotalAttemptedQuestions;
+    int percentage = (int)Math.Round((double)(100 * @Model.Summary.TotalObtainedMarks) / @Model.Summary.TotalMarks);
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnResultDetail').click(function () {
+            $('#divTestResultDetail').toggle();
+        });
+
+        loadChart();
+    });
+
+    function getFormattedCurrentDate() {
+        var monthNames = [
+                          "January", "February", "March",
+                          "April", "May", "June", "July",
+                          "August", "September", "October",
+                          "November", "December"
+        ];
+
+        var date = new Date();
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+
+        //console.log(day, monthNames[monthIndex], year);
+        return day + ', ' + monthNames[monthIndex] + ', ' + year;
+    }
+
+    function loadChart() {
+        // Build the chart
+        $('#container').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'CBT Overview, ' + getFormattedCurrentDate()
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            credits: false,
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Total',
+                colorByPoint: true,
+                data: [{
+                    name: 'UnAttempted Q.',
+                    color: '#7CB5EC',
+                    y: @unAttemptedQuestionCount
+                    },
+                @*{
+                    name: 'Attempted Q.',
+                    color: '#A0C827',
+                    y: @Model.Summary.TotalAttemptedQuestions
+                    },*@
+                {
+                    name: 'Corrected Q.',
+                    color: '#90ED7D',
+                    y:  @Model.Summary.TotalCorrectedAnswers,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: 'Wrong Q.',
+                    color:'#fa7419',
+                    y: @Model.Summary.TotalInCorrectedAnswers
+                    }
+                    @*,
+                   {
+                       name: 'Percentile',
+                       color:'#3bb34a',
+                       y: @percentage
+                       }*@
+                ]
+            }]
+        });
+    }
+</script>
+<div class="page-head">
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("CBT List", "Index", "QuestionPaper")</li>
+        <li class="active">Test Result & Statistics</li>
+    </ol>
+</div>
+
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            <ul id="myTab" class="nav nav-tabs">
+                <li class="active"><a href="#scorecard-tab" data-toggle="tab">SCORE CARD <i class="fa"></i></a></li>
+                <li><a href="#solution-tab" data-toggle="tab">SOLUTION <i class="fa"></i></a></li>
+                <li><a href="#score-user-list-tab" data-toggle="tab">TOP SCORERS <i class="fa"></i></a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane active" id="scorecard-tab">
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="cbt-header">Name: @Html.DisplayTextFor(x => x.Summary.Name)</p>
+                        </div>
+
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="cbt-header">
+                                Status: @switch (@Model.Summary.FinalStatus)
+                            {
+                                case "Excellent":
+                                        <span class="label label-success">@Model.Summary.FinalStatus</span>
+                                    break;
+                                case "Average":
+                                <span class="label label-warning">@Model.Summary.FinalStatus</span>
+                                    break;
+                                case "Below Average":
+                                <span class="label label-danger">@Model.Summary.FinalStatus</span>
+                                    break;
+                            }
+                            </p>
+                        </div>
+
+                        @*<div class="col-md-1">
+                                <button type="button" id="btnResultDetail" value="Show Detail" class="btn btn-warning">Show Detail</button>
+                            </div>*@
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-12 col-md-12">
+                            <div id="container"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-12 col-md-12">
+                            <p class="que text-center"><span class="total_que"></span>Total Questions = @Model.Summary.TotalQuestions</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que color_style1"><span class="attempted_que"></span>Attempted Questions = @Model.Summary.TotalAttemptedQuestions</p>
+                        </div>
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+
+                            <p class="que color_style2"><span class="notattempted_que"></span>Non Attempted Questions = @unAttemptedQuestionCount</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que color_style3"><span class="corrected_que"></span>Corrected Questions = @Model.Summary.TotalCorrectedAnswers</p>
+                        </div>
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que color_style1"><span class="incorrected_que"></span>Incorrected Questions = @Model.Summary.TotalInCorrectedAnswers</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que color_style4"><span class="marks_icon1"></span>Marks =@Model.Summary.TotalObtainedMarks/@Model.Summary.TotalMarks</p>
+                        </div>
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que"><span class="marks_icon2"></span>% = @percentage</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que"><span class="test_time"></span>Total Time (hh:mm:ss) =@OnlineExam.Repositories.CommonRepository.ConvertSecToMinutes(Model.Summary.DurationInMinutes)</p>
+                        </div>
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <p class="que color_style5">
+                                <span class="test_taken_time"></span>Time Taken (hh:mm:ss)=
+                                @OnlineExam.Repositories.CommonRepository.ConvertSecToMinutes(Model.Summary.TimeTakenInSecond)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="solution-tab">
+
+                    @if (OnlineExam.Helpers.CustomClaimsPrincipal.Current.MembershipPlan == OnlineExam.Utils.MembershipPlanType.Trial.ToString())
+                {
+                        <div class="row">
+                            <div class="col-md-12">
+                                To See Solution, Please upgrade your membership
+                                <a href="@Url.Action("MembershipExpired", "Account")" class="btn btn-info" title="Upgrade Account"><span class="fa fa-shopping-cart">&nbsp;Upgrade Account</span></a>
+                            </div>
+                        </div>
+                }
+                else
+                {
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                @if (Model != null && Model.ListOfTAnswerResult != null)
+                            {
+                                    @functions{
+                                    public string IsMatch(string option, OnlineExam.Controllers.TAnswerResult tAnswerResult)
+                                    {
+                                        var result = "list-group-item";
+                                        switch (option)
+                                        {
+                                            case "A":
+                                                if (tAnswerResult.Answer == "A")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "list-group-item list-group-item-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "list-group-item list-group-item-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "B":
+                                                if (tAnswerResult.Answer == "B")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "list-group-item list-group-item-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "list-group-item list-group-item-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "C":
+                                                if (tAnswerResult.Answer == "C")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "list-group-item list-group-item-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "list-group-item list-group-item-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "D":
+                                                if (tAnswerResult.Answer == "D")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "list-group-item list-group-item-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "list-group-item list-group-item-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "E":
+                                                if (tAnswerResult.Answer == "E")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "list-group-item list-group-item-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "list-group-item list-group-item-danger";
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                        return result;
+                                    }
+                                    public string SetAnswerString(string option, OnlineExam.Controllers.TAnswerResult tAnswerResult)
+                                    {
+                                        var result = "";
+                                        switch (option)
+                                        {
+                                            case "A":
+                                                if (tAnswerResult.Answer == "A")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-ok-sign\"></span>";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
+                                                    }
+                                                }
+                                                break;
+                                            case "B":
+                                                if (tAnswerResult.Answer == "B")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-ok-sign\"></span>";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
+                                                    }
+                                                }
+                                                break;
+                                            case "C":
+                                                if (tAnswerResult.Answer == "C")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-ok-sign\"></span>";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
+                                                    }
+                                                }
+                                                break;
+                                            case "D":
+                                                if (tAnswerResult.Answer == "D")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-ok-sign\"></span>";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
+                                                    }
+                                                }
+                                                break;
+                                            case "E":
+                                                if (tAnswerResult.Answer == "E")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-ok-sign\"></span>";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "YOUR ANSWER &nbsp;" + "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                        return result;
+                                    }
+                                    public string IsMatchBadge(string option, OnlineExam.Controllers.TAnswerResult tAnswerResult)
+                                    {
+                                        var result = "badge";
+                                        switch (option)
+                                        {
+                                            case "A":
+                                                if (tAnswerResult.Answer == "A")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "badge badge-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "badge badge-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "B":
+                                                if (tAnswerResult.Answer == "B")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "badge badge-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "badge badge-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "C":
+                                                if (tAnswerResult.Answer == "C")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "badge badge-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "badge badge-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "D":
+                                                if (tAnswerResult.Answer == "D")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "badge badge-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "badge badge-danger";
+                                                    }
+                                                }
+                                                break;
+                                            case "E":
+                                                if (tAnswerResult.Answer == "E")
+                                                {
+                                                    if (tAnswerResult.Answer == tAnswerResult.AnswerOption)
+                                                    {
+                                                        result = "badge badge-success";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "badge badge-danger";
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                        return result;
+                                    }
+
+                                    public string AnswerMatch(string option, OnlineExam.Controllers.TAnswerResult tAnswerResult)
+                                    {
+                                        var result = "list-group-item";
+                                        switch (option)
+                                        {
+                                            case "A":
+                                                result = tAnswerResult.AnswerOption == "A" ? "list-group-item list-group-item-success" : "list-group-item";
+                                                break;
+                                            case "B":
+                                                result = tAnswerResult.AnswerOption == "B" ? "list-group-item list-group-item-success" : "list-group-item";
+                                                break;
+                                            case "C":
+                                                result = tAnswerResult.AnswerOption == "C" ? "list-group-item list-group-item-success" : "list-group-item";
+                                                break;
+                                            case "D":
+                                                result = tAnswerResult.AnswerOption == "D" ? "list-group-item list-group-item-success" : "list-group-item";
+                                                break;
+                                            case "E":
+                                                result = tAnswerResult.AnswerOption == "E" ? "list-group-item list-group-item-success" : "list-group-item";
+                                                break;
+                                        }
+                                        return result;
+                                    }
+                                    }
+                                string parentQuestion = string.Empty;
+                                int parentIndex = 0;
+                                int childIndex = 0;
+                                foreach (var item in Model.ListOfTAnswerResult.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                {
+                                    <ul class="list-group">
+                                        @if (item.Data.ParentId == 0)
+                                        {
+                                            parentIndex = parentIndex + 1;
+                                            childIndex = 0;
+                                            <li class="list-group-item"><strong>Q @parentIndex</strong><strong>.&nbsp;@Html.Raw(item.Data.Description) </strong></li>
+                                        }
+                                        else
+                                        {
+                                            childIndex = childIndex + 1;
+                                            <li class="list-group-item"><strong>Q @childIndex</strong><strong>.&nbsp;@Html.Raw(item.Data.Description) </strong></li>
+                                        }
+                                        @if (item.Data.AnswerOption != "NA")
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(item.Data.ImagePath))
+                                            {
+                                                <li class="list-group-item"><img src="@item.Data.ImagePath" /></li>
+                                            }
+                                            <li class="@IsMatch("A", item.Data) @AnswerMatch("A", item.Data)"><strong class="@IsMatchBadge("A", item.Data)">A</strong> &nbsp;<span>@item.Data.OptionA</span><div class="text-right"><strong>@Html.Raw(SetAnswerString("A", item.Data))</strong></div> </li>
+                                            <li class="@IsMatch("B", item.Data) @AnswerMatch("B", item.Data)"><strong class="@IsMatchBadge("B", item.Data)">B</strong> &nbsp;<span>@item.Data.OptionB</span><div class="text-right"><strong>@Html.Raw(SetAnswerString("B", item.Data))</strong></div> </li>
+                                            <li class="@IsMatch("C", item.Data) @AnswerMatch("C", item.Data)"><strong class="@IsMatchBadge("C", item.Data)">C</strong> &nbsp;<span>@item.Data.OptionC</span><div class="text-right"><strong>@Html.Raw(SetAnswerString("C", item.Data))</strong></div> </li>
+                                            <li class="@IsMatch("D", item.Data) @AnswerMatch("D", item.Data)"><strong class="@IsMatchBadge("D", item.Data)">D</strong> &nbsp;<span>@item.Data.OptionD</span><div class="text-right"><strong>@Html.Raw(SetAnswerString("D", item.Data))</strong></div> </li>
+                                            if (!string.IsNullOrWhiteSpace(item.Data.OptionE))
+                                            {
+                                                <li class="@IsMatch("E", item.Data) @AnswerMatch("E", item.Data)"><strong class="@IsMatchBadge("E", item.Data)">E</strong> &nbsp;<span>@item.Data.OptionE</span><div class="text-right"><strong>@Html.Raw(SetAnswerString("E", item.Data))</strong></div> </li>
+                                            }
+                                            if (!string.IsNullOrWhiteSpace(item.Data.AnswerDescription))
+                                            {
+                                                <li class="list-group-item">
+                                                    <div class=" text-info">
+                                                        <strong>Solution Description:</strong> &nbsp;<span>@Html.Raw(item.Data.AnswerDescription)</span>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                    <br />
+                                }
+                            }
+                            </div>
+                        </div>
+                }
+
+                </div>
+                <div class="tab-pane" id="score-user-list-tab">
+                    #TOP SCORERS
+                    <table class="table table-condensed table-bordered">
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Time Taken (hh:mm:ss)</th>
+                        </tr>
+
+                        @foreach (var item in Model.TopScorerViewModel.Select((x, i) => new { Data = x, Index = i + 1 }))
+                    {
+                        var timeTaken = @OnlineExam.Repositories.CommonRepository.ConvertSecToMinutes(item.Data.TimeTakenInSecond);
+                            <tr>
+                                <td> @Html.DisplayFor(modelItem => item.Index)<strong>.</strong></td>
+                                <td> @Html.DisplayFor(modelItem => item.Data.Name)</td>
+                                <td> @Html.DisplayFor(modelItem => item.Data.Marks)</td>
+                                <td>@timeTaken</td>
+                            </tr>
+                    }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="row">
+            <div class="col-md-12">
+                <div class="student_rank_div_m">
+                    <h2><img src="https://www.wifistudy.com/images/thumbs_us_icon_new.png" title="" alt="">Congratulation</h2>
+                    <h3>You got <span>282</span> rank among <span>255</span> students</h3>
+                </div>
+            </div>
+        </div>*@
+
+
+</div>

@@ -1,0 +1,84 @@
+﻿@model List<OnlineExam.Models.ProductListViewModel>
+
+<style>
+    .amount {
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.checkbox').change(function () {
+            var total = 0;
+            $('.checkbox:checked').each(function () {
+                var value = $(this).closest('tr').find('td:eq(5)').text(); // for fifth column
+                //alert(value);
+                total += parseFloat(value);
+            });
+            $('#totalAmount').text(total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString());
+        });
+
+    });
+
+</script>
+
+@using (Html.BeginForm("GenerateInvoice", "Company", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <table id="tblProducts" class="table table-responsive table-bordered table-condensed table-hover  table-striped">
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayName("Product Code")
+            </th>
+            <th>
+                @Html.DisplayName("Name")
+            </th>
+            <th>
+                @Html.DisplayName("Price (Rs)")
+            </th>
+            <th>
+                @Html.DisplayName("Tax(%)")
+            </th>
+            <th>
+                @Html.DisplayName("Line Total (Rs)")
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <input name="chkProduct" type="checkbox" class="checkbox">
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tax)
+                </td>
+                <td>
+                    <span class="amount">
+                        @Html.DisplayFor(modelItem => item.LineTotal)
+                    </span>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4"></td>
+            <td class="right"><b style="font-size: 25px;">Total:</b></td>
+            <td class="right label-warning">
+                <div id="totalAmount" style="font-size: 25px; color: white;">0.00</div>
+            </td>
+        </tr>
+    </table>
+    
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" class="btn btn-success" value="Generate Invoice" />
+        </div>
+    </div>
+}

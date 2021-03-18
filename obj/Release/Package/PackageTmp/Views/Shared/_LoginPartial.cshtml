@@ -1,0 +1,88 @@
+﻿@using Microsoft.AspNet.Identity
+@using OnlineExam.Helpers
+<style>
+    .avatar1 {
+        border: 1px solid #fff;
+    }
+</style>
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", new { Area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right user-nav">
+            <li class="dropdown profile_menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    @if(!string.IsNullOrWhiteSpace(CustomClaimsPrincipal.Current.Avatar))
+                    {
+                        <img src="@Url.Content(CustomClaimsPrincipal.Current.Avatar)" class="avatar1" alt="Avatar" height="30px" width="30px" />
+                    }
+                    else
+                    {
+                        <img alt="Avatar" src="~/Content/Images/ContactPerson.jpg" class="avatar1" alt="Avatar" height="30px" width="30px" />
+                    }
+                    @(string.IsNullOrWhiteSpace(CustomClaimsPrincipal.Current.UserFullName) ? User.Identity.Name : CustomClaimsPrincipal.Current.UserFullName)
+                    @if (Request.IsAuthenticated && !User.IsInRole(OnlineExam.Utils.AppConstants.Roles.StaffAdmin))
+                    {
+                        @( "(" + CustomClaimsPrincipal.Current.UserType + ")")
+                    }
+
+
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    @*<li>
+                            <a href="#">
+                                <i class="glyphicon glyphicon-record"></i>
+                                <span>&nbsp;My Account</span>
+                            </a>
+                        </li>*@
+                    <li>
+                        <a href="@Url.Action("MyProfile", "UsersAdmin", new { Area = "" })">
+                            <i class="glyphicon glyphicon-user"></i>
+                            <span>&nbsp;Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("UpdatePassword", "UsersAdmin", new { Area = "" })">
+                            <i class="glyphicon glyphicon-edit"></i>
+                            <span>&nbsp;Change Password</span>
+                        </a>
+                    </li>
+                    @*<li>
+                            <a href="#">
+                                <i class="glyphicon glyphicon-envelope"></i>
+                                <span>&nbsp;Messages</span>
+                                <span class="badge">2</span>
+                            </a>
+                        </li>*@
+                    <li class="divider"></li>
+                    <li>
+                        <a href="javascript:document.getElementById('logoutForm').submit()">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            <span>&nbsp;Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    
+        if (!CustomClaimsPrincipal.Current.IsACDAStoreUser && Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["Controller"]) != "Home")
+        {
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account Type: @CustomClaimsPrincipal.Current.MembershipPlan<b class="caret"></b></a>
+                </li>
+            </ul>
+        }
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        @*  <li>@Html.ActionLink("Franchise Register", "Register", "Account", new {register='F'} , htmlAttributes: new { id = "fRegisterLink" })</li>*@
+        <li>@Html.ActionLink("Register", "PreRegister", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

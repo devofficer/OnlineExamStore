@@ -1,0 +1,297 @@
+﻿@using OnlineExam.Utils
+@model OnlineExam.Models.Company
+<style>
+    .block-flat, .block-wizard {
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+    }
+</style>
+<br />
+<br />
+<div class="cl-mcont">
+    <div class="form-horizontal  block-flat">
+        <div class="row">
+            <div class="col-sm-4">
+                <h4>VIEW COMPANY DETAILS</h4>
+            </div>
+            <div class="col-sm-offset-10">
+                <p>
+                    @if (Model.Status == "Pending")
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.CompanyId })
+                        <text>|</text>
+                    }
+                    @Html.ActionLink("Back to List", "Index")
+                </p>
+            </div>
+        </div>
+        <hr />
+        <div class="table-responsive">
+            <table class="table table-bordered" id="datatable">
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.CompanyCode) :</strong>
+                    </td>
+
+                    <td class="col-lg-4">
+                        @Html.DisplayFor(model => model.CompanyCode)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.Name) :</strong>
+                    </td>
+
+                    <td class="col-lg-4">
+                        @Html.DisplayFor(model => model.Name)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.Logo) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Logo)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.Description) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Description)
+                    </td>
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.Location) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Location)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.AddressLine1) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.AddressLine1)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.AddressLine2) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.AddressLine2)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.ZipCode) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.ZipCode)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.City) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.City)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.State) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.State)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.Country) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Country)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.ContactNumber) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.ContactNumber)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.ContactPerson) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.ContactPerson)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.ContactDetail) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.ContactDetail)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.PrimaryEmail) :</strong>
+                    </td>
+
+                    <td align="left">
+                        @Html.DisplayFor(model => model.PrimaryEmail)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.SecondaryEmail) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.SecondaryEmail)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.TinNumber) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.TinNumber)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.ServiceNumber) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.ServiceNumber)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.OtherNumber) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.OtherNumber)
+                    </td>
+
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.BusinessType) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.BusinessType)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.RelationshipStatus) :</strong>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.RelationshipStatus)
+                    </td>
+                    <td>
+                        <strong>@Html.DisplayNameFor(model => model.Status) :</strong>
+                    </td>
+
+                    <td>
+                        @switch ((CompanyStatus)Enum.Parse(typeof(CompanyStatus), Model.Status, true))
+                        {
+                            case CompanyStatus.Pending:
+                                <div class="label label-warning">
+                                    @Html.DisplayFor(model => model.Status, new { @class = "label label-warning" })
+                                </div>
+                                break;
+                            case CompanyStatus.Active:
+                            <div class="label label-success">
+                                @Html.DisplayFor(model => model.Status, new { @class = "label label-success" })
+                            </div>
+                                break;
+                            case CompanyStatus.Submitted:
+                            <div class="label label-success">
+                                @Html.DisplayFor(model => model.Status, new { @class = "label label-success" })
+                            </div>
+                                break;
+                            case CompanyStatus.Approved:
+                            <div class="label label-success">
+                                @Html.DisplayFor(model => model.Status, new { @class = "label label-success" })
+                            </div>
+
+                                break;
+                            case CompanyStatus.Suspended:
+                            <div class="label label-danger">
+                                @Html.DisplayFor(model => model.Status, new { @class = "label label-danger" })
+                            </div>
+                                break;
+                            case CompanyStatus.Rejected:
+                            <div class="label label-danger">
+                                @Html.DisplayFor(model => model.Status, new { @class = "label label-danger" })
+                            </div>
+                                break;
+                        }
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="block-flat">
+        <h4>COMPANY DOCUMENTS:</h4>
+        <hr />
+        <table class="table table-bordered table-condensed table-hover table-responsive">
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    Name
+                </th>
+                <th></th>
+
+            </tr>
+            @for (int i = 0; i < Model.Documents.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(x => Model.Documents[i].DocumentId)
+                        @Html.HiddenFor(x => Model.Documents[i].CompanyId)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(x => Model.Documents[i].Name)
+                        @Html.HiddenFor(x => Model.Documents[i].Name)
+                    </td>
+
+                    <td>
+                        <a href="@Url.Action("Download", new { id = Model.Documents[i].DocumentId })" title="Download">
+                            <i class="glyphicon glyphicon-paperclip"></i>
+                            <span class="sr-only">Download</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

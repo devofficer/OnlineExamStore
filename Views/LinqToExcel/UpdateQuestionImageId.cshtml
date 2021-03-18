@@ -1,0 +1,9 @@
+﻿@using (Html.BeginForm("UpdateQuestionImageId", "LinqToExcel", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="submit" value="UpdateQuestionImageId" class="btn btn-flat btn-success" /> <br />
+}
+
+@if (ViewBag.NotFoundList != null)
+{
+    @ViewBag.NotFoundList
+}

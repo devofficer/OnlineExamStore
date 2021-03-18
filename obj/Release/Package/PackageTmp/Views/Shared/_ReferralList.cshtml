@@ -1,0 +1,348 @@
+﻿<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+@*<script src="https://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js"></script>*@
+<script src="~/Scripts/bootstrap-table/extensions/export/tableExport.js"></script>
+<script src="~/Scripts/bootbox.min.js"></script>
+
+<style>
+    .tab-content {
+        padding: 5px !important;
+        margin-bottom: 20px;
+    }
+</style>
+<script type="text/javascript">
+
+    function dateFormat(value, row, index) {
+        //debugger;
+        if (value != null && value.length > 5) {
+            var date = new Date(parseInt(value.substr(6)));
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        } else {
+            return value;
+        }
+    }
+
+    function demoFormat(value, row, index) {
+        var result = "";
+        if (row.IsDemo) {
+            result = "✔️";
+        }
+        return result;
+    }
+    function paidByVoucherFormat(value, row, index) {
+        var result = "";
+        if (row.IsPaidByVoucher) {
+            result = "✔️";
+        }
+        return result;
+    }
+    function paidByBankFormat(value, row, index) {
+        var result = "";
+        if (row.IsPaidByBank) {
+            result = "✔️";
+        }
+        return result;
+    }
+    function bonusFormat(value, row, index) {
+        if (row.Bonus && row.Bonus != null) {
+            value = value.toFixed(2);
+        }
+        return value;
+    }
+    function loadReferrals() {
+
+        @*var d1 = $.get('@Url.Action("GetReferrals", "Account", new { is1stLevelReferral = @Model })');
+        var d2 = $.get('@Url.Action("GetRedeemOrder", "Account", new { is1stLevelReferral = @Model })');
+        //debugger;
+        $.when(d1, d2)
+            .done(function (result1, result2) {
+                debugger;
+                //if (result1.success) { //GetReferrals
+                //    debugger;
+                //    if (result1.data != null) {
+                //        $('#tblReferrals').bootstrapTable('destroy');
+                //        $('#tblReferrals').bootstrapTable({
+                //            data: result1.data,
+                //            pagination: true,
+                //            pageSize: 20,
+                //            pageList: [10, 20, 50],
+                //            search: true,
+                //            showColumns: false,
+                //            showRefresh: false,
+                //            minimumCountColumns: 3,
+                //            clickToSelect: false
+                //        });
+                //    }
+                //} else
+                //    alert(result1.errors);
+
+                if (result2[0].success) {
+                    if (result2[0] != null) {
+                        $("#btnAdd").hide();
+                        bootbox.alert("Your placed order to redeem bonus is already in progress.");
+                    } else {
+                        //debugger;
+                        var data = $('#tblReferrals').bootstrapTable('getData');
+                        if (data.length == 0) {
+                            $("#btnAdd").hide();
+                        }
+                    }
+                } else
+                    alert(result2[0].errors);
+
+            }).fail(function (result1, result2) {
+                alert(result1.errors);
+                alert(result2.errors);
+            });*@
+
+        $.get('@Url.Action("GetReferrals", "Account", new { is1stLevelReferral = @Model })',
+               function (result) {
+                   //debugger;
+                   if (result.success) {
+                       if (result.data != null) {
+                           $('#tblReferrals').bootstrapTable('destroy');
+                           $('#tblReferrals').bootstrapTable({
+                               data: result.data,
+                               pagination: true,
+                               pageSize: 20,
+                               pageList: [10, 20, 50],
+                               search: true,
+                               showColumns: false,
+                               showRefresh: false,
+                               minimumCountColumns: 3,
+                               clickToSelect: false
+                           });
+                           getReferralOrder();
+                           // LOAD PAID OREDRS
+                           $('#tblBonusOrders').bootstrapTable('destroy').bootstrapTable({
+                               data: result.paidOrders
+                           });
+                       }
+                   } else
+                       alert(result.errors);
+               }
+           ).done(function (result) {
+               // debugger
+
+           }).fail(function (data) {
+               alert(result.errors);
+           });
+    }
+
+    function getReferralOrder() {
+        $.get('@Url.Action("GetRedeemOrder", "Account", new { is1stLevelReferral = @Model })',
+               function (result) {
+                   //debugger;
+                   if (result.success) {
+                       if (result.isOrderPlaced) {
+                           $("#btnAdd").addClass("btn btn-warning hide");
+                           $("#btnAdd").removeClass("btn btn-warning show");
+                           bootbox.alert("Your placed order to redeem bonus is already in progress.");
+                       } else {
+                           debugger;
+                           var isBankUser = $('#tblReferrals').bootstrapTable('getOptions').data.filter(function (i, n) {
+                               return i.IsPaidByBank === true;
+                           });
+                           if (isBankUser != null && isBankUser.length > 0) {
+                               $("#btnAdd").removeClass("btn btn-warning hide");
+                               $("#btnAdd").addClass("btn btn-warning show");
+                           } else {
+                               $("#btnAdd").addClass("btn btn-warning hide");
+                               $("#btnAdd").removeClass("btn btn-warning show");
+                           }
+                       }
+                   } else
+                       alert(result.errors);
+               }
+           ).done(function (result) {
+               // debugger
+
+           }).fail(function (data) {
+               alert(result.errors);
+           });
+    }
+
+    function placeRedeemOrder(referralList) {
+        var is1stLevelReferral = true;
+        if ('@Model' == 'True')
+            is1stLevelReferral = true;
+        else
+            is1stLevelReferral = false;
+
+        $.ajax({
+            url: '@Url.Action("PlaceRedeemOrder", "Account")',
+            type: 'POST',
+            data: JSON.stringify({ referralList: referralList, is1stLevelReferral: is1stLevelReferral }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                debugger;
+                if (data.success) {
+                    //getReferralOrder();
+                    //loadReferrals();
+                    $('#tblReferrals').bootstrapTable('destroy').bootstrapTable({
+                        url: '@Url.Action("GetReferrals", "Account", new { is1stLevelReferral = @Model})'
+                    });
+
+                    @*$('#tblReferrals').bootstrapTable('destroy');
+                    $('#tblReferrals').bootstrapTable({
+                        url: '@Url.Action("GetReferrals", "Account", new { is1stLevelReferral = @Model})',
+                        pagination: true,
+                        pageSize: 20,
+                        pageList: [10, 20, 50],
+                        search: true,
+                        showColumns: false,
+                        showRefresh: false,
+                        minimumCountColumns: 3,
+                        clickToSelect: false
+                    });*@
+
+                    if (data.isShowPopup) {
+                        $("#btnAdd").addClass("btn btn-warning hide");
+                        $("#btnAdd").removeClass("btn btn-warning show");
+                        bootbox.alert("Your placed order to redeem bonus is already in progress.");
+                    }
+
+                } else
+                    alert(data.errors);
+            },
+            error: function (data) {
+                alert(data.errors);
+            },
+            complete: function () {
+
+            }
+        });
+    }
+
+    $(function () {
+        loadReferrals();
+        @*$('#tblReferrals').bootstrapTable({
+            url: '@Url.Action("GetReferrals", "Account", new { is1stLevelReferral = @Model})',
+            pagination: true,
+            pageSize: 20,
+            pageList: [10, 20, 50],
+            search: true,
+            showColumns: false,
+            showRefresh: false,
+            minimumCountColumns: 3,
+            clickToSelect: false
+        });*@
+
+        function getPaidOrders(list) {
+            $('#tblBonusOrders').bootstrapTable({
+                data: list,
+                pagination: true,
+                pageSize: 20,
+                pageList: [10, 20, 50],
+                search: true,
+                showColumns: true,
+                showRefresh: true,
+                minimumCountColumns: 3,
+                clickToSelect: false
+            });
+        }
+
+        $("#btnAdd").click(function (e) {
+            e.preventDefault();
+            debugger;
+            var data = $('#tblReferrals').bootstrapTable('getData');
+            if (data != null && data.length >= '@Convert.ToInt32(ViewBag.ReferralCounter)') {
+                bootbox.confirm({
+                    title: "Confirmation?",
+                    message: "Do you want to place an order to redeem the bonus.",
+                    buttons: {
+                        cancel: {
+                            label: '<i class="fa fa-times"></i> Cancel'
+                        },
+                        confirm: {
+                            label: '<i class="fa fa-check"></i> Confirm'
+                        }
+                    },
+                    callback: function (result) {
+                        console.log('This was logged in the callback: ' + result);
+                        var referralList = [];
+                        $.each(data, function (i, row) {
+                            debugger;
+                            if (row.IsDemo === false)
+                                referralList.push({ 'id': parseInt(row.ReferralProgramId), 'isPaidByBank': row.IsPaidByBank, 'bonus': row.Bonus });
+                        });
+                        console.log('data array: ' + JSON.stringify(referralList));
+                        placeRedeemOrder(referralList);
+                    }
+                });
+            }
+            else {
+                bootbox.alert("To redeem bonus, your referrals MUST be equal to OR more than " + '@Convert.ToInt32(ViewBag.ReferralCounter)');
+            }
+        }).error(function () {
+        });
+    });
+</script>
+<style>
+    thead {
+        background-color: #2494F2;
+        color: #fff;
+    }
+
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+</style>
+
+<div class="row">
+    <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="#myReferralsTab" data-toggle="tab">MY REFERRALS <i class="fa"></i></a></li>
+        <li><a href="#paidOrdersTab" data-toggle="tab">REDEEMED ORDERS <i class="fa"></i></a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane active" id="myReferralsTab">
+            <div id="divMyReferrals">
+                <div id="custom-toolbar">
+                    <button id="btnAdd" type="button" class="btn btn-warning hide">Redeem Bonus(₦)</button>
+                </div>
+                <table id="tblReferrals" data-toolbar="#custom-toolbar" data-show-export="true" data-export-types="['excel']"
+                       data-export-options='{
+                                                "fileName": "testo",
+                                                "worksheetName": "test1"
+                                                }
+                                               }'>
+                    <thead>
+                        <tr>
+                            <th data-field="ReferralProgramId" data-sortable="false" class="col-md-1">Id</th>
+                            <th data-field="RefererEmail" data-sortable="false">Email</th>
+                            <th data-field="IsDemo" data-sortable="false" data-formatter="demoFormat">Demo</th>
+                            <th data-field="IsPaidByVoucher" data-formatter="paidByVoucherFormat">Paid(Voucher)</th>
+                            <th data-field="IsPaidByBank" data-formatter="paidByBankFormat">Paid(Bank)</th>
+                            <th data-field="Bonus" data-sortable="false" data-formatter="bonusFormat">Bonus(₦)</th>
+                            <th data-field="CreatedOn" data-formatter="dateFormat">Created On</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane" id="paidOrdersTab">
+            <div id="divPaidOrders">
+                <table id="tblBonusOrders">
+                    <thead>
+                        <tr>
+                            <th data-field="Name" data-sortable="false">Name</th>
+                            <th data-field="Email" data-sortable="false">Email</th>
+                            <th data-field="ReferralType" data-sortable="false">Referral Type</th>
+                            <th data-field="PaymentStatus" data-sortable="false">Payment Status</th>
+                            <th data-field="TotalBonus" data-sortable="false">Total Bonus(₦)</th>
+                            <th data-field="CreatedOn" data-formatter="dateFormat">Created On</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

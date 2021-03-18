@@ -1,0 +1,178 @@
+﻿@using OnlineExam.Models.ViewModels
+<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+<script src="~/Scripts/bootbox.min.js"></script>
+<script type="text/javascript">
+    function operateFormatter1(value, row, index) {
+        //debugger;
+        if (value != null && value.length > 5) {
+            var date = new Date(parseInt(value.substr(6)));
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        } else {
+            return value;
+        }
+    }
+
+    function operateFormatter(value, row, index) {
+        //debugger;
+        return [
+            '<a class="remove ml10 label label-danger" href="javascript:void(0)" title="Remove">',
+            '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+    //Status: 1 Not In Use, 2 Expired, 3 Used and Not Expired
+    function setStatus(value, row, index) {
+        //debugger;
+        var status;
+        switch (row.Status) {
+            case 1:
+                status = '<a class="label label-success" href="#" title="Not In Use">Not In Use</a>';
+                break;
+            case 2:
+                status = '<a class="label label-danger" href="#" title="Expired">Expired</a>';
+                break;
+            case 3:
+                status = '<a class="label label-warning" href="#" title="Used and Not Expired">Used and Not Expired</a>';
+                break;
+        }
+        return [
+            status
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove': function (e, value, row, index) {
+            bootbox.confirm({
+                size: 'small',
+                message: "Are your sure, you want to delete the record?",
+                buttons: {
+                    'cancel': {
+                        label: 'Cancel',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: 'Delete',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    //debugger;
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("Delete", "Voucher")',
+                            type: 'POST',
+                            async: true,
+                            data: JSON.stringify({ id: row.Id }),
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                //debugger;
+                                if (data.success) {
+                                    $('#tblVouchers').bootstrapTable('destroy');
+                                    loadVouchers();
+                                } else
+                                    alert(data.errors);
+                            },
+                            error: function (data) {
+                                alert(data.errors);
+                            },
+                            complete: function () {
+
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    };
+
+    function loadVouchers() {
+        $('#tblVouchers').bootstrapTable({
+            url: '@Url.Action("GetVouchers", "Voucher")',
+            pagination: true,
+            pageSize: 20,
+            pageList: [10, 20, 50],
+            search: true,
+            showColumns: true,
+            showRefresh: true,
+            minimumCountColumns: 3,
+            clickToSelect: false
+        });
+    }
+
+    $(function () {
+        loadVouchers();
+    });
+</script>
+<style>
+    thead {
+        background-color: #2494F2;
+        color: #fff;
+    }
+    </style>
+<div class="page-head">
+    <h3>Voucher List</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Voucher List</li>
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div id="editDialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header btn-success">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <h4 class="modal-title" id="myModalLabel">Add/Edit Voucher</h4>
+                            </div>
+                            <div class="col-md-1 pull-right">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div id="divVouchers"></div>
+                        @*@Html.Partial("_Edit")*@
+                    </div>
+                    <div class="modal-footer form-inline">
+                        <strong></strong>  <a id="btnAddEdit" class="btn btn-success">Save</a>
+                        <a href="#" class="btn btn-default " data-dismiss="modal">Close</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        @Html.Partial("_Edit", new VoucherViewModel())
+    </div>
+    <div class="row">
+        <hr />
+    </div>
+    <div class="row">
+        @*<div id="custom-toolbar">
+                <button id="btnAdd" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i> Add New</button>
+            </div>*@
+        <table id="tblVouchers" data-show-export="true">
+            <thead>
+                <tr>
+                    @*<th data-field="state" data-checkbox="true"></th>*@
+                    <th data-field="Id" data-sortable="false" class="col-md-1">Id</th>
+                    <th data-field="VendorName" data-sortable="false">Vendor Name</th>
+                    <th data-field="VoucherCode" data-sortable="false">Voucher Code</th>
+                    <th data-field="DateOfIssue" data-formatter="operateFormatter1">Date Of Issue</th>
+                    <th data-field="DateOfExpiry" data-formatter="operateFormatter1">Date Of Expiry</th>
+                    <th data-field="SelectedDenomination" data-sortable="false">Denomination</th>
+                    <th data-field="Status" data-sortable="false" data-formatter="setStatus">Status</th>
+                    <th data-field="operate" class="col-md-1" data-formatter="operateFormatter" data-events="operateEvents">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>

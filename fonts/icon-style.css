@@ -1,0 +1,295 @@
+﻿
+
+/*@font-face {
+    font-family: testbook-icons;
+    src: url(../fonts/fontawesome-webfont.ttf?v=4.0.3) format('truetype'),
+        url(../fonts/fontawesome-webfont.woff?v=4.0.3) format('woff'),
+        url(../fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular) format('svg');
+    font-weight: 400;
+    font-style: normal;
+}*/
+
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    src: url('../fonts/glyphicons-halflings-regular.eot?v=4.0.3');
+    src: url('../fonts/glyphicons-halflings-regular.eot?#iefix&v=4.0.3') format('embedded-opentype'),
+         url('../fonts/glyphicons-halflings-regular.woff?v=4.0.3') format('woff'), 
+        url('../fonts/glyphicons-halflings-regular.ttf?v=4.0.3') format('truetype'), 
+        url('../fonts/glyphicons-halflings-regular.svg?v=4.0.3#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+
+
+.glyphicon, .tb-icon {
+    font-family: testbook-icons !important;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.tb-thumb-down:before {
+    content: "\e93e";
+}
+
+.tb-thumb-up:before {
+    content: "\e93d";
+}
+
+.tb-aptitude:before {
+    content: "\e931";
+}
+
+.tb-bankclerk:before {
+    content: "\e932";
+}
+
+.tb-bankpo:before {
+    content: "\e933";
+}
+
+.tb-gate-ce:before {
+    content: "\e934";
+}
+
+.tb-gate-cs:before {
+    content: "\e935";
+}
+
+.tb-gate-ec:before {
+    content: "\e936";
+}
+
+.tb-gate-ee:before {
+    content: "\e937";
+}
+
+.tb-gate-gk:before {
+    content: "\e938";
+}
+
+.tb-insurance:before {
+    content: "\e939";
+}
+
+.tb-gate-me:before {
+    content: "\e93a";
+}
+
+.tb-railways:before {
+    content: "\e93b";
+}
+
+.tb-ssc-cgl:before {
+    content: "\e93c";
+}
+
+.tb-arrow-right-b:before {
+    content: "\e92f";
+}
+
+.tb-calculator:before {
+    content: "\e930";
+}
+
+.tb-clock-new:before {
+    content: "\e908";
+}
+
+.tb-add:before {
+    content: "\e906";
+}
+
+.tb-clear:before {
+    content: "\e905";
+}
+
+.tb-cart-blank:before {
+    content: "\e901";
+}
+
+.tb-cart-selected:before {
+    content: "\e903";
+}
+
+.tb-cart:before {
+    content: "\e904";
+}
+
+.tb-filter:before {
+    content: "\e902";
+}
+
+.tb-analytics:before {
+    content: "\e900";
+}
+
+.tb-clock:before {
+    content: "\e907";
+}
+
+.tb-lock:before {
+    content: "\e909";
+}
+
+.tb-question:before {
+    content: "\e90a";
+}
+
+.tb-reset:before {
+    content: "\e90b";
+}
+
+.tb-rupee:before {
+    content: "\e90c";
+}
+
+.tb-search:before {
+    content: "\e90d";
+}
+
+.tb-solutions:before {
+    content: "\e90e";
+}
+
+.tb-share:before {
+    content: "\e90f";
+}
+
+.tb-verified:before {
+    content: "\e910";
+}
+
+.tb-check:before {
+    content: "\e206";
+}
+
+.tb-star:before {
+    content: "\e911";
+}
+
+.tb-star-1:before {
+    content: "\e912";
+}
+
+.tb-more:before {
+    content: "\e913";
+}
+
+.tb-grid:before {
+    content: "\e914";
+}
+
+.tb-bookmark:before {
+    content: "\e915";
+}
+
+.tb-bullet-list:before {
+    content: "\e916";
+}
+
+.tb-pause:before {
+    content: "\e917";
+}
+
+.tb-play:before {
+    content: "\e918";
+}
+
+.tb-report:before {
+    content: "\e919";
+}
+
+.tb-spinner:before {
+    content: "\e91a";
+}
+
+.glyphicon-chevron-left:before, .tb-arrow-left:before {
+    content: "\e91b";
+}
+
+.glyphicon-chevron-right:before, .tb-arrow-right:before {
+    content: "\e91c";
+}
+
+.tb-menu:before {
+    content: "\e91d";
+}
+
+.tb-arrow-down:before {
+    content: "\e91e";
+}
+
+.tb-linkedin:before {
+    content: "\e91f";
+}
+
+.tb-twitter:before {
+    content: "\e920";
+}
+
+.tb-google-plus:before {
+    content: "\e921";
+}
+
+.tb-facebook:before {
+    content: "\e922";
+}
+
+.tb-email:before {
+    content: "\e923";
+}
+
+.tb-phone:before {
+    content: "\e924";
+}
+
+.tb-plane:before {
+    content: "\e925";
+}
+
+.tb-arrow-down-thin:before {
+    content: "\e926";
+}
+
+.tb-arrow-left-thin:before {
+    content: "\e927";
+}
+
+.tb-arrow-right-thin:before {
+    content: "\e928";
+}
+
+.tb-arrow-up-thin:before {
+    content: "\e929";
+}
+
+.tb-left-quote:before {
+    content: "\e92a";
+}
+
+.tb-right-quote:before {
+    content: "\e92b";
+}
+
+.tb-left-quote-1:before {
+    content: "\e92c";
+}
+
+.tb-timer-clock:before {
+    content: "\e92d";
+}
+
+.tb-calendar-1:before {
+    content: "\e92e";
+}

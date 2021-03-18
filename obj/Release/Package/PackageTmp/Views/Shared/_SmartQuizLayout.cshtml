@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html data-ng-app="@ViewBag.InitModule">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Testing Free Quiz Maker Create the Best web-based quizzes  ACADAStore</title>
+    <meta name="description" content="The ACADAStore.com online quiz website, is a professional, easy to use, online quiz that marks your tests and quizzes for you. Create online quizzes free quiz maker." />
+    <meta name="keywords" content="Online testing, Create online quizzes, free quiz maker, web based tests, online quiz maker, testing, test maker,  assesments, quiz software, quizzes, exams, free, classmarker, schools, teachers, students, instant marking, multiple choice" />
+    <link rel="shortcut icon" href="~/images/favicon.png">
+    <link href="~/Content/quiz-list-style.css" rel="stylesheet" />
+    <link href="~/Content/quiz-list-ctrl.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.1.1.min.js"></script>
+    <script src="~/Scripts/angular/angular.min.js"></script>
+    <script src="~/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Scripts/pace/themes/red/pace-theme-minimal.css" rel="stylesheet" />
+    <link href="~/fonts/font-awesome.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+    <style>
+        @@media (min-width:768px) {
+            .test-summary-modal {
+                width: 750px;
+            }
+        }
+
+        @@media (min-width: 768px) .modal-dialog {
+            width: 600px;
+            margin: 30px auto;
+        }
+
+        .btn {
+            border-radius: 0;
+            -webkit-border-radius: 0;
+            outline: none;
+            margin-bottom: 5px !important;
+            margin-left: 4px;
+            font-size: 13px;
+            padding: 7px 11px;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.12), 1px 1px 0 rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .answer-box {
+            margin: 8px auto 48px;
+            max-width: 800px !important;
+            width: 800px !important;
+            float: none;
+        }
+
+        .font-sm {
+            font-size: 85%;
+        }
+
+        .network-unavailable {
+            max-width: 800px;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .fa-2x {
+            font-size: 1.1em !important;
+        }
+
+        .fa-3x {
+            font-size: 1.6em !important;
+        }
+
+        .section-question-list .each-section .header .section-details .triangle-icon1 {
+            position: absolute;
+            left: 1px;
+            top: 1px;
+            font-size: 10px;
+            color: #059ac4;
+            -webkit-transition: all .4s cubic-bezier(.165,.84,.44,1);
+            -o-transition: all .4s cubic-bezier(.165,.84,.44,1);
+            transition: all .4s cubic-bezier(.165,.84,.44,1);
+        }
+        /*hasComprehension = true*/
+        /*.answer-box {
+            margin: 8px auto 48px;
+            width: 535px !important;
+            float:none;
+        }*/
+    </style>
+</head>
+<body>
+    @RenderBody()
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/pace/pace.min.js"></script>
+    <script src="~/Scripts/angular/angular-route.min.js"></script>
+</body>
+</html>

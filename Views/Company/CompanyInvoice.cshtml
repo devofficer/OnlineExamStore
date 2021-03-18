@@ -1,0 +1,250 @@
+﻿@using Microsoft.Ajax.Utilities
+@using OnlineExam.Utils
+@model OnlineExam.Models.ProductSelectionViewModel
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.checkbox').change(function () {
+            var total = 0;
+            $('.checkbox:checked').each(function () {
+                var value = $(this).closest('tr').find('td:eq(5)').text(); // for fifth column
+                //alert(value);
+                total += parseFloat(value);
+            });
+            $('#totalAmount').text(total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString());
+        });
+
+    });
+
+</script>
+<style>
+    .block-flat, .block-wizard {
+        background: none repeat scroll 0 0 #fff;
+        border-bottom: 1px solid #e2e2e2;
+        border-left: 1px solid #efefef;
+        border-radius: 3px;
+        border-right: 1px solid #efefef;
+        box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.04);
+        margin-bottom: 5px;
+        padding: 20px;
+    }
+</style>
+@using (Html.BeginForm("Invoice", "Company", FormMethod.Post, new { encType = "multipart/form-data", @class = "form-horizontal", role = "form" }))
+{
+    <div class="cl-mcont">
+        <div class="block-flat">
+                <div class="col-sm-4">
+                    <h4>COMPANY INVOICE</h4>
+                </div>
+                <div class="col-sm-offset-11">
+                        @Html.ActionLink("Back to List", "Index")
+                </div>
+            
+            <hr />
+            <div class="table-responsive">
+                <table id="tblProducts" class="table table-bordered   table-condensed">
+                    <tr>
+                        <th></th>
+                        <th>
+                            @Html.DisplayName("Product Code")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Price")&nbsp;(<i class="fa fa-inr"></i>)
+                        </th>
+                        <th>
+                            @Html.DisplayName("Tax(%)")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Line Total")&nbsp;(<i class="fa fa-inr"></i>)
+                        </th>
+                    </tr>
+                    @Html.HiddenFor(model => model.CompanyId)
+                    @Html.EditorFor(p => p.Product)
+                    <tr>
+                        <td colspan="4">
+                            <div class="col-lg-offset-8 col-md-6">
+                                <input type="submit" class="btn btn-primary" name="submitButton" value="@AppConstants.DraftInvoiceText" />
+                                <input type="submit" class="btn btn-success" name="submitButton" value="@AppConstants.GenerateInvoiceText"/>
+                            </div>
+                        </td>
+                        <td class="right"><b style="font-size: 25px;">Total&nbsp;(<i class="fa fa-inr"></i>):</b></td>
+                        <td class="right success">
+                            <div id="totalAmount" style="font-size: 25px;">0.00</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        @if (Model.Invoices.Count > 0)
+        {
+            <div class="block-flat">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-condensed">
+                        <tr>
+                            <th>
+                                @Html.DisplayName("Ref #")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Invoice Code")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Total Amount") &nbsp;(<i class="fa fa-inr"></i>)
+                            </th>
+                            <th>
+                                @Html.DisplayName("Status")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Invoice Date")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Due Date")
+                            </th>
+                            <th style="width: 10%"></th>
+                        </tr>
+
+                        @foreach (var item in Model.Invoices)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.RefNumber)
+                                    @*@if (item.InvoiceItems != null && item.InvoiceItems.Count > 0)
+                    {
+                        <img alt="" style="cursor: pointer" src="../../img/plus.png" />
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    @Html.DisplayName("Product Name")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Price")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Tax")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Total Amount")
+                                </th>
+                            </tr>
+                            @foreach (var ii in item.InvoiceItems)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => ii.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => ii.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => ii.Tax)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => ii.TotalAmount)
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    }*@
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.InvoiceCode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TotalAmount)
+                                </td>
+                                <td>
+                                    @switch ((InvoiceStatus) Enum.Parse(typeof (InvoiceStatus), item.Status, true))
+                                    {
+                                        case InvoiceStatus.Draft:
+                                            <div class="label label-warning">
+                                                @Html.DisplayFor(modelItem => item.Status, new {@class = "label label-warning"})
+                                            </div>
+                                            break;
+                                        case InvoiceStatus.Submitted:
+                                            <div class="label label-success">
+                                                @Html.DisplayFor(modelItem => item.Status, new {@class = "label label-success"})
+                                            </div>
+                                            break;
+                                        case InvoiceStatus.Due:
+                                            <div class="label label-danger">
+                                                @Html.DisplayFor(modelItem => item.Status, new {@class = "label label-danger"})
+                                            </div>
+                                            break;
+                                        case InvoiceStatus.Overdue:
+                                            <div class="label label-danger">
+                                                @Html.DisplayFor(modelItem => item.Status, new {@class = "label label-danger"})
+                                            </div>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.InvoiceDate)
+                                </td>
+                                <td>
+                                    @(item.DueDate == null ? Html.Label("N/A") : Html.DisplayFor(modelItem => item.DueDate))
+                                </td>
+                                @*<td>
+                    @Html.DisplayFor(modelItem => item.AddressTo)
+                </td>*@
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default">Action</button>
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="@Url.Action("PdfInvoice", new {invoiceId = item.InvoiceId, companyId = Model.CompanyId})" title="Download Invoice">
+                                                    <i class="glyphicon glyphicon-download"></i>
+                                                    <span>Download Invoice</span>
+                                                </a>
+
+                                            </li>
+                                            <li><a href="@Url.Action("EmailInvoice", new {invoiceId = item.InvoiceId, companyId = Model.CompanyId})" title="Invoice Email">
+                                                    <i class="glyphicon glyphicon-envelope"></i>
+                                                    <span>Email Invoice</span>
+                                                </a></li>
+                                            <li class="divider"></li>
+
+                                            @if (item.Receipt == null)
+                                            {
+                                                <li><a href="@Url.Action("Receipt", new {invoiceId = item.InvoiceId, companyId = Model.CompanyId})" title="Generate Receipt">
+                                                        <i class="glyphicon glyphicon-new-window"></i>
+                                                        <span>Generate Receipt</span>
+                                                    </a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><a href="@Url.Action("PdfReceipt", new {invoiceId = item.InvoiceId, companyId = Model.CompanyId})" title="Download Receipt">
+                                                        <i class="glyphicon glyphicon-download"></i>
+                                                        <span>Download Receipt</span>
+                                                    </a></li>
+
+                                                <li><a href="@Url.Action("EmailReceipt", new {invoiceId = item.InvoiceId, companyId = Model.CompanyId})" title="Receipt Email">
+                                                        <i class="glyphicon glyphicon-envelope"></i>
+                                                        <span>Receipt Email</span>
+                                                    </a></li>
+
+                                            }
+                                            <li class="divider"></li>
+                                            <li><a href="@Url.Action("CancelInvoice", new {invoiceId = item.InvoiceId, companyId = Model.CompanyId})" title="Cancel">
+                                                    <i class="glyphicon glyphicon-remove-circle"></i>
+                                                    <span>Cancel Invoice</span>
+                                                </a></li>
+
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        }
+            </div>
+}
+<br />
+<br />
+<br />
+<br />

@@ -1,0 +1,24 @@
+﻿@using OnlineExam.Helpers
+<link href="~/Content/toastr.css" rel="stylesheet" />
+<link href="~/Content/alerts.less" rel="stylesheet" />
+<script src="~/Scripts/toastr.min.js"></script>
+<script src="~/Scripts/app/alerts.js"></script>
+<div class="alerts">
+    @foreach (string key in Alerts.ALL.Except(new[] { Alerts.ATTENTION }))
+    {
+        if (TempData.ContainsKey(key))
+        {
+            <script type="text/javascript">
+                if ("@key" == "error")
+                    customAlertMessages.alerts.error("@TempData[key]");
+                if ("@key" == "success")
+                    customAlertMessages.alerts.success("@TempData[key]");
+                if ("@key" == "attention")
+                    customAlertMessages.alerts.warning("@TempData[key]");
+                if ("@key" == "info")
+                    customAlertMessages.alerts.info("@TempData[key]");
+            </script>
+        }
+    }
+</div>
+

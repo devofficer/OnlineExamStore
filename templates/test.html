@@ -1,0 +1,362 @@
+﻿
+<style>
+    .color-red {
+        color: #f44336 !important;
+    }
+
+    .answer-box {
+        margin: 8px auto 48px;
+        max-width: 800px !important;
+        width: auto !important;
+        float: none;
+    }
+    .qb-header {
+        padding-bottom: 0px;
+        /*padding-right: 10px !important;*/
+    }
+    .time-control-details .time-name .name {
+        width: 250px;
+    }
+    .btn-block {
+        width: 98%;
+    }
+    @media (min-width: 768px) {
+        .complete-que-content {
+            margin: 0 10px;
+        }
+    }
+    .question-box {
+        padding: 12px 16px 16px;
+        border-radius: 4px;
+        max-width: 951px;
+        margin: 16px auto 0;
+    }
+    .answer-box {
+        margin: 8px auto 48px;
+        max-width: 951px !important;
+        width: auto !important;
+        float: none;
+    }
+</style>
+<div class="test-top-bar ng-scope">
+    <div class="left-box">
+        <div class="time-control-details">
+            <div class="time-name">
+                <span class="time">
+                    <!--<count-down-timer test-duration="2220" is-test-submitted="false" is-timer-paused="false" test-time-over-ptr="testTimeOver" resume-ptr="resumeTimerCB" hide-zero="n" class="ng-binding ng-isolate-scope"><no-style ng-show="isVisible(TH)" class="ng-binding">00:</no-style>34:45</count-down-timer>-->
+                    <timer id="countdowntimer" countdown="duration" interval="1000" finish-callback="timesUp()"><no-style class="ng-binding"> {{hhours}}:{{mminutes}}:{{sseconds}}</no-style></timer>
+                </span>
+                <span class="name ng-binding">{{test.name}}</span>
+            </div>
+        </div>
+        <!--<div class="calci-btn">
+            <button class="btn ng-hide" ng-show="isGateExam" ng-click="showCalculator()"><span class="hidden-xs">Calculator</span> <i class="tb-icon tb-calculator visible-xs"></i></button>
+        </div>-->
+    </div>
+    <div class="right-box">
+        <!--<button class="btn rb-btn test-btn-style" type="button" ng-click="submitBtnPressed()">SUBMIT TEST</button>-->
+        <button class="btn rb-btn test-btn-style"
+                ng-bootbox-custom-dialog="Are you sure you want to submit the test?"
+                ng-bootbox-options="submitTestOptions">
+            SUBMIT TEST
+        </button>
+        <!--<button class="btn rb-btn test-btn-style" ng-bootbox-confirm="Are you sure you want to submit the test?"
+                ng-bootbox-confirm-action="submitBtnPressed(attr1, attr2)" ng-bootbox-confirm-action-cancel="confirmCallbackCancel(attr1, attr2)">
+            SUBMIT TEST
+        </button>-->
+    </div>
+</div>
+<div class="test-content-container ng-scope" ng-class="{'sidebar-open': isSideBarOpen}">
+    <div class="test-section-bar">
+        <div class="test-sections">
+            <div class="scroll-gradient left"></div>
+            <div class="ts-inner">
+                <!-- ngRepeat: section in test.sections track by $index -->
+                <div class="each ng-scope" ng-repeat="section in test.sections track by $index" ng-hide="test.sections.length ==1 &amp;&amp; section.title ==''">
+                    <button type="button" class="btn" ng-class="{'active' : selectedParentIndex -1 == $index}" ng-click="jumpToQuestion($index +1, 1)">
+                        <span class="name ng-binding">{{section.name}}</span>
+                    </button>
+                    <!-- conditional class "disabled"  on button-->
+                    <ul class="dropdown-menu question-states-menu">
+                        <li class="d-arrow"></li>
+                        <li class="skipped">
+                            <span class="icon"></span>Skipped<span class="count ng-binding">{{skippedCount($index)}}</span>
+                        </li>
+                        <li class="unseen">
+                            <span class="icon"></span>Unseen<span class="count ng-binding">30</span>
+                        </li>
+                        <li class="answered">
+                            <span class="icon"></span>Attempted<span class="count ng-binding">{{attemptedCount($index)}}</span>
+                        </li>
+                        <li class="marked"><span class="icon tb-icon tb-bookmark"></span>Marked for Review<span class="count ng-binding">{{bookmarkCount($index)}}</span></li>
+                    </ul>
+                </div><!-- end ngRepeat: section in test.sections track by $index -->
+            </div>
+            <div class="scroll-gradient right"></div>
+        </div>
+    </div>
+
+    <div class="inner-container js-que-ans-view" ng-class="{'js-que-ans-view':!isQuestionPaperVisible, 'js-que-list-view':isQuestionPaperVisible}">
+        <!--condition class " js-que-ans-view  js-que-list-view "-->
+        <div class="content-view test-question-list">
+            <!--test question list-->
+            <div class="row">
+                <div class="col-xs-12 content-height-fixer slim-scrollbar">
+                    <p class="test-ql-title">Question Paper</p>
+
+                    <!-- ngRepeat: section in test.sections track by $index -->
+                    <div class="section-que-container ng-scope" ng-repeat="section in test.sections track by $index">
+                        <h4 ng-show="test.sections.length > 1" class="ng-binding">{{section.name}}</h4>
+                        <ul class="list-choices">
+                            <!-- ngRepeat: question in section.questions track by $index -->
+                            <li class="list-option ng-scope" ng-repeat="question in section.questions track by $index"
+                                ng-click="questionPaperItemClicked($parent.$index +1, $index+1)">
+                           
+                                <div class="que-label ql-small" ng-class="{
+                                            'js-que-attempted' : isAttempted($parent.$index +1,  $index+1),
+                                            'js-que-current': isCurrentQuestion($parent.$index + 1, $index + 1)
+                                        }">
+                                    <div class="q-badge ng-binding">{{$index + 1}}<span class="tb-icon tb-bookmark"></span></div>
+                                </div>
+                                <div class="list-content ng-binding">
+                                   
+                                    {{getQuestionDesc($parent.$index, $index)}}
+                                </div>
+                            </li><!-- end ngRepeat: question in section.questions track by $index -->
+                        </ul>
+                    </div><!-- end ngRepeat: section in test.sections track by $index -->
+                </div>
+            </div>
+            <div class="test-action-controls text-center">
+                <button type="button" class="btn btn-gray-1 text-uppercase" ng-click="isQuestionPaperVisible = !isQuestionPaperVisible">Back</button>
+            </div>
+        </div>
+        <div class="content-view test-question-view">
+            <!--test question view-->
+            <div class="row">
+                <!-- ngIf: hasComprehension() -->
+                <div class="content-height-fixer comprehension-box slim-scrollbar" ng-if="hasComprehension()">
+                    <div class="inner">
+                        <!--<h4 class="title">Comprehension:</h4>-->
+                        <!--<h4 class="sub-title">Comprehension:</h4>-->
+                        <div class="ng-binding">
+                            <!--<p><strong>Read the passage given below and then answer the questions given below the passage. Some words may be highlighted for your attention. Pay careful attention.</strong></p>-->
+                            <p>
+                                <img ng-src="{{currentQuestion.imagePath}}">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-height-fixer question-answer-box on-test-page slim-scrollbar">
+                    <div ng-show="isNetworkAlertVisible" class="alert alert-danger network-unavailable font-sm ng-hide">Network disconnected. Retrying...<br> You can continue to attempt the test, please <b>DO NOT REFRESH</b> the page and just make sure you are connected to network before submitting the test.</div>
+                    <div ng-show="isMathJaxAlertVisible()" class="alert alert-danger network-unavailable font-sm ng-binding ng-hide" ng-bind-html="mathJaxErrorMsgHTML"></div>
+                    <div class="question-box">
+                        <div class="row">
+                            <div class="col-xs-12 qb-header">
+                                <div class="left-box">
+                                    <div class="que-label ql-small" ng-class="{
+                                            'js-que-bookmarked': isBookmarked(selectedParentIndex -1, selectedIndex -1),
+                                            'js-que-skipped' : isSkipped(selectedParentIndex -1, selectedIndex -1),
+                                            'js-que-attempted' : isAttempted(selectedParentIndex, selectedIndex)
+                                            }">
+                                        <div class="q-badge ng-binding">  {{selectedIndex}}<span class="fa fa-bookmark color-red"></span></div>
+                                    </div>
+                                    <div class="que-time">
+                                        <!--<count-up-timer secs="48" current-section="2" current-question="4" hide-zero="y" stop="false" class="ng-binding ng-isolate-scope"><no-style ng-show="isVisible(TH)" class="ng-binding ng-hide">00:</no-style>01:55</count-up-timer>-->
+                                        <!--<timer id="questionTimer" interval="1000">{{mminutes}}:{{sseconds}}</timer>-->
+                                    </div>
+                                </div>
+                                <div class="right-box">
+                                    <div class="row">
+                                        <div class="col-xs-12 que-action-options">
+                                            <div>
+                                                <button class="mark-review-btn test-btn-style" type="button" ng-class="{'marked-question':isBookmarked(selectedParentIndex -1, selectedIndex -1)}" ng-click="bookmarkBtnPressed()">
+                                                    <!-- conditional class "marked-question" -->
+                                                    <i class="fa fa-bookmark"></i>
+                                                    <span class="mark">Mark For Review</span>
+                                                    <span class="marked">Marked For Review</span>
+                                                </button>
+                                            </div>
+                                            <div class="report-que dropdown" ng-class="{'que-reported': hasReported(),'que-reporting': isReporting}">
+                                                <!-- conditional class "que-reported que-reporting" -->
+                                                <button class="report-que-btn dropdown-toggle test-btn-style" type="button" id="report-question" data-toggle="dropdown">
+                                                    <i class="fa fa-warning"></i>
+                                                    <i class="tb-icon tb-spinner spin-me"></i>
+                                                    <span class="report">Report</span>
+                                                    <span class="reported">Reported</span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="report-question">
+                                                    <li class="d-arrow"></li>
+                                                    <li>
+                                                        <a class="btn-sm" data-href="#" data-toggle="modal" data-target="#reportOther" ng-click="reportType = 'Wrong Question'">
+                                                            Wrong Question
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="btn-sm" data-href="#" data-toggle="modal" data-target="#reportOther" ng-click="reportType = 'Formatting Issue'">
+                                                            Formatting Issue
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="btn-sm" data-href="#" data-toggle="modal" data-target="#reportOther" ng-click="reportType='Other'">
+                                                            Other
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 qb-body">
+                                <div class="complete-que-content  ng-binding" ng-bind-html="questionTitle"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="answer-box">
+                        <ul class="list-choices" ng-show="!isNumerical()">
+                            <li class="list-option ng-scope" ng-repeat="option in getOptions()" ng-class="{'js-que-attempted': selectedOption.value == option.value}" ng-click="setOption(option)">
+                                <div class="que-label ql-small">
+                                    <div class="q-badge ng-binding">{{getIndex(option.id)}}</div>
+                                </div>
+                                <div class="list-content ng-binding">
+                                    {{option.value}}
+                                </div>
+                            </li><!-- end ngRepeat: option in getOptions() -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-action-controls">
+                <button type="button" class="btn btn-gray-1 text-uppercase mark-next" ng-click="bookmarkAndNextBtnPressed()" ng-disabled="selectedParentIndex ==sectionCount &amp;&amp; selectedIndex ==questionCount">
+                    Mark <span class="hidden-xs">for Review</span> &amp; Next
+                </button>
+                <button type="button" class="btn btn-link text-uppercase clear-selection" ng-click="clearResponse()">
+                    <i class="fa fa-times-circle-o" aria-hidden="true"></i> Clear Selection
+                </button>
+                <button type="button" class="btn btn-primary text-uppercase pull-right save-next" ng-click="saveAndNextBtnPressed(true)" ng-disabled="selectedParentIndex ==sectionCount &amp;&amp; selectedIndex ==questionCount">Save &amp; Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-content-backdrop" ng-click="toggleSideBar(false)"></div>
+
+    <!--<div class="open-test-sidebar" ng-click="toggleSideBar(true)">
+        <span class="tb-icon tb-menu"></span>
+    </div>-->
+
+    <div class="test-sidebar">
+        <button type="button" class="btn close-sidebar" ng-click="toggleSideBar(false)"><i class="tb-icon tb-clear"></i></button>
+        <ul class="list-unstyled nav-sections list-view-deactive" ng-class="{'list-view-active': isListViewEnabled, 'list-view-deactive': !isListViewEnabled}">
+            <li>
+                <button type="button" class="btn" ng-click="toggleListView(false)"><i class="fa fa-th-large fa-2x"></i> GRID VIEW</button>
+            </li>
+            <li>
+                <button type="button" class="btn" ng-click="toggleListView(true)"><i class="fa fa-list-ul fa-2x"></i> LIST VIEW</button>
+            </li>
+        </ul>
+        <div class="section-question-list slim-scrollbar" ng-class="{'list-view': isListViewEnabled}">
+            <ul class="accordion">
+                <!-- ngRepeat: section in test.sections track by $index -->
+                <li class="course-accordion each-section ng-scope" ng-repeat="section in test.sections track by $index">
+                    <!--<li class="course-accordion each-section ng-scope" ng-repeat="section in test.sections track by $index" ng-click="changeSection()">-->
+                    <div class="accordion-head header" ng-class="{'active':isSectionActive($index)}">
+                        <div class="section-details">
+                            <span class="tb-icon triangle-icon1"><i class="fa fa-caret-down fa-3x" aria-hidden="true"></i></span>
+                            <div class="name ng-binding">
+                                {{section.name}}
+                            </div>
+                            <!--<span class="time-spent js-limited-time ng-hide" ng-show="!test.sectionTimeSharedFlag">
+                                <count-down-timer test-duration="0" is-test-submitted="false" is-timer-paused="false" hide-zero="y" class="ng-binding ng-isolate-scope"><no-style ng-show="isVisible(TH)" class="ng-binding ng-hide">00:</no-style>00:00</count-down-timer>
+                            </span>-->
+                            <!--conditional class "js-limited-time" with reverse timer-->
+
+                            <div class="comp-status">
+                                <!--<span ng-style="{'width':getAnsweredCount($index + 1)*100/getQuestionsCount($index + 1) + '%'}" style="width: 0%;"></span>-->
+                            </div>
+                        </div>
+                        <ul class="question-states-menu inline-menu mar-t8">
+                            <li class="skipped"><span class="icon"></span><span class="count ng-binding">{{skippedCount($index)}}</span></li>
+                            <li class="unseen"><span class="icon"></span><span class="count ng-binding">{{skippedCount($index)}}</span></li>
+                            <li class="answered"><span class="icon"></span><span class="count ng-binding">{{attemptedCount($index)}}</span></li>
+                            <li class="marked"><span class="fa fa-bookmark color-red"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="count ng-binding">{{bookmarkCount($index)}}</span></li>
+                        </ul>
+                    </div>
+                    <div class="accordion-content body" ng-class="{'show':isSectionActive($index)}">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <ul class="question-list">
+                                    <!-- ngRepeat: question in section.questions track by $index -->
+                                    <li class="que-label ql-large ng-scope" ng-repeat="question in section.questions track by $index" ng-class="{
+                                            'js-que-attempted' : isAttempted($parent.$index +1,  $index+1),
+                                          'js-que-skipped' : isSkipped($parent.$index,  $index),
+                                         'js-que-bookmarked': isBookmarked($parent.$index,  $index),
+                                         'js-que-current': isCurrentQuestion($parent.$index + 1, $index + 1)
+                                            }" ng-click="sideBarItemClicked($parent.$index +1, $index+1)">
+                                        <div class="q-badge ng-binding">
+                                            {{$index + 1}}<span class="fa fa-bookmark color-red"></span>
+                                        </div>
+                                        <div class="que-title ng-binding">
+                                            {{getQuestionDesc($parent.$index, $index)}}
+                                        </div>
+                                    </li><!-- end ngRepeat: question in section.questions track by $index -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li><!-- end ngRepeat: section in test.sections track by $index -->
+            </ul>
+        </div>
+        <div class="quesList-inst">
+            <a data-href="#" class="dropup">
+                Help
+                <ul class="dropdown-menu question-states-menu">
+                    <li class="skipped"><span class="icon"></span>Skipped</li>
+                    <li class="unseen"><span class="icon"></span>Unseen</li>
+                    <li class="answered"><span class="icon"></span>Attempted</li>
+                    <li class="marked"><span class="fa fa-bookmark color-red"></span>&nbsp;&nbsp;&nbsp;Marked for Review</li>
+                </ul>
+            </a> |
+            <a data-href="#" ng-click="isQuestionPaperVisible = !isQuestionPaperVisible; toggleSideBar(false)">Question Paper</a> |
+            <a data-href="#" ng-click="getDynamicInstructions()">Instructions</a>
+        </div>
+    </div>
+
+    <!--<div class="bootbox modal fade bootbox-confirm in" id="submitTest" tabindex="-1" role="dialog" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                    <div class="bootbox-body">Are you sure you want to submit the test?</div>
+                </div>
+                <div class="modal-footer">
+                    <button data-bb-handler="cancel" type="button" class="btn btn-gray-1">No</button>
+                    <button data-bb-handler="confirm" type="button" class="btn btn-test-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>
+<div class="modal fade" id="reportOther" tabindex="-1" role="dialog" aria-labelledby="reportOtherLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Tell us more</h4>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control ng-pristine ng-untouched ng-valid" rows="5" ng-model="reportText" placeholder="Type here"></textarea>
+            </div>
+            <div class="modal-footer pad-0">
+                <button type="button" class="btn btn-primary btn-block btn-lg border-square" ng-disabled="reportText.length == 0" ng-click="report(reportType, reportText)" data-dismiss="modal" disabled="disabled">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

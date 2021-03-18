@@ -1,0 +1,349 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.Company>
+@using PagedList.Mvc;
+@using OnlineExam.Helpers
+@using OnlineExam.Utils
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Manage Companies";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+      
+        var url = "/Company/IsCompanyApproved";
+        var userid ="@CustomClaimsPrincipal.Current.UserId";
+        
+
+        $.ajax({
+
+            type: "POST",
+            url: url,
+            data: JSON.stringify({ 'userid': userid }),
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+
+            success: function (result) {
+                if (!result) {
+                   
+                    bootbox.dialog({
+                        message: "Your Company not approved yet. Please contact Administrator." ,
+                        title: "License Agreement",
+                        buttons: {
+                            main: {
+                                label: " ok ",
+                                className: "btn-primary",
+                                callback: function () {
+
+                                    window.location.href = "/Account/SignOut";
+
+
+                                }
+                            }
+
+                        }
+
+                    });
+                }
+               
+            },
+            error: function (err, result) {
+                   alert("Error occured"+err+"dd"+result);
+                
+            }
+        });
+    });
+
+</script>
+@*<h4>MANAGE COMPANIES</h4>*@
+<script type="text/javascript">
+    $(document).on("click", "#deleteAction", function (e) {
+        e.preventDefault();
+        var $this = $(this);
+        // alert($(this).attr('href'));
+        var link = $(this).attr('href');
+        bootbox.confirm("Are you sure you want to close this Service Request? This operation cannot be reversed: " + $this.val() + "?", function (result) {
+            if (result) {
+                document.location.href = link; // if result, "set" the document location
+            }
+        });
+    });
+    function redirect(ddl, id) {
+        var target = "/Company/" + $(ddl).find('Option:selected').text() + "/" + id;
+        window.location = target;
+
+    }
+</script>
+<style>
+    .block-flat, .block-wizard {
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+    }
+</style>
+<div class="cl-mcont">
+    @if (CustomClaimsPrincipal.Current.IsAusVisaUser)
+    {
+        <div class="form-horizontal block-flat">
+            <div class="row">
+                @using (Html.BeginForm("Index", "Company", FormMethod.Get))
+                {
+                    <div class="row">
+
+                        <div class="form-group  col-md-10">
+                            <label class="col-md-2 control-label">Name/Code:</label>
+                            <div class="col-md-4">
+                                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" value="Search" class="btn btn-primary">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                    <span class="">&nbsp;Search</span>
+                                </button>
+                            </div>
+                            <div class="col-sm-3 col-md-push-3">
+                                @Html.ActionLink("Create New", "Create")
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <div class="form-horizontal block-flat">
+        <div class="table-responsive">
+            <table class="table table-bordered table-responsive table-condensed table-hover">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().CompanyCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().ContactNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().ContactPerson)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().PrimaryEmail)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().Location)
+                    </th>
+                    <th>@Html.DisplayNameFor(model => model.First().Status)</th>
+                    <th style="width: 10%;"></th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CompanyCode)
+
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ContactNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ContactPerson)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PrimaryEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Location)
+                        </td>
+                        <td>
+                            @switch ((CompanyStatus)Enum.Parse(typeof(CompanyStatus), item.Status, true))
+                            {
+                                case CompanyStatus.Pending:
+                                    <div class="label label-warning">
+                                        @Html.DisplayFor(modelItem => item.Status, new { @class = "label label-warning" })
+                                    </div>
+                                    break;
+                                case CompanyStatus.Submitted:
+                                <div class="label label-warning">
+                                    @Html.DisplayFor(modelItem => item.Status, new { @class = "label label-warning" })
+                                </div>
+                                    break;
+                                case CompanyStatus.Approved:
+                                <div class="label label-success">
+                                    @Html.DisplayFor(modelItem => item.Status, new { @class = "label label-success" })
+                                </div>
+                                    break;
+                                case CompanyStatus.Active:
+                                <div class="label label-success">
+                                    @Html.DisplayFor(modelItem => item.Status, new { @class = "label label-success" })
+                                </div>
+                                    break;
+                                case CompanyStatus.Suspended:
+                                <div class="label label-danger">
+                                    @Html.DisplayFor(modelItem => item.Status, new { @class = "label label-danger" })
+                                </div>
+                                    break;
+                                case CompanyStatus.Rejected:
+                                <div class="label label-danger">
+                                    @Html.DisplayFor(modelItem => item.Status, new { @class = "label label-danger" })
+                                </div>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            @*@Html.ActionLink("Edit", "Edit", new { id = item.CompanyId }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.CompanyId }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.CompanyId })*@
+                            @* @if (item.Status == "Pending")
+                                {  @Html.DropDownList("CompStatusP", ViewBag.CompStatusP as SelectList, new { onchange = "redirect(this," + item.CompanyId + ")" })}
+                                else
+                                {@Html.DropDownList("CompStatusS", ViewBag.CompStatusS as SelectList, new { onchange = "redirect(this," + item.CompanyId + ")" })}*@
+                            @if (item.Name != "Aus-visa.com")
+                            {
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default">Action</button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+
+                                        @if (item.Status == CompanyStatus.Pending.ToString()) //CASE:4 Pending: View/Edit
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("View", new {id = item.CompanyId})" title="@CompanyAction.View">
+                                                    <i class="glyphicon glyphicon-new-window"></i>
+                                                    <span>&nbsp;@CompanyAction.View</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Edit", new {id = item.CompanyId})" title="@CompanyAction.Edit">
+                                                    <i class="glyphicon glyphicon-pencil"></i>
+                                                    <span>&nbsp;@CompanyAction.Edit</span>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (item.Status == CompanyStatus.Submitted.ToString()) //CASE:5 Submitted: View/Approved/Rejected
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("View", new {id = item.CompanyId})" title="@CompanyAction.View">
+                                                    <i class="glyphicon glyphicon-new-window"></i>
+                                                    <span>&nbsp;@CompanyAction.View</span>
+                                                </a>
+                                            </li>
+                                            @* DISPLAY FOR ADMIN & MANAGER *@
+
+                                            if (CustomClaimsPrincipal.Current.IsAusVisaAdmin || CustomClaimsPrincipal.Current.IsAusVisaManager)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Update", new {id = item.CompanyId, status = (int) CompanyStatus.Approved})" title="@CompanyAction.Approve">
+                                                        <i class="glyphicon glyphicon-ok"></i>
+                                                        <span>&nbsp;@CompanyAction.Approve</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("Update", new {id = item.CompanyId})" title="@CompanyAction.Reject">
+                                                        <i class="glyphicon glyphicon-remove"></i>
+                                                        <span>&nbsp;@CompanyAction.Reject</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        @if (item.Status == CompanyStatus.Suspended.ToString()) //CASE:3 Suspended: View/Active
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("View", new {id = item.CompanyId})" title="@CompanyAction.View">
+                                                    <i class="glyphicon glyphicon-new-window"></i>
+                                                    <span>&nbsp;@CompanyAction.View</span>
+                                                </a>
+                                            </li>
+                                            @* DISPLAY FOR ADMIN & MANAGER *@
+                                            if (CustomClaimsPrincipal.Current.IsAusVisaAdmin || CustomClaimsPrincipal.Current.IsAusVisaManager)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Update", new {id = item.CompanyId, status = (int) CompanyStatus.Active})" title="@CompanyAction.Active">
+                                                        <i class="glyphicon glyphicon-ok"></i>
+                                                        <span>&nbsp;@CompanyAction.Active</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        @if (item.Status == CompanyStatus.Active.ToString()) //CASE:6 Active: View/Suspend
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("View", new {id = item.CompanyId})" title="@CompanyAction.View">
+                                                    <i class="glyphicon glyphicon-new-window"></i>
+                                                    <span>&nbsp;@CompanyAction.View</span>
+                                                </a>
+                                            </li>
+
+                                            @* DISPLAY FOR ADMIN & MANAGER *@
+                                            if (CustomClaimsPrincipal.Current.IsAusVisaAdmin || CustomClaimsPrincipal.Current.IsAusVisaManager)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Update", new {id = item.CompanyId, status = (int) CompanyStatus.Suspended})" title="@CompanyAction.Suspend">
+                                                        <i class="glyphicon glyphicon-ok"></i>
+                                                        <span>&nbsp;@CompanyAction.Suspend</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        @if (item.Status == CompanyStatus.Rejected.ToString()) //CASE:2 Rejected: Edit/View
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("View", new {id = item.CompanyId})" title="@CompanyAction.View">
+                                                    <i class="glyphicon glyphicon-new-window"></i>
+                                                    <span>&nbsp;@CompanyAction.View</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Edit", new {id = item.CompanyId})" title="@CompanyAction.Edit">
+                                                    <i class="glyphicon glyphicon-pencil"></i>
+                                                    <span>&nbsp;@CompanyAction.Edit</span>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (item.Status == CompanyStatus.Approved.ToString()) //CASE:1 Approved:View/Suspend
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("View", new {id = item.CompanyId})" title="@CompanyAction.View">
+                                                    <i class="glyphicon glyphicon-new-window"></i>
+                                                    <span>&nbsp;@CompanyAction.View</span>
+                                                </a>
+                                            </li>
+                                            @* DISPLAY FOR ADMIN & MANAGER *@
+                                            if (CustomClaimsPrincipal.Current.IsAusVisaAdmin || CustomClaimsPrincipal.Current.IsAusVisaManager)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Update", new {id = item.CompanyId, status = (int) CompanyStatus.Suspended})" title="@CompanyAction.Suspend">
+                                                        <i class="glyphicon glyphicon-ok"></i>
+                                                        <span>&nbsp;@CompanyAction.Suspend</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        <li class="divider"></li>
+                                        <li>
+                                            <a href="@Url.Action("Invoice", new {id = item.CompanyId})" title="@CompanyAction.Invoice">
+                                                <i class="glyphicon glyphicon-list"></i>
+                                                <span>&nbsp;@CompanyAction.Invoice</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <br />
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("Index",
+            new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    </div>
+</div>

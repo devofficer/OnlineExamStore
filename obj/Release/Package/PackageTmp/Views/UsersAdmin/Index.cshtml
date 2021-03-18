@@ -1,0 +1,182 @@
+﻿@using OnlineExam.Helpers
+@using OnlineExam.Utils
+@model Tuple<List<OnlineExam.Models.UserViewModel>, OnlineExam.Models.RegisterViewModel>
+
+<script type="text/javascript">
+    function showRegister() {
+        $("#Register").toggle('show');
+    }
+</script>
+<div class="page-head">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>User Index</h3>
+            <ol class="breadcrumb">
+                <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+                <li class="active">User List</li>
+            </ol>
+        </div>
+        <div class="col-md-8 text-right">
+            @*<a href="@Url.Action("Create", "UsersAdmin")" class="btn btn-primary" title="Create"><span class="glyphicon glyphicon-plus-sign"></span></a>*@
+            <a href="javascript: showRegister();" title="Create new user" class="btn btn-primary">
+                Add User &nbsp;<span class="glyphicon glyphicon-user"></span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="block-flat form-horizontal">
+    @using (Html.BeginForm("CreateUser", "UsersAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-horizontal" id="Register" style="display: none; margin: 10px;">
+            <div class="row">
+                <h5>Create New user</h5>
+                <hr />
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(m => m.Item2.FirstName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.Item2.FirstName, new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(m => m.Item2.LastName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.Item2.LastName, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(m => m.Item2.Email, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.Item2.Email, new { @class = "form-control", @id = "Email" })
+                        <span id="result"></span>
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(m => m.Item2.Password, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.PasswordFor(m => m.Item2.Password, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(m => m.Item2.ConfirmPassword, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-7">
+                        @Html.PasswordFor(m => m.Item2.ConfirmPassword, new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(m => m.Item2.DOB, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.Item2.DOB, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker" })
+                    </div>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+
+                            $('#Email').blur(function () {
+                                var url = "/Company/CheckUserName";
+                                var name = $('#Email').val();
+                                if (name.length == 0) {
+                                    $("#result").html("<span class='label-danger' style='color:white'>Please provide the email address to regsiter.</span>");
+                                    return false;
+                                }
+                                $.get(url, { input: name }, function (data) {
+                                    if (data == "Available") {
+                                        $("#result").html("<span class='label-success' style='color:white'>Available</span>");
+                                        $("#Email").css('border-color', 'green');
+                                    } else {
+                                        $("#result").html("<span class='label-danger' style='color:white'>@AppConstants.EmailIsExistMessage</span>");
+                                        $("#Email").css('border-color', 'red');
+                                    }
+                                });
+                            });
+
+                        });
+                    </script>
+                </div>
+
+
+
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Role", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @*@Html.DropDownList("RoleList", Model.RolesList, "--Select--", new { disabled = "disabled", @class = "form-control" }) : Html.DropDownList("RoleList", Model.RolesList, "--Select--", new { @class = "form-control" })*@
+                        @Html.DropDownListFor(model => model.Item2.RoleId, new SelectList(Model.Item2.Roles, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-offset-9 col-md-1">
+                        <input type="submit" name="Action:CreateUser" value="Create" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+            <hr />
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-condensed table-hover">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Item1.FirstOrDefault().Name)
+
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Item1.FirstOrDefault().Email)
+
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Item1.FirstOrDefault().Status)
+
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Item1.FirstOrDefault().Role)
+
+                </th>
+                <th>
+                    @Html.DisplayName("Created On")
+                </th>
+                <th>@Html.DisplayName("Action")</th>
+
+            </tr>
+
+            @foreach (var item in Model.Item1)
+            {
+                <tr>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedOn)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", new { id = item.UserId })" title="Edit" class="label label-success">
+                            <i class="fa fa-pencil-square-o"></i>
+                            <span class="sr-only">Edit</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+</div>

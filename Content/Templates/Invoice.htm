@@ -1,0 +1,110 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td width="60%">
+                <h2><span><strong>[CompanyName]</strong></span><br />
+                    <span style="font-weight: normal; font-size: 12pt;">[CompanyAddressLine1]<br />
+                        [CompanyAddressLine2]<br />
+                        [CompanyPhone]
+                    </span>
+
+                </h2>
+            </td>
+            <td width="40%">
+                <span width="100%" style="float: right;">Invoice No.:&nbsp;[InvoiceNumber]</span><br />
+                <span style="float: right;">Invoice Date:&nbsp;&nbsp;[InvoiceDate]</span><br />
+                <!--<span style="float: right;">Sales Rep:&nbsp;&nbsp;[SalesRep]</span><br />-->
+                <span style="float: right;">Company Code:&nbsp;[CompanyCode]</span><br />
+                <span width="100%" style="float: right;">Email:&nbsp;[Email]</span><br />
+            </td>
+        </tr>
+        <tr style="outline: thin solid black;">
+            <!--<td style="font-weight: bold; text-decoration: underline;" valign="top">License Sold To:</td>-->
+            <td colspan="2">[Line5]</td>
+            <!--<td>&nbsp;</td>-->
+        </tr>
+        <tr>
+            <td style="width: 400px; width: 20%;" valign="top">[ClientName]<br />
+                <span style="font-weight: normal; font-size: 13pt;">[ClientAddressLine1]<br />
+                    [ClientAddressLine2]
+                    <br />
+                    [ClientPhone]</span></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td valign="top" colspan="2">[Line2]</td>
+        </tr>
+        <tr>
+            <td valign="top" colspan="2">
+                <h2 style="font-weight: bold; text-decoration: underline;">Items In Your Order:</h2>
+                <br />
+                [ITEMS]
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+      
+        </tr>
+        <tr style="outline: thin solid black;">
+            <td style="font-weight: bold; width: 400px; width: 20%;" valign="top">&nbsp;</td>
+            <td style="font-weight: bold;">&nbsp;</td>
+        </tr>
+        <tr style="outline: thin solid black;">
+            <td style="font-weight: bold; width: 400px; width: 20%;" valign="top">&nbsp;</td>
+            <td style="font-weight: bold;">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#F5F5F5">
+            <td>Service Tax No.:&nbsp;<strong>[ServiceTax]</strong></td>
+            <td align="right"><strong>For Aus-Visa.com</strong></td>
+        </tr>
+        <tr bgcolor="#F5F5F5">
+            <td>PAN No.:&nbsp;<strong>[PAN]</strong></td>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">[Line3]</td>
+        </tr>
+        <tr style="outline: thin solid black;">
+            <td colspan="2"></td>
+        </tr>
+        <tr bgcolor="#F5F5F5">
+            <td valign="top" colspan="2" align="left">
+                <table width="100%" border="0">
+                    <tr>
+                        <td style="font-weight: bold;">Terms and Conditions:</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: normal;">
+                            <ul>
+                                <li>This invoice is recognised subject to realization of Payment.</li>
+                                <li>Service charges are non-refundable.</li>
+
+                                <li>All disputes subject to Delhi Jurisdiction only.</li>
+                                <li>The complete terms ans Conditions in relation to the product/services offered & accepted by the channel partner, and in relation to the general Terms and conditions on portal usage are available on the website (portal) for which services have been subscribed.</li>
+                                <li>Benefits of portal may apply after clearing your cheque.</li>
+                                <li>If your cheque is returned dishonoured or in case of charge back on an online transaction (including credit card payment), services will be immediately deactivated. In case of dishonoured, the reactivation would be done only on payment of an additional Rs. 500 per instance of dishonour.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+    </table>
+    <br />
+    [Line4]
+    <p style="text-align: left; font-style: italic; font-size: 10pt">
+        Thank you for your business! If you have any questions about your order, please contact us at
+        [CompanyPhone].
+    </p>
+</body>
+</html>

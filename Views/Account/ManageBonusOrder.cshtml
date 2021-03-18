@@ -1,0 +1,159 @@
+﻿<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+<script src="~/Scripts/bootbox.min.js"></script>
+<script type="text/javascript">
+    (function () {
+        var dropdownMenu;
+        $(window).on('show.bs.dropdown', function (e) {
+            dropdownMenu = $(e.target).find('.dropdown-menu');
+            $('body').append(dropdownMenu.detach());
+            var eOffset = $(e.target).offset();
+            dropdownMenu.css({
+                'display': 'block',
+                'top': eOffset.top + $(e.target).outerHeight(),
+                'left': eOffset.left
+            });
+        });
+        $(window).on('hide.bs.dropdown', function (e) {
+            $(e.target).append(dropdownMenu.detach());
+            dropdownMenu.hide();
+        });
+    })();
+    function operateFormatter1(value, row, index) {
+        //debugger;
+        if (value != null && value.length > 5) {
+            var date = new Date(parseInt(value.substr(6)));
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        } else {
+            return value;
+        }
+    }
+
+    function operateFormatter(value, row, index) {
+        //debugger
+        var id = row.PaymentStatus;
+        var buttons = "";
+        if (id == "Pending") {
+            var strHTML = "<div class='btn-group' astyle='position: absolute'><button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>Options<span class='caret'></span></button><ul class='dropdown-menu text-left' role='menu' style='position:absolute'>";
+            strHTML += "<li><a class='edit ml10' href='javascript:void(0)' title='Paid'><span class='fa fa-check'></span>&nbsp;&nbsp;Paid</a></li>";
+            //strHTML += "<li><a class='remove ml10' href='javascript:void(0)' title='Reject Payment'><span class='glyphicon glyphicon-remove'></span>&nbsp;&nbsp;Reject</a></li>";
+            strHTML += "</ul></div>";
+            buttons = strHTML;
+        }
+        return buttons;
+    }
+
+    //Status: 1 User Confirmed, 2 Pending At Staff, 3 Payment Received
+    function paymentStatus(value, row, index) {
+        //debugger;
+        var status;
+        switch (row.PaymentStatus) {
+            case 1:
+                status = '<a class="label label-info" href="#" title="Confirmed">Confirmed</a>';
+                break;
+            case 2:
+                status = '<a class="label label-success" href="#" title="Rejected">Rejected</a>';
+                break;
+            case 3:
+                status = '<a class="label label-success" href="#" title="Received">Received</a>';
+                break;
+        }
+        return [
+            status
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .edit': function (e, value, row, index) {
+            bootbox.confirm({
+                message: "Are your sure, do you want to APPROVED the Payment?",
+                buttons: {
+                    'cancel': {
+                        label: 'CANCEL',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: 'PAID',
+                        className: 'btn-success'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("BonusPayment", "Account")',
+                            type: 'POST',
+                            async: true,
+                            data: JSON.stringify({ id: row.Id }),
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                if (data.success) {
+                                    $('#tblBonusOrders').bootstrapTable('destroy');
+                                    loadGetBonusOrders();
+                                } else
+                                    alert(data.errors);
+                            },
+                            error: function (data) {
+                                alert(data.errors);
+                            },
+                            complete: function () {
+
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    };
+
+    function loadGetBonusOrders() {
+        $('#tblBonusOrders').bootstrapTable({
+            url: '@Url.Action("GetBonusOrders", "Account")',
+            pagination: true,
+            pageSize: 20,
+            pageList: [10, 20, 50],
+            search: true,
+            showColumns: true,
+            showRefresh: true,
+            minimumCountColumns: 3,
+            clickToSelect: false
+        });
+    }
+
+    $(function () {
+        loadGetBonusOrders();
+    });
+</script>
+<style>
+    thead {
+        background-color: #2494F2;
+        color: #fff;
+    }
+</style>
+<div class="page-head">
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Bonus Orders</li>
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <table id="tblBonusOrders">
+            <thead>
+                <tr>
+                    <th data-field="Name" data-sortable="false">Name</th>
+                    <th data-field="Email" data-sortable="false">Email</th>
+                    <th data-field="ReferralType" data-sortable="false">Referral Type</th>
+                    <th data-field="PaymentStatus" data-sortable="false">Payment Status</th>
+                    <th data-field="TotalBonus" data-sortable="false">Total Bonus(₦)</th>
+                    <th data-field="CreatedOn" data-formatter="operateFormatter1">Created On</th>
+                    <th data-field="operate" class="col-md-2" data-formatter="operateFormatter" data-events="operateEvents">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>

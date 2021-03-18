@@ -1,0 +1,285 @@
+﻿@using OnlineExam.Helpers
+@model OnlineExam.Models.QuestionFilterViewModel
+<style>
+    hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pager {
+        margin: 0px;
+    }
+
+        .pager li {
+            padding-right: 5px;
+        }
+    /*.pager li > a, .pager li > span {
+            padding: 15px 14px;
+        }*/
+</style>
+<script type="text/javascript">
+    //DISABLE RIGHT CLICK
+    $(function () {
+        $(this).bind("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    });
+
+    $(document).ready(function () {
+        $(document).on('change', '[id*=SelectedClass]', function () {
+            $.getJSON('/QuestionPaper/GetCategoriesByClassType/', { classType: $('[id*=SelectedClass]').val() },
+                function (data) {
+                    var items = '<option>Select Category</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('[id*=SelectedCategory]').html(items);
+                }
+            );
+        });
+        $(document).on('change', '[id*=SelectedCategory]', function () {
+            $.getJSON('/QuestionPaper/GetSubjectsByCategoryType/', { categoryType: $('[id*=SelectedCategory]').val() },
+                function (data) {
+                    var items = '<option>Select Subject</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('[id*=SelectedSubject]').html(items);
+                }
+            );
+        });
+        $('#btnRefresh').click(function () {
+            $('[id*=SelectedClass]').find('option:first').attr('selected', 'selected');
+
+            $('[id*=SelectedCategory]').empty();
+            $('[id*=SelectedCategory]').append("<option>Select Category</option>");
+
+            $('[id*=SelectedSubject]').empty();
+            $('[id*=SelectedSubject]').append("<option>Select Subject</option>");
+
+            $.ajax({
+                url: $(this).attr("href"),
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    $("#divQuestionPapars").empty();
+                    $('#divQuestionPapars').html(result);
+                }
+            });
+        });
+
+        $('#btnSearch').click(function (e) {
+            var $tab = $('#myTabContent'), $active = $tab.find('.tab-pane.active'), opType = $active.attr('id');
+            var questionFilterViewModel = {
+                "SelectedClass": $("#SelectedClass").val(),
+                "SelectedCategory": $("#SelectedCategory").val(),
+                "SelectedSubject": $("#SelectedSubject").val()
+                //"IsOnline": $("#IsOnline").val(),
+            };
+            $.ajax({
+                url: '@Url.Action("Index", "QuestionPaper")',
+                type: 'POST',
+                async: true,
+                data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, opType: opType }),
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    //alert(id);
+                    if (opType == "unAttempted-tab") {
+                        // debugger;
+                        $("#divQuestionPapars1").empty();
+                        $("#divQuestionPapars1").html(result);
+                    } else if (opType == "attempted-tab") {
+                        $("#divQuestionPapars2").empty();
+                        $("#divQuestionPapars2").html(result);
+                    }
+                    else {
+                        $('#divQuestionPapars').html(result);
+                    }
+
+                }
+            });
+        });
+
+        $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+            var target = $(e.target).attr("href"); // activated tab
+            //alert(target); // activated tab
+            var opType = target;
+            $.ajax({
+                url: '@Url.Action("Index", "QuestionPaper")',
+                type: 'GET',
+                async: false,
+                data: { page: '1', opType: opType, type: '@Convert.ToString(Request.QueryString["type"])' },
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (opType == "#unAttempted-tab") {
+                        $("#divQuestionPapars1").empty();
+                        $("#divQuestionPapars1").html(data);
+                    } else {
+                        $("#divQuestionPapars2").empty();
+                        $("#divQuestionPapars2").html(data);
+                    }
+                }
+            });
+        });
+
+        $('#myTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        // store the currently selected tab in the hash value
+        $("ul.nav-tabs > li > a").on("shown.bs.tab", function (e) {
+            var id = $(e.target).attr("href").substr(1);
+            window.location.hash = id;
+        });
+
+        // on load of the page: switch to the currently selected tab
+        var hash = window.location.hash;
+        $('#myTab a[href="' + hash + '"]').tab('show');
+
+    });
+</script>
+<div class="page-head">
+    <div class="row">
+        <div class="col-md-4">
+            @*<h3>CBT/Standard CBT</h3>*@
+            <ol class="breadcrumb">
+                <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+                @if (Convert.ToString(Request.QueryString["type"]) == OnlineExam.Utils.CBTType.Admin.ToString())
+                {
+                    <li class="active">Admin CBTs</li>
+                }
+                else if (Convert.ToString(Request.QueryString["type"]) == OnlineExam.Utils.CBTType.Custom.ToString())
+                {
+                    <li class="active">Custom CBTs</li>
+                }
+                else if (Convert.ToString(Request.QueryString["type"]) == OnlineExam.Utils.CBTType.Teacher.ToString())
+                {
+                    <li class="active">Teacher CBTs</li>
+                }
+                else if (Convert.ToString(Request.QueryString["type"]) == OnlineExam.Utils.CBTType.Confernce.ToString())
+                {
+                    <li class="active">Confernce CBTs</li>
+                }
+                else
+                {
+                    <li class="active">All CBTs</li> 
+                }
+            </ol>
+        </div>
+        <div class="col-md-8 text-right">
+            @if (Request.IsAuthenticated && CustomClaimsPrincipal.Current.MembershipPlan == OnlineExam.Utils.MembershipPlanType.Paid.ToString())
+            {
+                if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+                {
+                    <a href="@Url.Action("Create", "QuestionPaper")" class="btn btn-primary" title="Create">Create New CBT:&nbsp;<span class="glyphicon glyphicon-plus-sign"></span></a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Create", "QuestionPaper")" class="btn btn-primary" title="Create">Create Customize CBT&nbsp;<span class="glyphicon glyphicon-plus-sign"></span></a>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<link href="~/Content/quiz-list-box.css" rel="stylesheet" />
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.SelectedClass, Model.Classes, "Select Class", new { @class = "form-control" })
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Select Category", new { @class = "form-control" })
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(m => m.SelectedSubject, Model.Subjects, "Select Subject", new { @class = "form-control" })
+        </div>
+        @*<div class="col-md-2">
+                @Html.DropDownListFor(m => m.SelectedFormat, Model.Formats, "Select Format", new { @class = "form-control" })
+            </div>*@
+        @*<div class="col-md-2">
+                @Html.DropDownListFor(m => m.SelectedMark, Model.Marks, "Select Mark", new { @class = "form-control" })
+            </div>
+            <div class="col-md-1">
+                @Html.CheckBoxFor(m => m.IsOnline, Model.IsOnline)
+            </div>*@
+        <div class="col-md-3">
+            <button type="button" name="command" value="Search" id="btnSearch" class="btn btn-success" title="Search">
+                Search&nbsp;<i class="fa fa-search"></i>
+            </button>
+            <button type="button" name="command" value="Refresh" id="btnRefresh" class="btn btn-warning" title="Refresh">
+                Refresh&nbsp;<i class="fa fa-refresh"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <hr />
+    </div>
+
+    @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+    {
+        <div id="divQuestionPapars">
+            @Html.Partial("_QuestionPaperList", this.Model)
+            @*@Html.Partial("_QuestionPaperListV2", this.Model)*@
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <ul id="myTab" class="nav nav-tabs">
+                <li class="active"><a href="#unAttempted-tab" data-toggle="tab">MY TEST <i class="fa"></i></a></li>
+                <li><a href="#attempted-tab" data-toggle="tab">ATTEMPTED <i class="fa"></i></a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane active" id="unAttempted-tab">
+                    <div id="divQuestionPapars1">
+                        @*@Html.Partial("_QuestionPaperListV2", this.Model)*@
+                        @Html.Partial("_QuestionPaperList", this.Model)
+                    </div>
+                </div>
+                <div class="tab-pane" id="attempted-tab">
+                    <div id="divQuestionPapars2">
+                        @*@Html.Partial("_QuestionPaperListV2", this.Model)*@
+                        @Html.Partial("_QuestionPaperList", this.Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @section scripts
+{
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function () {
+                $(document).on("click", "#contentPager a", function () {
+                    // debugger;
+                    $.ajax({
+                        url: $(this).attr("href"),
+                        type: 'GET',
+                        cache: false,
+                        success: function (result) {
+                            // debugger;
+                            var $tab = $('#myTabContent'), $active = $tab.find('.tab-pane.active'), id = $active.attr('id');
+                            //alert(id);
+                            if (id == "unAttempted-tab") {
+                                // debugger;
+                                $("#divQuestionPapars1").empty();
+                                $("#divQuestionPapars1").html(result);
+                            } else if (id == "attempted-tab") {
+                                $("#divQuestionPapars2").empty();
+                                $("#divQuestionPapars2").html(result);
+                            }
+                            else {
+                                $('#divQuestionPapars').html(result);
+                            }
+                        }
+                    });
+                    return false;
+                });
+            });
+        </script>
+    }
+
+</div>

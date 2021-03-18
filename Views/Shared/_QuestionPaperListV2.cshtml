@@ -1,0 +1,200 @@
+﻿@model OnlineExam.Models.QuestionFilterViewModel
+@using OnlineExam.Helpers
+@using OnlineExam.Utils
+@using PagedList;
+@using PagedList.Mvc
+
+<script type="text/javascript">
+    function startTest(id, format) {
+        //window.location.href = "/SmartQuiz/Index/" + id;
+        window.location.href = "/SmartQuiz/IndexV2/#/test/" + id;
+    }
+</script>
+
+<style>
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+
+    .tab-content {
+        padding: 5px 20px 20px 20px;
+    }
+
+    .table {
+        max-width: 99%;
+    }
+</style>
+<div class="row">
+    <div class="col-md-2"><strong> Total Count:&nbsp;</strong><span class="badge badge-success" style="font-size:20px;"> @Model.QuestionPapars.TotalItemCount</span></div>
+    <div class="col-md-2">
+        <strong> CUSTOM CBT:&nbsp;</strong><span class="badge badge-warning" style="font-size:20px;"> @ViewBag.TotalCustomCBT</span>
+    </div><div class="col-md-2">
+        <strong>ADMIN CBT:&nbsp;</strong><span class="badge badge-info" style="font-size:20px;"> @ViewBag.TotalStandardCBT</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 packs-container">
+        @foreach (var item in Model.QuestionPapars.Select((x, i) => new { Data = x, Index = i + 1 }))
+        {
+            //mt-card my-test-card ng-scope fst-test-card nt-default-state has-syll-info
+            //mt-card my-test-card ng-scope fst-test-card nt-default-state has-syll-info test-resumable
+            //mt-card my-test-card ng-scope live-test-card lt-time-over has-syll-info has-tags
+            //mt-card my-test-card attempted-test-card ng-scope has-tags has-syll-info
+
+            //var status = 1;
+            //@Model.QuestionPapars[item.Index - 1].Status
+            // ng-class="{0: 'attempted-test-card' ,2: 'test-resumable'}[@Model.QuestionPapars[item.Index - 1].Status]"
+            var className = "mt-card my-test-card ng-scope fst-test-card nt-default-state has-syll-info has-tags";
+            switch (Model.QuestionPapars[item.Index - 1].Status)
+            {
+                case 0:
+                    className = "mt-card my-test-card attempted-test-card ng-scope has-tags has-syll-info has-tags";
+                    break;
+                case 1:
+                    className = "mt-card my-test-card ng-scope fst-test-card nt-default-state has-syll-info has-tags";
+                    break;
+                case 2:
+                    className = "mt-card my-test-card ng-scope fst-test-card nt-default-state has-syll-info has-tags test-resumable";
+                    break;
+                case 3:
+                    className = "mt-card my-test-card ng-scope fst-test-card nt-default-state has-syll-info has-tags";
+                    break;
+            }
+            <div class="@className">
+                <div class="title">
+                    <h4 title="Live Test 3" class="ng-binding">@item.Data.Name</h4>
+                </div>
+                <div class="tags">
+                    <span class="ng-binding ng-scope">@item.Data.CBTType</span>
+                </div>
+                <div class="details">
+                    <ul class="list-unstyled">
+                        <li>
+                            <span class="ng-binding">@item.Data.Subject</span>
+                        </li>
+                        <li>
+                            @if (Model.IsAttempted)
+                            {
+                                <span class="ng-binding">@item.Data.TotalAttemptedQuestions/@item.Data.TotalQuestions &nbsp;Questions</span>
+                            }
+                            else
+                            {
+                                <span class="ng-binding">@item.Data.TotalQuestions &nbsp;Questions</span>
+                            }
+                        </li>
+                        <li>
+                            @if (Model.IsAttempted)
+                            {
+                                <span class="ng-binding">@item.Data.TotalObtainedMarks/@item.Data.TotalMarks &nbsp;Marks</span>
+                            }
+                            else
+                            {
+                                <span class="ng-binding">@item.Data.TotalMarks&nbsp;Marks</span>
+                            }
+
+                        </li>
+                        <li>
+                            @if (Model.IsAttempted)
+                            {
+                                <span class="ng-binding">@TimeSpan.FromSeconds(item.Data.TimeTakenInMinutes).Minutes/@item.Data.Minute &nbsp;Minutes</span>
+                            }
+                            else
+                            {
+                                <span class="ng-binding">@item.Data.Minute &nbsp;Minutes</span>
+                            }
+
+                        </li>
+                    </ul>
+                </div>
+
+                @if (Model.IsAttempted)
+                {
+                    <div class="sol-ana-re-share">
+                        <a href="/SmartQuiz/IndexV2/#/solution/@item.Data.Id" class="btn sol" data-toggle="tooltip" title="Solution">
+                            <i class="fa fa-bolt"></i>
+                            <div class="tooltip top">
+                                <div class="po-content">
+                                    Solutions
+                                </div>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("Summary", "SmartQuiz", new { id = item.Data.Id })" class="btn ana" data-toggle="tooltip" title="Analysis">
+                            <i class="fa fa-bar-chart-o"></i>
+                            <div class="tooltip top">
+                                <div class="po-content">
+                                    Analytics
+                                </div>
+                            </div>
+                        </a>
+                        <div class="btn share dropup" data-toggle="tooltip" title="Share">
+                            <i class="fa fa-share" id="socialShare0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <div class="tooltip top">
+                                <div class="po-content">
+                                    Share
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="start-test">
+                        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+                        {
+                            <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                            <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                        }
+                        else
+                        {
+                            if (Model.IsAttempted)
+                            {
+                                @*<a class="btn btn-info" href="/SmartQuiz/IndexV2/#/solution/@item.Data.Id"></a>*@
+                                @*<a href="@Url.Action("Summary", "SmartQuiz", new { id = item.Data.Id })" class="btn btn-success" title="Analysis">ANALYSIS&nbsp;<span class="fa fa-bar-chart-o"></span></a>*@
+
+                                @*<button type="button" class="btn btn-theme" ng-click="startTest(test)">
+                                        <span class="before-test ng-binding"> 00:00:00</span>
+                                        <span class="prelaunch ng-binding">Avail from 05 Sep 2016</span>
+                                    </button>*@
+                            }
+                            else
+                            {
+                                switch (Model.QuestionPapars[item.Index - 1].Status)
+                                {
+                                    case 1:
+                                        if (CustomClaimsPrincipal.Current.MembershipPlan == MembershipPlanType.Trial.ToString())
+                                        {
+                                            if (item.Data.IsTrial)
+                                            {
+                                                <button type="button" id="btnPreview @item.Data.Id" value="@item.Data.Id" class="btn btn-success btn-xs" onclick="startTest(@item.Data.Id)">Take Test</button>
+                                            }
+                                            else
+                                            {
+                                                //TBD: REDIRECT TO UPGRADE ACCOUNT
+                                                @*<button type="button" id="btnUpgrade" value="@item.Data.Id" class="btn btn-success btn-xs">Upgrade Account</button>*@
+                                                <a href="@Url.Action("MembershipExpired", "Account", new {id = item.Data.Id})" class="label label-info" title="Upgrade Account"><span class="fa fa-shopping-cart"></span></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <button type="button" id="btnPreview @item.Data.Id" value="@item.Data.Id" class="btn btn-success btn-xs" onclick="startTest(@item.Data.Id)"></button>
+                                        }
+                                        break; // TAKE TEST
+                                    case 2:
+                                    <button type="button" id="btnPreview @item.Data.Id" value="@item.Data.Id" class="btn btn-warning btn-xs" onclick="startTest(@item.Data.Id)"></button>
+                                        break;// RE-TEST
+                                    case 3: //DISABLED LINK
+                                    <button type="button" id="btnPreview @item.Data.Id" value="@item.Data.Id" class="btn btn-default btn-xs" disabled="disabled"></button>
+                                        break;
+                                }
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div id="contentPager">
+        @Html.PagedListPager(Model.QuestionPapars, page => Url.Action("Index", new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+    </div>
+</div>

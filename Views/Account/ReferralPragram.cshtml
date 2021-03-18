@@ -1,0 +1,147 @@
+﻿@using OnlineExam.Utils
+@model OnlineExam.Models.ReferralPragramViewModel
+<style>
+    hr {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .btn {
+        margin-left: 0px;
+    }
+
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+
+    .fadeInDown {
+        -webkit-animation-name: fadeInDown;
+        animation-name: fadeInDown;
+    }
+
+    .animated {
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+    }
+
+    .features-box-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        padding-top: 10px;
+        background: #e8643e;
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+        font-size: 50px;
+        color: #fff;
+        line-height: 50px;
+        text-align: center;
+    }
+
+        .features-box-icon span {
+            vertical-align: middle;
+        }
+    /*.features-box h3 {
+        padding: 10px 0;
+    }*/
+    /*.features-box p {
+        font-size: 18px;
+        line-height: 32px;
+    }*/
+    /*h3 {
+        font-size: 30px;
+        font-weight: 100;
+        line-height: 34px;
+    }*/
+    p {
+        margin: 0 0 10px;
+    }
+</style>
+<div class="page-head">
+    @*<h3>Refferal Program</h3>*@
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Refferal Program</li>
+    </ol>
+</div>
+<div class="cl-mcont">
+    <div class="block-flat">
+        @using (Html.BeginForm("ReferralPragram", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="text-center text-ellipsis">INVITE FRIENDS TO ACADASTORE</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center text-gray-dark">When they register, and sign in to ACADASTORE, they'll get Bonus</div>
+                </div>
+            </div>
+            <div class="row">
+                <hr />
+            </div>
+            <div class="row">
+                <div class="col-sm-6 features-box wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;">
+                    <div class="features-box-icon">
+                        <span aria-hidden="true" class="fa fa-users"></span>
+                    </div>
+                    <h3 class="text-center">INVITE FRIENDS</h3>
+                    <p>
+                        <strong> FIRST LEVEL REFERRAL</strong> <br />
+                        If a user A introduces another user Bob to acadastore, user B represents first level referral to user A. User A gets paid ₦y, this is the first level bonus.
+                    </p>
+                    <p>
+                        <strong> SECOND LEVEL REFERRAL</strong> <br />
+                        If user B introduces another (user C) to ACADASTORE, user C represents first level referral to user Bob but represents second level referral to user A. User B gets ₦y being the first level bonus while user A gets paid ₦z. This is second level bonus.
+                    </p>
+                </div>
+                <div class="col-sm-6 features-box wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;">
+                    <div class="features-box-icon">
+                        <span aria-hidden="true" class="fa fa-dollar"></span>
+                    </div>
+                    <h3 class="text-center">KEEP EARNING</h3>
+                    <p>Whenever a friend you referred, you will earn bonus points.</p>
+                    <p>Therefore, if user A introduces 10 people to ACADASTORE directly, we will pay him 10 multiplied by ₦y (first level bonus). If any or all of the 10 users bring in 50 more users to acadastore, user Amara will be entitled to be paid 50 multiplied by ₦z (second level referral bonus). And the chain continues.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+
+                            $('#Email').blur(function () {
+                                var url = "/Account/CheckUserName";
+                                var name = $('#Email').val();
+                                if (name != null && name.length > 0) {
+                                    $.get(url, { input: name }, function (data) {
+                                        if (data == "Available") {
+                                            $("#result").html("<span class='label-success' style='color:white'>Available</span>");
+                                            $("#Email").css('border-color', 'green');
+                                        } else {
+                                            $("#result").html("<span class='label-danger' style='color:white'>@AppConstants.EmailIsExistMessage</span>");
+                                            $("#Email").css('border-color', 'red');
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    </script>
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                    <span id="result" />
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-success">Invite</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

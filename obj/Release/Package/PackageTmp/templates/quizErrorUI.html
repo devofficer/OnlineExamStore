@@ -1,0 +1,32 @@
+﻿
+<div>
+    <form name="questionErrorForm" ng-submit="save()">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">×</button>
+            <h4 class="modal-title" id="myModalLabel">
+                Report an error for #{{ questionId }}
+            </h4>
+        </div>
+        <div class="modal-body">
+            <div class="control-group" ng-class="{true: 'error'}[submitted && questionErrorForm.description.$invalid]">
+                <label class="control-label" for="description">PLEASE DESCRIBE THE ERROR BELOW:</label>
+                <div class="controls">
+                    <input type="hidden" id="questionId" name="questionId" ng-model="newError.QuestionId" ng-init="newError.QuestionId=questionId" />
+                    <textarea cols="40" rows="10" name="description" ng-model="newError.Discription" required class="form-control" ng-minlength="50"
+                              ng-maxlength="1000"></textarea>
+                    <span class="help-inline" ng-show="submitted && questionErrorForm.description.$error.required"></span>
+                    <!-- show an error if username is too short -->
+                    <span class="help-inline" ng-show="submitted && questionErrorForm.description.$error.minlength">Minimum 50 charactors</span>
+
+                    <!-- show an error if username is too long -->
+                    <span class="help-inline" ng-show="submitted && questionErrorForm.description.$error.maxlength">Maximum 1000 charactors</span>
+                </div>
+            </div>
+            <!--<input type="submit" class="btn" value="Save" ng-click="submitted=true" />-->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">OK</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>

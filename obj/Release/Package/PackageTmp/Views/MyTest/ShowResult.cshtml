@@ -1,0 +1,276 @@
+﻿@model OnlineExam.Models.ViewModels.TestResultViewModel
+@{
+    ViewBag.Title = "Show Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/iCheck/all.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.icheck.min.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+    availableFonts: [],
+    preferredFonts: "TeX",
+    webFont:"",
+    imageFont:"",
+    undefinedFamily:"'Arial"
+    }
+    });
+</script>
+<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+@*@Scripts.Render("~/bundles/jquery")*@
+<script>
+    $(document).ready(function () {
+        $('input').iCheck({ radioClass: 'iradio_square-aero' });
+
+        $('#btnResultDetail').click(function () {
+            $('#divTestResultDetail').toggle();
+        });
+    });
+
+    $(function () {
+        //DISABLE F12 TO SEE THE SOURCE CODE
+        $(document).keydown(function (event) {
+            if (event.keyCode == 123) {
+                return false;
+            }
+            else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+                return false;  //Prevent from ctrl+shift+i
+            }
+            else if (event.keyCode == 116) {
+                return false;  //Prevent from ctrl+shift+i
+            }
+            else if (event.ctrlKey && event.keyCode == 82) {
+                return false;  //Prevent from ctrl+shift+i
+            }
+        });
+        //DISABLE RIGHT CLICK
+        $(this).bind("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    });
+</script>
+<style>
+    .btn {
+        margin-left: 0px;
+    }
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+</style>
+<div class="page-head">
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("CBT List", "Index", "QuestionPaper")</li>
+        <li class="active">Test Result & Statistics</li>
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div class="col-md-2">@Html.Label("CBT Name:")</div>
+        <div class="col-md-3">@Html.DisplayTextFor(x => x.QuestionPaparName)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-2"><label>Time Taken:</label> </div>
+        <div class="col-md-2"><label>@OnlineExam.Repositories.CommonRepository.ConvertSecToMinutes(@Model.TimeTakenInMinutes)</label></div>
+    </div>
+    <div class="row">
+        <div class="col-md-2"><label>Status:</label> </div>
+        <div class="col-md-2">
+            @switch (@Model.Status)
+            {
+                case "Excellent":
+                    <span class="label label-success">@Model.Status</span>
+                    break;
+                case "Average":
+                <span class="label label-warning">@Model.Status</span>
+                    break;
+                case "Below Average":
+                <span class="label label-danger">@Model.Status</span>
+                    break;
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">@Html.Label("Score"):</div>
+        <div class="col-md-1">
+            @switch (@Model.Status)
+            {
+                case "Excellent":
+                    <h4><span class="label label-success">@Model.TotalObtainedMarks Score</span></h4>
+                    break;
+                case "Average":
+                <h4><span class="label label-warning">@Model.TotalObtainedMarks Score</span></h4>
+                    break;
+                case "Below Average":
+                <h4><span class="label label-danger">@Model.TotalObtainedMarks Score</span></h4>
+                    break;
+            }
+
+        </div>
+        <div class="col-md-1">
+            <button type="button" id="btnResultDetail" value="Show Detail" class="btn btn-warning">Show Detail</button>
+        </div>
+    </div>
+    <div class="row">
+        <hr />
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <div class="text-center">
+                <span class="label label-info">@Model.TotalQuestions</span><br />
+                Questions
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="text-center">
+                <span class="label label-default">@Model.TotalUnAttemptedQuestions</span><br />
+                UnAttempted
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="text-center">
+                <span class="label label-primary">@Model.TotalAttemptedQuestions</span><br />
+                Attempted
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="text-center">
+                <span class="label label-danger"> @Model.TotalInCorrectQuestions</span><br />
+                Incorrect
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="text-center">
+                <span class="label label-success">@Model.TotalCorrectedQuestions</span><br />
+                Corrected
+            </div>
+        </div>
+    </div>
+    <div id="divTestResultDetail" class="row" style="display: none">
+        <div class="col-md-12">
+            <table class="table table-condensed table-bordered">
+                @if (Model.TestResultQuestionViewModel != null)
+                {
+                    string parentQuestion = string.Empty;
+                    foreach (var item in Model.TestResultQuestionViewModel.Select((x, i) => new { Data = x, Index = i + 1 }))
+                    {
+                        if (parentQuestion != item.Data.ParentQuestion && !String.IsNullOrEmpty(item.Data.ParentQuestion))
+                        {
+                            parentQuestion = item.Data.ParentQuestion;
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <strong>Q @item.Index</strong><strong>.&nbsp;@Html.Raw(item.Data.ParentQuestion) </strong>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <strong>Q @item.Index</strong><strong>.&nbsp;@Html.Raw(item.Data.Description) </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        @if (item.Data.SelectedAnsOption == item.Data.AnswerOption)
+                                        {
+                                            <label class="label label-success">Answer: Option @item.Data.AnswerOption</label>
+                                        }
+                                        else
+                                        {
+                                            <label class="label label-danger">Answer: Option @item.Data.AnswerOption</label>
+                                        }
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        @if (item.Data.SelectedAnsOption == "A")
+                                        {
+                                            <strong>A.</strong> <input checked="checked" id="@item.Index" disabled="disabled" name="@item.Index" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        else
+                                        {
+                                            <strong>A.</strong> <input id="@item.Index" disabled="disabled" name="@item.Index" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+
+                                        @*@Html.RadioButtonFor(x => item.Data.SelectedAnsOption, item.Data.AnswerOption, item.Data.QuestionId)*@
+                                        <label for="OptionA">@Html.Raw(item.Data.OptionA)</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        @if (item.Data.SelectedAnsOption == "B")
+                                        {
+                                            <strong>B.</strong> <input checked="checked" disabled="disabled" id="@item.Index" name="@item.Index" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        else
+                                        {
+                                            <strong>B.</strong> <input id="@item.Index" disabled="disabled" name="@item.Index" class="radio" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        @*@Html.RadioButtonFor(x => item.Data.SelectedAnsOption, item.Data.AnswerOption, item.Data.QuestionId)*@
+                                        <label for="OptionB">@Html.Raw(item.Data.OptionB)</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        @if (item.Data.SelectedAnsOption == "C")
+                                        {
+                                            <strong>C.</strong> <input checked="checked" disabled="disabled" id="@item.Index" name="@item.Index" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        else
+                                        {
+                                            <strong>C.</strong>  <input id="@item.Index" name="@item.Index" disabled="disabled" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        @*@Html.RadioButtonFor(x => item.Data.SelectedAnsOption, item.Data.AnswerOption, item.Data.QuestionId)*@
+                                        <label for="OptionC">@Html.Raw(item.Data.OptionC)</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        @if (item.Data.SelectedAnsOption == "D")
+                                        {
+                                            <strong>D.</strong> <input checked="checked" disabled="disabled" id="@item.Index" name="@item.Index" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        else
+                                        {
+                                            <strong>D.</strong>  <input id="@item.Index" name="@item.Index" disabled="disabled" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+
+                                        @*@Html.RadioButtonFor(x => item.Data.SelectedAnsOption, item.Data.AnswerOption, item.Data.QuestionId)*@
+                                        <label for="OptionD">@Html.Raw(item.Data.OptionD)</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        @if (item.Data.SelectedAnsOption == "E")
+                                        {
+                                            <strong>E.</strong> <input checked="checked" disabled="disabled" id="@item.Index" name="@item.Index" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+                                        else
+                                        {
+                                            <strong>E.</strong>  <input id="@item.Index" name="@item.Index" disabled="disabled" type="radio" value="@item.Data.SelectedAnsOption" />
+                                        }
+
+                                        @*@Html.RadioButtonFor(x => item.Data.SelectedAnsOption, item.Data.AnswerOption, item.Data.QuestionId)*@
+                                        <label for="OptionE">@Html.Raw(item.Data.OptionE)</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <strong>Answer Description: </strong>  <div> @Html.Raw(item.Data.AnswerDescription)</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>

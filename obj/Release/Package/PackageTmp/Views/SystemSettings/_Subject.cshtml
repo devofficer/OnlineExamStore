@@ -1,0 +1,68 @@
+﻿<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/lookup/lookup-lib.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $(this).BindTable('tab_Subject', 'GET', '/SystemSettings/GetLookups/?moduleCode=Subject', 'operateSubject', 'EventsSubject');
+        $('#btnSubject').click(function () {
+            var isValid = true;
+            if ($('#textSubject').val() == "") {
+                $('#divSubjectClass').addClass('has-error has-feedback');
+                $('#textSubject').focus();
+                isValid = false;
+            } else {
+                $('#divSubjectClass').removeClass('has-error has-feedback');
+            }
+            if (isValid)
+                $(this).callModalPopup('POST', '@Url.Action("_Subject", "SystemSettings")',
+                    JSON.stringify({ subject: $("#textSubject").val(), id: $("#hdnSubject").val() }), "Subject");
+
+            return isValid;
+        });
+    });
+
+    function operateSubject(value, row, index) {
+        return [
+            '<a class="editSubject ml10" href="javascript:void(0)" title="Edit">',
+                '<i class="glyphicon glyphicon-edit"></i>',
+            '</a>',
+            '<a class="removeSubject ml10" href="javascript:void(0)" title="Remove">',
+                '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.EventsSubject = {
+        'click .editSubject': function (e, value, row, index) {
+            $('#textSubject').val(row.Text);
+            $('#hdnSubject').val(row.LookupId);
+        },
+        'click .removeSubject': function (e, value, row, index) {
+            if (confirm('You Want to Delete This')) {
+                $(this).callModalPopup('GET', '@Url.Action("DeleteLookup", "SystemSettings")', { id: row.LookupId, moduleCode: row.ModuleCode }, "Subject");
+            }
+        }
+    };
+</script>
+
+
+<div class="row">
+    <div class="col-md-12">
+        @Html.Label("Subject", new { @class = "col-md-2" })
+        <div class="col-md-8">
+            <div id="divTextClass">
+                @Html.TextBox("textSubject", null, new { @class = "form-control" })
+            </div>
+            @Html.Hidden("hdnSubject")
+            @*@Html.ValidationMessageFor(model => model.VendorCode)*@
+        </div>
+        <div class="col-md-2">
+            <button id="btnSubject" type="button" class="btn btn-success"><i class="fa fa-save"></i> Add/Edit</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table id="tab_Subject"></table>
+</div>
+

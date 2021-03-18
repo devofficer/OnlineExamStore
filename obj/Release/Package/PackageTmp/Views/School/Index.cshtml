@@ -1,0 +1,787 @@
+﻿@model OnlineExam.Models.School
+@{
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["Controller"].ToString();
+    var action = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString();
+    var id = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["id"]);
+    var isSchoolView = false;
+
+    string layout = "";
+    if (controller.ToLower() == "school" && action.ToLower() == "index" && !string.IsNullOrWhiteSpace(id))
+    {
+        layout = "~/Views/Shared/_SchoolLayout.cshtml";
+        isSchoolView = true;
+    }
+    else
+    {
+        layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    Layout = layout;
+}
+
+,
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script src="~/Content/angular/school/Module.js"></script>
+<script src="~/Content/angular/school/Service.js"></script>
+<script src="~/Content/angular/school/Controller.js"></script>
+@*<link href="~/Content/angular-block-ui.min.css" rel="stylesheet" />
+<script src="~/Scripts/angular-block-ui.min.js"></script>*@
+
+@*@Scripts.Render("~/bundles/angular")
+@Scripts.Render("~/bundles/school")*@
+
+@if (!isSchoolView)
+{
+
+    <style>
+        .btn {
+            margin-left: 0px;
+        }
+
+        hr {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .cl-mcont .row {
+            margin-top: 5px;
+        }
+
+        .imgDiv {
+            max-width: 140px;
+            max-height: 50px;
+        }
+    </style>
+    <div class="page-head">
+        <h3>School Detail.</h3>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+            <li class="active">School</li>
+        </ol>
+    </div>
+
+    <div class="form-horizontal block-flat" ng-app="myApp">
+        <div class="row">
+            <div ng-controller="myCntrl" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(OnlineExam.Helpers.CustomClaimsPrincipal.Current.IsACDAStoreUser))" class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form name="formAdd" novalidate ng-submit="AddUpdateEmployee()">
+                            <div>
+                                {{Action}} School Detail
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.Label("Name", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="text" ng-model="employeeName" name="Name" required class="form-control" />
+                                            <span class="alert-danger" ng-show="submitted && formAdd.Name.$error.required">Required Name</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        @Html.Label("Url", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="url" ng-model="employeeUrl" name="Url" class="form-control" placeholder="http://www.google.com" />
+                                            <span class="alert-danger" ng-show="submitted && formAdd.Url.$error.url">
+                                                Please provide the valid url
+                                            </span>
+                                            @*<span class="alert-danger" ng-show="submitted && formAdd.Url.$error.required">Required Url</span>*@
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        @Html.Label("Address", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            @*<input type="text" ng-model="employeeAddress" name="Address" required class="form-control" />*@
+                                            <textarea cols="40" rows="3" ng-model="employeeAddress" name="Address" required class="form-control"></textarea>
+                                            <span class="alert-danger" ng-show="submitted && formAdd.Address.$error.required">Required Address</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.Label("Contact Name", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="text" name="ContactName" ng-model="employeeContactName" required class="form-control" />
+
+                                            <span class="alert-danger" ng-show="submitted && formAdd.ContactName.$error.required">Required Contact Name</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        @Html.Label("State", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <select id="state" name="state" ng-model="employeeState" ng-init="FillState()" ng-change="GetSelectedState()" style="width: 100%;" required class="form-control">
+                                                <option value="" ng-selected="selected">Select State</option>
+                                                <option ng-repeat="emp in emp" value="{{emp.id}}">{{emp.Name}}</option>
+                                            </select>
+
+                                            <span class="alert-danger" ng-show="submitted && formAdd.state.$error.required">Required State</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button type="submit" class="btn btn-success" ng-click="submitted=true">
+                                                <i class="fa fa-save"></i> Save
+                                            </button>
+                                            <button type="button" class="btn btn-default" ng-click="CancelEmployee()">
+                                                <i class="fa fa-refresh"></i> Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.Label("Logo", new { @class = "col-md-3" })
+                                        <div class="col-md-7">
+                                            @if (Request.IsAuthenticated && User.IsInRole(OnlineExam.Utils.AppConstants.Roles.StaffAdmin))
+                                            {
+                                                <img src="{{Logo}}" class="thumbnail imgDiv" />
+                                                <input type="file" id="schoolFile" name="file" accept="image/*" onchange="angular.element(this).scope().selectFileforUpload(this.files)" />
+                                            }
+                                            else
+                                            {
+                                                <input type="file" id="schoolFile" name="file" accept="image/*" onchange="angular.element(this).scope().selectFileforUpload(this.files)" required />
+                                                <span class="alert-danger" ng-show="(formAdd.file.$dirty || submitted) && formAdd.file.$error.required">Image required!</span>
+                                            }
+                                            <span class="alert-danger">{{FileInvalidMessage}}</span>
+
+                                            @*<input type="file" ng-model="employeeLogo" name="Logo" class="btn btn-info" />*@
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.Label("Description", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            @*<input type="text" ng-model="employeeDescription" name="Description" required class="form-control" />*@
+                                            <textarea cols="40" rows="3" ng-model="employeeDescription" name="Description" required class="form-control"></textarea>
+                                            <span class="alert-danger" ng-show="submitted && formAdd.Description.$error.required">Required Description</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.Label("Template Name", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="text" ng-model="employeeTemplateName" name="TemplateName" required class="form-control" />
+                                            <span class="alert-danger" ng-show="submitted && formAdd.TemplateName.$error.required">Required Template Name</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.Label("Contact Phone", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            @*<input type="text" ng-model="employeeContactPhone" name="ContactPhone" required class="form-control" />*@
+
+                                            <input type="text" class="form-control" ng-minlength="10" ng-maxlength="10" name="ContactPhone" placeholder="xxx-xxx-xxxx" ng-model="employeeContactPhone" ng-required="true" ng-pattern="phoneNumbr">
+                                            <span class="alert-danger" ng-show="submitted && formAdd.ContactPhone.$error.required || registration.phone.$error.number">Valid phone number is required</span>
+                                            <span class="alert-danger" ng-show="((submitted && formAdd.$error.minlength || submitted && formAdd.$error.maxlength) && submitted && formAdd.$dirty) ">Phone number should be 10 digits</span>
+
+
+                                            @*<span class="alert-danger" ng-show="submitted && formAdd.ContactPhone.$error.required">Required Contact Phone</span>*@
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.Label("City", new { @class = "col-md-3" })
+                                        <div class="col-md-7">
+                                            <select id="City" name="City" ng-model="employeeCity" required class="form-control">
+                                                <option value="" ng-selected="selected">Select City</option>
+                                                <option ng-repeat="em in citys" value="{{em.id}}" ng-selected="employeeCity==em.id">{{em.Name}}</option>
+                                            </select>
+
+                                            <span class="alert-danger" ng-show="submitted && formAdd.City.$error.required">Required City</span>
+                                        </div>
+                                    </div>
+                                    @if (Request.IsAuthenticated && User.IsInRole(OnlineExam.Utils.AppConstants.Roles.StaffAdmin))
+                                    {
+                                        <div class="col-md-12">
+                                            @Html.Label("Status", new { @class = "col-md-3" })
+                                            <div class="col-md-7">
+                                                <select id="Status" name="Status" ng-model="employeeStatus" ng-init="FillAction()" style="width: 100%;" required class="form-control">
+                                                    <option value="" ng-selected="selected">Select Status</option>
+                                                    <option ng-repeat="em in actions" value="{{em.id}}" ng-selected="employeeStatus==em.id">{{em.Name}}</option>
+                                                </select>
+
+                                                <span class="alert-danger" ng-show="submitted && formAdd.Status.$error.required">Required Status</span>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @if (Request.IsAuthenticated && User.IsInRole(OnlineExam.Utils.AppConstants.Roles.StaffAdmin))
+                {
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $(".tip-top").tooltip({
+                                placement: 'top'
+                            });
+                        });
+                    </script>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="h3">School List</p>
+                        </div>
+                        <div class="col-md-6">
+
+                        </div>
+                        <div class="col-md-3 ">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-info" ng-click="AddEmployeeDiv()">
+                                    <i class="fa fa-plus"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr />
+                    </div>
+                    <div ng-show="divEmpList" class="row">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <td>#</td>
+                                    <td><strong>Name</strong></td>
+                                    <td><strong>Logo</strong></td>
+                                    <td><strong>Description</strong></td>
+                                    <td><strong>Url</strong></td>
+                                    <td><strong>Template Name</strong></td>
+                                    <td><strong>Address</strong></td>
+                                    <td><strong>Contact Name</strong></td>
+                                    <td>
+                                        <strong>Contact Phone</strong> &nbsp; <span class="glyphicon glyphicon-phone-alt">
+                                        </span>
+                                    </td>
+                                    <td><strong>City</strong></td>
+                                    <td><strong>State</strong></td>
+                                    <td><strong>Status</strong></td>
+                                    <td><strong>Action</strong></td>
+                                </tr>
+                                <tr ng-repeat="employee in employees" ng-class="{Created:'info',  'Approved':'success','De-Activate':'danger'}[employee.Status]">
+                                    <td>{{$index + 1}}.</td>
+                                    <td>
+                                        {{employee.Name}}
+                                    </td>
+                                    <td>
+                                        <img src="{{employee.Logo}}" class="imgDiv" />
+                                    </td>
+                                    <td class="col-md-2">
+                                        <div ng-if="employee.Description.length > 100">
+                                            {{employee.Description | strLimit:100 }}
+                                            <a href="#" data-toggle="tooltip" class="tip-top" title="{{employee.Description}}">
+                                                <span class="glyphicon glyphicon-info-sign"></span>
+                                            </a>
+                                        </div>
+                                        <div ng-if="employee.Description.length <= 100">
+                                            {{employee.Description }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{employee.Url}}
+                                    </td>
+                                    <td>
+                                        {{employee.TemplateName}}
+                                    </td>
+
+                                    <td class="col-md-3">
+                                        {{employee.Address}}
+                                    </td>
+                                    <td>
+                                        {{employee.ContactName}}
+                                    </td>
+                                    <td>
+                                        {{employee.ContactPhone}}
+                                    </td>
+                                    <td>
+                                        {{employee.City}}
+                                    </td>
+                                    <td>
+                                        {{employee.State}}
+                                    </td>
+                                    <td>
+                                        {{employee.Status}}
+                                    </td>
+                                    <td class="col-md-2">
+                                        <a ng-click="editEmployee(employee)" title="Edit" class="label label-success">
+                                            <i class="fa fa-pencil-square-o"></i>
+                                            <span class="sr-only">Edit</span>
+                                        </a> &nbsp;
+                                        <a ng-click="deleteEmployee(employee)" title="Delete" class="label label-danger">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                            <span class="sr-only">Delete</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr />
+                    </div>
+                    <form name="formNews" novalidate ng-submit="AddNews()">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="h3">Add News</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <hr />
+                        </div><div class="row">
+                            <div class="col-md-4">
+                                @Html.Label("School", new { @class = "col-md-3" })
+                                <div class="col-md-9">
+                                    <select id="schoolNews" name="schoolNews" ng-model="schoolNews" ng-init="GetSchools()" ng-change="GetSelectedNews()" style="width: 100%;" required class="form-control">
+                                        <option value="" ng-selected="selected">Select School</option>
+                                        <option ng-repeat="school in schools" value="{{school.Id}}">{{school.Name}}</option>
+                                    </select>
+                                    <span class="alert-danger" ng-show="submitted && formNews.schoolNews.$error.required">Required School</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                @Html.Label("News Description", new { @class = "col-md-3" })
+                                <div class="col-md-9">
+                                    <textarea cols="40" rows="3" ng-model="newsDescription" name="Description" required class="form-control"></textarea>
+                                    <span class="alert-danger" ng-show="submitted && formNews.newsDescription.$error.required">Required News</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fa fa-plus"></i> Add News
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-bordered table-responsive">
+                                    <tr>
+                                        <td>#</td>
+                                        <td><strong>Description</strong></td>
+                                        <td><strong>Is New</strong></td>
+                                        <td><strong>Is Active</strong></td>
+                                        <td><strong>Action</strong></td>
+                                    </tr>
+                                    <tr ng-repeat="news in schoolNewsData" ng-class="{'true':'success','false':'danger'}[news.IsActive]">
+                                        <td class="col-md-1">{{$index + 1}}.</td>
+                                        <td>
+                                            {{news.Description}}
+                                        </td>
+                                        <td class="col-md-1">
+                                            <input type="checkbox" ng-model="news.IsNew" ng-checked="news.IsNew" ng-click="editNews(news)" class="checkbox-inline">
+                                        </td>
+                                        <td class="col-md-1">
+                                            <input type="checkbox" ng-model="news.IsActive" ng-checked="news.IsActive" ng-click="editNews(news)" class="checkbox-inline">
+                                        </td>
+                                        <td class="col-md-1">
+                                            @*<a ng-click="editNews(news)" title="Edit" class="label label-success">
+                                                    <i class="fa fa-pencil-square-o"></i>
+                                                    <span class="sr-only">Edit</span>
+                                                </a> &nbsp;*@
+
+                                            <a ng-click="deleteNews(news)" title="Delete" class="label label-danger">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                                <span class="sr-only">Delete</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+
+
+                    <form name="formBanner" novalidate ng-submit="LoadFileData()">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="h3">Add Banner</p>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <hr />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.Label("School", new { @class = "col-md-3" })
+                                <div class="col-md-9">
+                                    <select id="school" name="school" ng-model="schoolList" ng-init="GetSchools()" ng-change="GetSelectedBanners()" style="width: 100%;" required class="form-control">
+                                        <option value="" ng-selected="selected">Select School</option>
+                                        <option ng-repeat="school in schools" value="{{school.Id}}">{{school.Name}}</option>
+                                    </select>
+
+                                    <span class="alert-danger" ng-show="submitted && formBanner.school.$error.required">Required School</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                @*<input type="file" ng-model="files" name="files[]" accept="image/*"  multiple required />*@
+                                <input name="avatarImage" type="file" class="btn btn-default btn-file" id="bannerFile"
+                                       onchange="angular.element(this).scope().bannerFiles(this.files)" multiple accept="image/*" required>
+
+                                <span class="alert-danger">{{FileInvalidMessage}}</span>
+                                <span class="alert-danger" ng-show="submitted && formBanner.avatarImage.$error.required">Image required!</span>
+                            </div><div class="col-md-4">
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-info" ng-click="submitted=true">
+                                        <i class="fa fa-plus"></i> Upload
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-bordered table-responsive">
+                                    <tr>
+                                        <td>#</td>
+                                        <td><strong>Banner</strong></td>
+                                        <td><strong>Created On</strong></td>
+                                        <td><strong>Action</strong></td>
+                                    </tr>
+                                    <tr ng-repeat="banner in banners" ng-class="{'true':'success','false':'danger'}[banner.IsActive]">
+                                        <td class="col-md-1">{{$index + 1}}.</td>
+                                        <td>
+                                            <img src="{{banner.Url}}" class="imgDiv" />
+                                        </td>
+                                        <td class="col-md-1">
+                                            {{banner.CreatedOn | dateFormat2}}
+                                        </td>
+                                        <td class="col-md-2">
+                                            @*<a ng-click="editBanner(banner)" title="Edit" class="label label-success">
+                                                    <i class="fa fa-pencil-square-o"></i>
+                                                    <span class="sr-only">Edit</span>
+                                                </a>*@
+                                            <label>
+                                                Is Active:
+                                                <input type="checkbox" ng-model="banner.IsActive" ng-checked="banner.IsActive" ng-click="editBanner(banner)" class="checkbox-inline">
+                                            </label>
+                                            &nbsp;
+                                            <a ng-click="deleteBanner(banner)" title="Delete" class="label label-danger">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                                <span class="sr-only">Delete</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <style>
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6 {
+            font-family: "Ubuntu", Helvetica, Arial, sans-serif !important;
+        }
+
+        .vertical .carousel-inner {
+            height: 100%;
+        }
+
+        .carousel.vertical .item {
+            -webkit-transition: 0.6s ease-in-out top;
+            -moz-transition: 0.6s ease-in-out top;
+            -ms-transition: 0.6s ease-in-out top;
+            -o-transition: 0.6s ease-in-out top;
+            transition: 0.6s ease-in-out top;
+        }
+
+        .carousel.vertical .active {
+            top: 0;
+        }
+
+        .carousel.vertical .next {
+            top: 400px;
+        }
+
+        .carousel.vertical .prev {
+            top: -400px;
+        }
+
+            .carousel.vertical .next.left,
+            .carousel.vertical .prev.right {
+                top: 0;
+            }
+
+        .carousel.vertical .active.left {
+            top: -400px;
+        }
+
+        .carousel.vertical .active.right {
+            top: 400px;
+        }
+
+        .carousel.vertical .item {
+            left: 0;
+        }
+
+        .carousel-control.left {
+            background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
+            background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
+            background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
+            /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);*/
+            background-repeat: repeat-x;
+        }
+
+        .carousel-control.right {
+            right: 0;
+            left: auto;
+            background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
+            background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
+            background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
+            /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);*/
+            background-repeat: repeat-x;
+        }
+
+        .list-group-item {
+            border-left-width: 0px !important;
+            border-right-width: 0px !important;
+            position: relative;
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: -1px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .cl-mcont .row {
+            margin-top: 0px;
+        }
+
+        .alert {
+            margin-top: 2px;
+            padding: 0px;
+            margin-bottom: 2px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-dismissable .close, .alert-dismissible .close {
+            position: relative;
+            margin-right: 23px;
+            top: -23px;
+            color: inherit;
+        }
+    </style>
+    <script>
+        //http://jsfiddle.net/wram2h2p/
+        $(document).ready(function () {
+            $('.carousel').carousel({
+                interval: 3000
+            })
+        });
+
+    </script>
+    if (Model.Id == 0 || Model.Id == null)
+    {
+        <style>
+            .alert-dismissable .close, .alert-dismissible .close {
+                position: relative;
+                margin-right: 23px;
+                top: 0px;
+                color: inherit;
+            }
+        </style>
+        <div class="form-horizontal block-flat">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                            &times;
+                        </button>
+                        <strong>Record doesn't exists.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    if (Model.Status == "Created" && Model.Id > 0)
+    {
+        <style>
+            .alert-dismissable .close, .alert-dismissible .close {
+                position: relative;
+                margin-right: 23px;
+                top: 0px;
+                color: inherit;
+            }
+        </style>
+        <div class="form-horizontal block-flat">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                            &times;
+                        </button>
+                        <strong> Your School is under review process.Soon, it will be go live. For more information, Please do contact to Administrator.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.Status == "De-Activate" && Model.Id > 0)
+    {
+        <style>
+            .alert-dismissable .close, .alert-dismissible .close {
+                position: relative;
+                margin-right: 23px;
+                top: 0px;
+                color: inherit;
+            }
+        </style>
+        <div class="form-horizontal block-flat">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                            &times;
+                        </button>
+                        <strong> Your School is De-activated.For more information, Please do contact to Administrator.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.Id > 0)
+    {
+
+        <div class="form-horizontal block-flat" ng-controller="myCntrl" ng-app="myApp" ng-init="LoadBanners(@id)">
+            <div class="row">
+                <div class="col-md-12">
+                    <section class="slider-home" style="max-height: 336px; border: 1px solid #ddd; overflow: hidden;">
+                        <div class="slider">
+                            <div id="myCarousel" class="carousel slide" data-ride="carousel" style="min-height:336px;">
+                                <!-- Indicators -->
+                                <ol class="carousel-indicators">
+                                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                                    <li data-target="#myCarousel" data-slide-to="3"></li>
+                                    <li data-target="#myCarousel" data-slide-to="4"></li>
+                                </ol>
+                                <div class="carousel-inner" role="listbox">
+                                    <div class="item" ng-class="{active:!$index}" ng-repeat="banner in banners">
+                                        <img class="img-responsive" src="{{ banner.Url }}">
+                                    </div>
+                                </div>
+                                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div><!-- /.carousel -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+            @*<div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-info alert-dismissable">
+                            <marquee style="max-height:20px !important;">  Live new goes here</marquee>
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                &times;
+                            </button>
+
+                        </div>
+                    </div>
+                </div>*@
+            <div class="row">
+                <div class="col-md-3">
+                    <style>
+                        .badge {
+                            background-color: rgba(234, 30, 15, 1);
+                        }
+                    </style>
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center"><strong>NEWS</strong></div>
+                        <div class="panel-body" style="min-height:400px;">
+                            <ul class="list-group">
+                                <marquee style="min-height:350px;" direction="up" behaviour="scroll" scrollamount="3" onmouseover="this.stop();" onmouseout="this.start();">
+                                    <li class=" list-group-item" ng-repeat="news in schoolNewsData">
+                                        {{news.Description}}
+                                        <div class="pull-right">
+                                            <cite>{{news.CreatedOn | dateFormat2}}</cite>
+                                        </div>
+                                        <span ng-if="news.IsNew" class="badge">New</span>
+                                    </li>
+                                </marquee>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>PRINCIPAL’S DESK</strong></div>
+                        <div class="panel-body">
+                            <p>{{employeeDesc}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center"><strong>EVENTS</strong></div>
+                        <div class="panel-body" style="min-height:400px;">
+                            <div id="myCarousel" class="carousel slide vertical">
+                                <!-- Carousel items -->
+                                <div class="carousel-inner">
+                                    <div class="active item">
+                                        @*<img src="http://placehold.it/600x400&amp;text=First+Slide">*@
+                                        <img src="~/FileUploads/School/13798632-school-banner-graduation-school-frame.jpg" />
+                                    </div>
+                                    <div class="item">
+                                        <img src="~/FileUploads/School/14711075-back-to-school-banners.jpg" />
+                                        @*<img src="http://placehold.it/600x400&amp;text=Second+Slide">*@
+                                    </div>
+                                    <div class="item">
+                                        <img src="~/FileUploads/School/14897437-set-of-back-to-school-banners.jpg" />
+                                        @*<img src="http://placehold.it/600x400&amp;text=Third+Slide">*@
+                                    </div>
+                                    <div class="item">
+                                        <img src="~/FileUploads/School/21232845-a-vector-illustration-of-back-to-school-banner-designs.jpg" />
+                                    </div>
+                                </div>
+                                <!-- Carousel nav -->
+                                <a class="carousel-control left" href="#myCarousel" data-slide="prev">‹</a>
+                                <a class="carousel-control right" href="#myCarousel" data-slide="next">›</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center"><strong>ADDRESS</strong></div>
+                        <div class="panel-body" style="max-height:200px">
+                            <address>
+                                <strong>{{employeeName}}</strong><br>
+                                {{employeeAdd}}<br>
+                                {{employeeCity}}, {{employeeState}}<br>
+                                <abbr title="Phone">P:</abbr>{{employeeContactPhone | tel}}
+                            </address>
+
+                            <address>
+                                <strong>{{employeeContactName}}</strong><br>
+                                <a href="mailto:#">{{employeeUrl}}</a>
+                            </address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

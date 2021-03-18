@@ -1,0 +1,486 @@
+﻿@using OnlineExam.Helpers
+@using OnlineExam.Utils
+@{
+    ViewBag.Title = "My Dashboard";
+}
+<script src="~/Scripts/angular/angular.js"></script>
+<script src="~/Scripts/angular-timer/angular-timer-all.min.js"></script>
+<script src="~/Scripts/angular/angular-count-to.min.js"></script>
+<link href="~/Content/static-style.css" rel="stylesheet" />
+<style>
+    .navbar-collapse.collapse {
+        float: right;
+    }
+
+    .form-group {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+
+    .serivs_box_contnet {
+        min-height: 100px;
+    }
+
+        .serivs_box_contnet ul li {
+            padding: 5px 25px 5px;
+        }
+
+    .content-alpage {
+        float: right;
+        padding: 10px;
+        width: 100%;
+        background: url("../images/page-bg-all.png") center top / 100% auto;
+    }
+
+    .cl-mcont {
+        min-height: 0px;
+    }
+
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6 {
+        font-family: "Ubuntu", Helvetica, Arial, sans-serif !important;
+    }
+
+    TILES .tile {
+        display: block;
+        cursor: pointer;
+        -webkit-perspective: 0;
+        -webkit-transform-style: preserve-3d;
+        -webkit-transition: -webkit-transform .2s;
+        float: left;
+        min-width: 75px;
+        min-height: 75px;
+        text-align: center;
+        opacity: .75;
+        z-index: 1;
+        border: 2px solid #f39c12;
+        color: #fff;
+    }
+
+    .tile.tile-orange {
+        background-color: #f39c12;
+    }
+
+    .tile.tile-wide, .tile.tile-double {
+        height: 150px;
+        width: 310px;
+    }
+
+    .tile.tile-medium {
+        min-height: 210px;
+        /*width: 310px;*/
+    }
+
+    .thumbnail {
+        border-radius: 0px;
+    }
+
+    .servics_title {
+        /*background-color: #f39c12;*/
+        margin: 0px;
+    }
+
+    .servics_title-color-green {
+        background-color: #4caf50 !important;
+    }
+
+    .servics_title-color-yellow {
+        background-color: #FBC02D !important;
+    }
+
+    .servics_title-color-gray {
+        background-color: #cacbcc !important;
+    }
+
+    .servics_title .icon {
+        background: none;
+        height: 50px;
+        width: 50px;
+    }
+
+    .servics_title h3 {
+        color: white;
+        margin: 15px 5px 0;
+    }
+
+    .serivs_box_contnet {
+        padding: 5px;
+    }
+
+    .lead-stats {
+        color: #080b0d;
+    }
+
+        .lead-stats .stats-number {
+            font-size: 32px;
+            line-height: 32px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .lead-stats .stats-icon {
+            position: absolute;
+            right: 30px;
+            top: 12px;
+        }
+
+        .lead-stats:hover .stats-icon i, .lead-stats:focus .stats-icon i {
+            font-size: 46px;
+        }
+
+        .lead-stats .stats-icon i {
+            font-size: 42px;
+            transition: all 0.25s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .lead-stats h5 {
+            font-size: 13px;
+            margin: 15px 0 0;
+            padding: 0;
+            line-height: 16px;
+        }
+
+    .color-green {
+        color: #4caf50 !important;
+    }
+
+    .color-yellow-dark {
+        color: #fbc02d !important;
+    }
+
+    .color-red {
+        color: #f44336 !important;
+    }
+
+    .color-gray {
+        color: #607d8b !important;
+    }
+
+    .color-green-light {
+        color: #a5d6a7 !important;
+    }
+
+    .color-blue {
+        color: #2196f3 !important;
+    }
+
+    h4 {
+        font-size: 16px !important;
+    }
+
+    .panel {
+        border-radius: 0px;
+    }
+</style>
+
+<script>
+    var app;
+    (function () {
+        app = angular.module("dashboardApp", ['countTo']);
+        //init();
+    })();
+
+    app.controller('dashboardController', ["$scope", "$timeout", "$http", function ($scope, $timeout, $http) {
+
+        $scope.dashboardObj = {
+            totalCBTs: 0,
+            totalAttemptedCBTs: 0,
+            totalStdCBTs: 0,
+            totalAttemptedStdCBTs: 0,
+            totalCustomCBTs: 0,
+            totalAttemptedCustomCBTs: 0
+        };
+
+        $scope.init = function (userId) {
+            $http.get("/api/smartquizapi/GetUserDashboardInfo", {
+                params:
+                    {
+                        userId: userId
+                    }
+            }).success(function (data, status, headers, config) {
+                //debugger;
+                $scope.dashboardObj.totalCBTs = data.totalCBTs;
+                $scope.dashboardObj.totalAttemptedCBTs = data.totalAttemptedCBTs;
+                $scope.dashboardObj.totalStdCBTs = data.totalStdCBTs;
+                $scope.dashboardObj.totalAttemptedStdCBTs = data.totalAttemptedStdCBTs;
+                $scope.dashboardObj.totalCustomCBTs = data.totalCustomCBTs;
+                $scope.dashboardObj.totalAttemptedCustomCBTs = data.totalAttemptedCustomCBTs;
+
+            }).error(function (data, status, headers, config) {
+                debugger;
+            }).then(function (data) {
+                //debugger;
+            });
+        };
+    }]);
+</script>
+
+@*<section class="content-alpage">*@
+
+<div class="cl-mcont" ng-app="dashboardApp">
+    <div class="block-flat">
+        <div class="page-head">
+            <h3>DASHBOARD</h3>
+        </div>
+        <div class="row" ng-controller="dashboardController" ng-init="init('@ViewBag.UserId')">
+            <!-- .row start -->
+            <div class="col-lg-2 col-md-6 col-xs-6 col-small-enlarge">
+                <!-- col-md-6 start here -->
+                <div class="panel panel-default" id="dash_0">
+                    <!-- Start .panel -->
+                    <div class="panel-body">
+                        <a class="lead-stats" href="#">
+                            @*<h1 class="count" count-to="{{countTo}}" value="{{countFrom}}" duration="4"></h1>*@
+                            <span class="stats-number" count-to="{{dashboardObj.totalCBTs}}" value="0" duration="2"></span>
+                            @*<timer autostart="true" countdown="dashboardObj.totalCBTs" interval="1000">{{seconds}}</timer>*@
+                            @*<timer id="countdowntimer" countdown="dashboardObj.totalCBTs" interval="1000"> {{sseconds}}</timer>*@
+                            @*<timer id="countdowntimer" autostart="true" countdown="dashboardObj.totalCBTs" interval="1000">{{sseconds}}</timer>*@
+                            <span class="stats-icon">
+                                <i class="fa fa-book color-green"></i>
+                            </span>
+                            <h4>Total CBT</h4>
+                        </a>
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-md-6 end here -->
+            <div class="col-lg-2 col-md-6 col-xs-6 col-small-enlarge">
+                <!-- col-md-6 start here -->
+                <div class="panel panel-default" id="dash_1">
+                    <!-- Start .panel -->
+                    <div class="panel-body">
+                        <a class="lead-stats" href="#">
+                            <span class="stats-number" count-to="{{dashboardObj.totalAttemptedCBTs}}" value="0" duration="2"></span>
+                            <span class="stats-icon">
+                                @*<i class="fa fa-file-text color-yellow-dark"></i>*@
+                                <i class="fa fa-book color-yellow-dark"></i>
+                            </span>
+                            <h4>Attempted CBT</h4>
+                        </a>
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-md-6 end here -->
+            <div class="col-lg-2 col-md-6 col-xs-6 col-small-enlarge">
+                <!-- col-md-4 start here -->
+                <div class="panel panel-default" id="dash_2">
+                    <!-- Start .panel -->
+                    <div class="panel-body">
+                        <a class="lead-stats" href="#">
+                            <span class="stats-number" count-to="{{dashboardObj.totalStdCBTs}}" value="0" duration="2"></span>
+                            <span class="stats-icon">
+                                <i class="fa fa-clipboard color-green"></i>
+                            </span>
+                            <h4>Admin CBT</h4>
+                        </a>
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-md-4 end here -->
+            <div class="col-lg-2 col-md-6 col-xs-6 col-small-enlarge">
+                <!-- col-md-4 start here -->
+                <div class="panel panel-default" id="dash_3">
+                    <!-- Start .panel -->
+                    <div class="panel-body">
+                        <a class="lead-stats" href="#">
+                            <span class="stats-number" count-to="{{dashboardObj.totalAttemptedStdCBTs}}" value="0" duration="2"></span>
+                            <span class="stats-icon">
+                                @*<i class="fa fa-files-o color-red"></i>*@
+                                <i class="fa fa-clipboard color-yellow-dark"></i>
+                            </span>
+                            <h4>Att. Admin CBT</h4>
+                        </a>
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-md-4 end here -->
+            <div class="col-lg-2 col-md-6 col-xs-6 col-small-enlarge">
+                <!-- col-md-4 start here -->
+                <div class="panel panel-default" id="dash_4">
+                    <!-- Start .panel -->
+                    <div class="panel-body">
+                        <a class="lead-stats" href="#">
+                            <span class="stats-number" count-to="{{dashboardObj.totalCustomCBTs}}" value="0" duration="2"></span>
+                            <span class="stats-icon">
+                                @*<i class="fa fa-file-o color-gray"></i>*@
+                                <i class="fa fa-file-text color-green"></i>
+                            </span>
+                            <h4>Custom CBT</h4>
+                        </a>
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-md-4 end here -->
+            <div class="col-lg-2 col-md-6 col-xs-6 col-small-enlarge">
+                <!-- col-md-4 start here -->
+                <div class="panel panel-default" id="dash_5">
+                    <!-- Start .panel -->
+                    <div class="panel-body">
+                        <a class="lead-stats" href="#">
+                            <span class="stats-number" count-to="{{dashboardObj.totalAttemptedCustomCBTs}}" value="0" duration="2"></span>
+                            <span class="stats-icon">
+                                @*<i class="fa fa-file color-green-light"></i>*@
+                                <i class="fa fa-file-text color-yellow-dark"></i>
+                            </span>
+                            <h4>Att. Custom CBT</h4>
+                        </a>
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-md-4 end here -->
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-yellow">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter5.png")" align="" class="center-block" /></div>
+                        @*<i class="fa fa-file-text color-yellow-dark"></i>*@
+                        <h3>MARKETING</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            @if (Request.IsAuthenticated && CustomClaimsPrincipal.Current.IsACDAStoreUser)
+                            {
+                                <li><a href="@Url.Action("ManageBonusOrder", "Account")">Manage Bonus Orders</a></li>
+                            }
+                            else
+                            {
+                                <li><a href="@Url.Action("ReferralList", "Account", new { level = "1" })">1st Level Referral</a></li>
+                                <li><a href="@Url.Action("ReferralList", "Account", new { level = "2" })">2nd Level Referral</a></li>
+                                <li><a href="@Url.Action("ReferralPragram", "Account")">Refer a Friend </a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-green">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter2.png")" align="" class="center-block" /></div>
+                        <h3>CBT</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            @if (CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
+                            {
+                                <li><a href="@Url.Action("Create", "QuestionPaper")">Create Teacher CBT</a></li>
+                                <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Teacher.ToString() })">Teacher CBT</a></li>
+                            }
+                            else
+                            {
+                                <li><a href="@Url.Action("Create", "QuestionPaper")">Create Custom CBT</a></li>
+                                <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Admin.ToString() })">Admin CBT</a></li>
+                                @*<li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Confernce.ToString() })">Confernce CBT</a></li>*@
+                                <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Teacher.ToString() })">Teacher CBT</a></li>
+                                <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Custom.ToString() })">Custom CBT</a></li>
+                                <li><a href="@Url.Action("Index", "QuestionPaper")">All CBT</a></li>
+                            }
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-gray">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter1.png")" align="" class="center-block" /></div>
+                        <h3>eWallet</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-gray">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter3.png")" align="" class="center-block" /></div>
+                        <h3>Download Item</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-gray">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter4.png")" align="" class="center-block" /></div>
+                        <h3>Online Users</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-gray">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter6.png")" align="" class="center-block" /></div>
+                        <h3>Download App</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-gray">
+                        <div class="icon"><img src="@Url.Content("~/images/moniter5.png")" align="" class="center-block" /></div>
+                        <h3>Reports</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                            <li><a href="#">Coming Soon...................</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*</section>*@

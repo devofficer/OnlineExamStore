@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>iCheck</id>
+    <version>1.0.2</version>
+    <title>iCheck</title>
+    <authors>FRONTEED</authors>
+    <owners>FRONTEED</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>http://fronteed.com/iCheck/</projectUrl>
+    <iconUrl>http://fronteed.com/iCheck/demo/css/icheck.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Highly customizable checkboxes and radio buttons for jQuery and Zepto.</description>
+    <summary>Highly customizable checkboxes and radio buttons for jQuery and Zepto.</summary>
+    <tags>checkbox radio ui</tags>
+  </metadata>
+</package>

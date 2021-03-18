@@ -1,0 +1,302 @@
+﻿@model OnlineExam.Models.QuestionFilterViewModel
+@using OnlineExam.Helpers
+@using OnlineExam.Utils
+@using PagedList;
+@using PagedList.Mvc
+<script type="text/javascript">
+    $(function () {
+        $('[id*=btnPreview]').click(function (e) {
+            // debugger;
+            //alert($('#questionId').val());
+            $('#QuestionPaperId').val($(this).attr("value"));
+            // $('#QuestionPaperId').val($('#questionId').val());  // for label button type
+            var description = $(this).closest("tr").find('td:eq(2)').text(); //name
+            var duration = $(this).closest("tr").find('td:eq(3)').text();// duration
+            var totalQuestions = $(this).closest("tr").find('td:eq(4)').text(); //total questions
+            var totalMarks = $(this).closest("tr").find('td:eq(5)').text(); //total marks
+            $('#modal-content').modal({
+                show: true
+            });
+            $('#modal-content').on('shown.bs.modal', function () {
+                $("#questionDescription").text(description);
+                $("#duration").text(duration);
+
+                $("#totalQuestions").text(totalQuestions);
+                $("#totalMarks").text(totalMarks);
+            });
+        });
+    });
+    function startTest(e) {
+        $('#modal-content').modal('hide');
+        $('.modal-backdrop').remove();
+        window.location.href = "/SmartQuiz/Index/" + $('#QuestionPaperId').val();
+    }
+    function startTest1(e) {
+        $('#modal-content').modal('hide');
+        $('.modal-backdrop').remove();
+        window.location.href = "/SmartQuiz/IndexV2/#/test/" + $('#QuestionPaperId').val();
+    }
+</script>
+<style>
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+
+    .tab-content {
+        padding: 5px 20px 20px 20px;
+    }
+
+    .table {
+        max-width: 99%;
+    }
+</style>
+@Html.Hidden("QuestionPaperId")
+<div class="row">
+    <div id="modal-content" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header btn-success">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">Question Paper Preview:</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered">
+                            <tr>
+                                <td><strong>Question Name:</strong></td>
+                                <td>
+                                    <p id="questionDescription"></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Questions:</strong> </td>
+                                <td><span id="totalQuestions"></span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Marks:</strong> </td>
+                                <td><span id="totalMarks"></span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Duration:</strong></td>
+                                <td><span id="duration"></span>&nbsp;Mins</td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="btnStartTest" onclick="startTest1(this)" class="btn btn-success">Start</a>
+                    @*<a href="#" id="btnStartTest" onclick="startTest(this)" class="btn btn-success">Start</a>*@
+                    <a href="#" class="btn btn-danger" data-dismiss="modal">Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><strong> TOTAL COUNT:&nbsp;</strong><span class="badge badge-success" style="font-size:20px;"> @Model.QuestionPapars.TotalItemCount</span></div>
+    @if (ViewBag.TotalCustomCBT != null && ViewBag.TotalCustomCBT > 0)
+    {
+        <div class="col-md-2">
+            <strong> CUSTOM CBT:&nbsp;</strong><span class="badge badge-warning" style="font-size:20px;"> @ViewBag.TotalCustomCBT</span>
+        </div>
+    }
+    @if (ViewBag.TotalAdminCBT != null && ViewBag.TotalAdminCBT > 0)
+    {
+        <div class="col-md-2">
+            <strong>ADMIN CBT:&nbsp;</strong><span class="badge badge-info" style="font-size:20px;"> @ViewBag.TotalAdminCBT</span>
+        </div>
+    }
+    @if (ViewBag.TotalTeacherCBT != null && ViewBag.TotalTeacherCBT > 0)
+    {
+        <div class="col-md-2">
+            <strong>TEACHER CBT:&nbsp;</strong><span class="badge badge-primary" style="font-size:20px;"> @ViewBag.TotalTeacherCBT</span>
+        </div>
+    }
+</div>
+<div class="row">
+    <div class="table table-responsive">
+        <table class="table">
+            <tr>
+                <th>
+                    S.No.
+                </th>
+                @if (Model.IsAttempted)
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.CBTType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        Duration <br /> (Mins)
+                    </th>
+                    <th>
+                        Total<br /> Questions
+                    </th>
+                    <th>
+                        Total<br /> Marks
+                    </th>
+                    <th>
+                        Time Taken<br /> (Mins)
+                    </th>
+                    <th>
+                        Obtained <br />Marks
+                    </th>
+                    <th>
+                        Last<br /> Attempted On
+                    </th>
+                }
+                else
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.CBTType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        Duration <br /> (Mins)
+                    </th>
+                    <th>
+                        Total<br /> Questions
+                    </th>
+                    <th>
+                        Total<br /> Marks
+                    </th>
+                    <th>
+                        Class <br /> Name
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SelectedCategory)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SelectedSubject)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsOnline)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsTrial)
+                    </th>
+                }
+                <th>
+                    Action
+                </th>
+            </tr>
+
+            @foreach (var item in Model.QuestionPapars.Select((x, i) => new { Data = x, Index = i + 1 }))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Index)<strong>.</strong>
+                    </td>
+                    @if (Model.IsAttempted)
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.CBTType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.Minute)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.TotalQuestions)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.TotalMarks)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.TimeTakenInMinutes)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.TotalObtainedMarks)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.CreatedOn)
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.CBTType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.Name)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.Minute)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.TotalQuestions)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.TotalMarks)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.ClassName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.ExamName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.Subject)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.IsOnline)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Data.IsTrial)
+                        </td>
+                    }
+                    @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+                    {
+                        <td>
+                            @if (item.Data.CBTType == OnlineExam.Utils.CBTType.Admin.ToString())
+                            {
+                                <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                                <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                            }
+                        </td>
+                    }
+                    else if (Model.IsAttempted)
+                    {
+                        <td>
+                            <a href="@Url.Action("Summary", "SmartQuiz", new { id = item.Data.Id })" class="btn btn-success btn-xs" data-toggle="tooltip" title="Analysis">
+                                <span class="fa fa-bar-chart-o">&nbsp; Analysis</span>
+                            </a>&nbsp;
+                            @if (CustomClaimsPrincipal.Current.MembershipPlan != MembershipPlanType.Trial.ToString())
+                            {
+                                <a class="btn btn-info btn-xs" href="/SmartQuiz/IndexV2/#/solution/@item.Data.Id" title="Solution">Solution&nbsp;<span class="fa fa-bar-chart-o"></span></a>
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @switch (Model.QuestionPapars[item.Index - 1].Status)
+                            {
+                                case 1:
+                                    <button type="button" id="btnPreview @item.Data.Id" value="@item.Data.Id" class="btn btn-success btn-xs" data-toggle="modal" data-target="#modal-content">Take Test</button>
+                                    break;
+                                case 2:
+                                <button type="button" id="btnPreview @item.Data.Id" value="@item.Data.Id" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modal-content">Re-Test</button>
+                                    break;
+                                case 3:
+                                    break;
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+        <div id="contentPager">
+            @Html.PagedListPager(Model.QuestionPapars, page => Url.Action("Index", new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+        </div>
+    </div>
+</div>

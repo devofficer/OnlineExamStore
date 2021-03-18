@@ -1,0 +1,100 @@
+﻿@model OnlineExam.Models.ViewModels.VoucherViewModel
+@*@{
+        ViewBag.Title = "Edit";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }*@
+@Scripts.Render("~/bundles/jqueryval")
+<div id="errorMessages"></div>
+<script>
+    $(function () {
+        // EDIT VENDOR
+        $("#btnSave").click(function (e) {
+            //debugger;
+            var $btn = $(this).button('loading');
+            if (!$("#editVoucher").valid()) {
+                $btn.button('reset');
+                return false;
+            }
+            else
+            {
+                var _form = $(this).closest("form");
+                e.preventDefault();
+                $.post(_form.attr("action"), _form.serialize(), function (data) {
+                    //debugger;
+                    if (data.success) {
+                        $('#tblVouchers').bootstrapTable('destroy');
+                        $('#tblVouchers').bootstrapTable({
+                            url: '@Url.Action("GetVouchers", "Voucher")',
+                            pagination: true,
+                            pageSize: 20,
+                            pageList: [10, 20, 50],
+                            search: true,
+                            showColumns: true,
+                            showRefresh: true,
+                            minimumCountColumns: 3,
+                            clickToSelect: false
+                        });
+                        $('#editDialog').modal('hide');
+                        $btn.button('reset');
+                    } else {
+                        alert(data.errors);
+                        $btn.button('reset');
+                    }
+                });
+                return true;
+            }
+        });
+    });
+
+</script>
+<style>
+    .cl-mcont .row {
+        margin-top: 2px;
+    }
+</style>
+@using (Html.BeginForm("Create", "Voucher", null, FormMethod.Post, new { @id = "editVoucher", enctype = "multipart/form-data" }))
+{
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="row">
+            <div class="col-md-3">
+                @Html.LabelFor(model => model.SelectedVendorId, new { @class = "col-md-3" })
+                <div class="col-md-12">
+                    @Html.DropDownListFor(x => x.SelectedVendorId, new SelectList(Model.Vendors, "Value", "Text", Model.SelectedVendorId), "Select", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.SelectedMembershipPlanId, new { @class = "col-md-3" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(x => x.SelectedMembershipPlanId, new SelectList(Model.MembershipPlans, "Value", "Text", Model.SelectedMembershipPlanId), "Select", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.SelectedDenomination, new { @class = "col-md-3" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(x => x.SelectedDenomination, new SelectList(Model.Denominations, "Value", "Value", Model.SelectedDenomination), "Select", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                @Html.LabelFor(model => model.NoOfVoucher, new { @class = "col-md-6" })
+                <div class="col-md-7">
+                    @Html.TextBoxFor(x => x.NoOfVoucher, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-2">
+                @Html.Label("Action", new { @class = "col-md-5" })
+                <div class="col-md-8">
+                    @*<input id="btnSave" type="submit" class="btn btn-success" value="Save" />*@
+                    <button type="submit" name="command" value="Create" id="btnSave" class="btn btn-success" data-loading-text="Saving...">
+                        Save&nbsp;<span class="fa fa-save"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@*@section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@

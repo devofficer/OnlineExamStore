@@ -1,0 +1,67 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $(this).BindTable('tab_ClassCategory', 'GET', '/SystemSettings/GetLookups/?moduleCode=ClassCategory', 'operateClassCategory', 'EventsClassCategory');
+        $('#btnClassCategory').click(function () {
+           // debugger;
+            $(this).callModalPopup('POST', '@Url.Action("_ClassCategory", "SystemSettings")', JSON.stringify({
+                iClass: $('#drpClass').val(),
+                iCategory: $("#drpCategory").val(),
+                strCategory: $("#drpCategory option:selected").text(),
+                id: $("#hdnClassCategory").val()
+            }), "ClassCategory");
+            $('#drpClass').find('option:first').attr('selected', 'selected');
+            $('#drpCategory').find('option:first').attr('selected', 'selected');
+        })
+    });
+
+    function operateClassCategory(value, row, index) {
+        return [
+            '<a class="editClassCategory ml10" href="javascript:void(0)" title="Edit">',
+                '<i class="glyphicon glyphicon-edit"></i>',
+            '</a>',
+            '<a class="removeClassCategory ml10" href="javascript:void(0)" title="Remove">',
+                '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.EventsClassCategory = {
+        'click .editClassCategory': function (e, value, row, index) {
+            //debugger;
+            $('#drpClass').val(row.Parent);
+            $('#drpCategory').val(row.Value);
+            $('#hdnClassCategory').val(row.LookupId);
+            //alert($('#hdnClassCategory').val());
+        },
+        'click .removeClassCategory': function (e, value, row, index) {
+            if (confirm('You Want to Delete This')) {
+                $(this).callModalPopup('GET', '@Url.Action("DeleteLookup", "SystemSettings")', { id: row.LookupId, moduleCode: row.ModuleCode }, "ClassCategory");
+            }
+        }
+    };
+</script>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.Label("Class", new { @class = "col-md-2" })
+        @Html.DropDownList("drpClass", null, "Select Class", new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        @Html.Label("Category", new { @class = "col-md-2" })
+        @Html.DropDownList("drpCategory", null, "Select Category", new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        @Html.Label("Action", new { @class = "col-md-2" })
+        <div class="col-md-2">
+            <input type="hidden" id="hdnClassCategory" />&nbsp;
+            <button type="button" name="command" value="Save" id="btnClassCategory" class="btn btn-success" title="Save">
+                <i class="fa fa-save"></i>Add/Edit
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table id="tab_ClassCategory"></table>
+</div>
+
+

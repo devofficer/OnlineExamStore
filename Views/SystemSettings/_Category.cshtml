@@ -1,0 +1,82 @@
+﻿<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/lookup/lookup-lib.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(this).BindTable('tab_ExamType', 'GET', '/SystemSettings/GetLookups/?moduleCode=ExamType', 'operateExamType', 'EventsExamType');
+
+        $('#btnExam').click(function () {
+            //debugger;
+            var isValid = true;
+            if ($('#textExamType').val() == "") {
+                $('#divExamClass').addClass('has-error has-feedback');
+                $('#textExamType').focus();
+                isValid = false;
+            } else {
+                $('#divExamClass').removeClass('has-error has-feedback');
+            }
+            if (isValid)
+                $(this).callModalPopup('POST', '@Url.Action("_Category", "SystemSettings")',
+                    JSON.stringify({ category: $("#textExamType").val(), id: $("#hdnExamType").val() }), "ExamType");
+
+            return isValid;
+        });
+    });
+
+    function operateExamType(value, row, index) {
+        return [
+            '<a class="editExam ml10" href="javascript:void(0)" title="Edit">',
+                '<i class="glyphicon glyphicon-edit"></i>',
+            '</a>',
+            '<a class="removeExam ml10" href="javascript:void(0)" title="Remove">',
+                '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+
+    window.EventsExamType = {
+        'click .editExam': function (e, value, row, index) {
+            $('#textExamType').val(row.Text);
+            $('#hdnExamType').val(row.LookupId);
+        },
+        'click .removeExam': function (e, value, row, index) {
+            if (confirm('You Want to Delete This')) {
+                $(this).callModalPopup('GET', '@Url.Action("DeleteLookup", "SystemSettings")', { id: row.LookupId, moduleCode: row.ModuleCode }, "ExamType");
+            }
+        }
+    };
+</script>
+
+<div class="row">
+    <div class="col-md-12">
+        @Html.Label("Category", new { @class = "col-md-2" })
+        <div class="col-md-6">
+            <div id="divExamClass">
+                @Html.TextBox("textExamType", null, new { @class = "form-control" })
+            </div>
+            @Html.Hidden("hdnExamType")
+            @*@Html.ValidationMessageFor(model => model.VendorCode)*@
+        </div>
+        <div class="col-md-2">
+            <button id="btnExam" type="button" class="btn btn-success"><i class="fa fa-save"></i> Add/Edit</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table id="tab_ExamType"></table>
+</div>
+
+@*<div class="row">
+        <div class="col-md-12">
+            Exam&nbsp;<input type="text" id="txtExam" />
+            <input type="hidden" id="hdnExam" />&nbsp;&nbsp;
+            <input type="button" id="btnExam" value="Add" />
+        </div>
+    </div>
+    <div class="row">
+        <table id="tab_Exam"></table>
+    </div>*@
+
+
+

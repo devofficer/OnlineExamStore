@@ -1,0 +1,169 @@
+﻿@model OnlineExam.Models.UserPlanViewModel
+<style>
+    hr {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .btn {
+        margin-left: 0px;
+    }
+
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+</style>
+<div class="page-head">
+    <h3>Membership Expired</h3>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+        <li class="active">Membership Expired</li>
+    </ol>
+</div>
+<div class="cl-mcont">
+    <div class="block-flat">
+        @using (Html.BeginForm("MembershipExpired", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-md-10">
+                    @*Your Membership Plan has been expired. Please enter Voucher code to renew your Membership Plan.*@
+                    <strong> TO UPGRADE MEMBERSHIP, PLEASE CHOOSE ONE OF THE BELOW PAYMENT PLAN: </strong>
+                </div>
+            </div>
+            <div class="row">
+                <hr />
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.ValidationSummary()
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <strong> (i) PAYMENT BY VOUCHER</strong>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(m => m.VoucherCode)
+                </div>
+                <div class="col-md-2">
+                    @Html.TextBoxFor(x => x.VoucherCode, new { @class = "form-control" })
+                </div>
+                <div class="col-md-1">
+                    @*<input type="submit" class="btn btn-primary" value="SUBMIT" name="btnVoucherPayment" />*@
+                    <button type="submit" id="btnVoucherPayment" name="Command" value="VoucherPayment" class="btn btn-primary">SUBMIT</button>
+                </div>
+            </div>
+            <div class="row">
+                <hr />
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <strong> (ii) BANK PAYMENT</strong>
+                </div>
+            </div>
+
+            if (Model.PaymentStatus == OnlineExam.Utils.PaymentStatus.None)
+            {
+                <div id="divBankPayment">
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2">
+                            @Html.LabelFor(m => m.Despositor)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DisplayFor(m => m.Despositor)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2">
+                            @Html.LabelFor(m => m.Narration)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DisplayFor(m => m.Narration)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2">
+                            @Html.LabelFor(m => m.Amount)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DisplayFor(m => m.Amount)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2">
+                            @Html.LabelFor(m => m.Beneficiary)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DisplayFor(m => m.Beneficiary)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2">
+                            @Html.LabelFor(m => m.Bank)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DisplayFor(m => m.Bank)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2">
+                            @Html.LabelFor(m => m.Account)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DisplayFor(m => m.Account)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-11">
+                            @Html.HiddenFor(m => m.TxnId)
+                            <button type="submit" id="btnBankPayment" name="Command" value="BankPayment" class="btn btn-success">I WANT TO MAKE THIS PAYMENT</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div id="divPendingConfirmationMsg" class="shoe">
+                    <div class="row">
+                        <hr />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 alert alert-warning text-center text-capitalize">
+                             YOUR PAYMENT CONFIRMATION REQUEST IS PENDING AT ACADASTORE STAFF. ONCE ITS APPROVED, YOUR MEMBERSHIP WILL BE UPGRADED.
+                        </div>
+                    </div>
+                </div>
+            }
+            <div id="divConfirmPayment" class="hide">
+                <div class="row">
+                    <hr />
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong> PLEASE CONFIRM THE PAYMENT: </strong> &nbsp;<button type="submit" id="btnConfirmPayment" name="Command" value="ConfirmPayment" class="btn btn-success">CONFIRM PAYMENT</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

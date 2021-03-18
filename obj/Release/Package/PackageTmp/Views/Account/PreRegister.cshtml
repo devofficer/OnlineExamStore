@@ -1,0 +1,55 @@
+﻿<style>
+    .block-flat {
+        margin-bottom: 0px;
+        padding: 5px 10px;
+    }
+
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+</style>
+<div class="page-head">
+    <h3>Register.</h3>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+        <li class="active">Register</li>
+    </ol>
+</div>
+<div class="cl-mcont">
+    <div class="block-flat">
+        <div class="row">
+            <div class="col-md-6" title="Demo">
+                <dl class="block-flat alert-warning">
+                    <dt>Demo User</dt>
+                    <dd>
+                        <p>This is Trail Membership & will expire in 2 days from registration date.</p>
+                        <p>In Trail Membership, you will be able to give Online Test of Standard CBTs.</p>
+                    </dd>
+                    <dd>
+                        <input type="button" title="Demo" value="Register" class="btn btn-primary" onclick="location.href='@Url.Action("Register", "Account", new { register = "Demo", code = Convert.ToString(Request.QueryString["code"]) })'" />
+                    </dd>
+                </dl>
+
+            </div>
+            <div class="col-md-6" title="Paid User">
+                <dl class="block-flat alert-success">
+                    <dt>Paid User</dt>
+                    <dd>
+                        <p>This is Paid Membership & will be application for 1 year registration date.</p>
+                        <p>
+                            In Paid Membership,<ul>
+                                <li> You will be able to give Online Test of Standard CBTs.</li>
+                                <li> You will be able to create Custom CBTs.</li>
+                                <li> You will be able to see result of given Test.</li>
+                            </ul>
+                        </p>
+                    </dd>
+                    <dd>
+                        <input type="button" title="Paid" value="Register" class="btn btn-primary" onclick="location.href='@Url.Action("Register", "Account", new {register="Paid",code = Convert.ToString(Request.QueryString["code"])})'" />
+                    </dd>
+                </dl>
+
+            </div>
+        </div>
+    </div>
+</div>

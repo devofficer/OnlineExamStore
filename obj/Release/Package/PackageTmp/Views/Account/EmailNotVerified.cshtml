@@ -1,0 +1,10 @@
+﻿<div class="cl-mcont">
+    <div class="block-flat">
+        <h4>Email Not Verified</h4>
+        <hr/>
+        <div>
+            <p class="text-danger">Your email has not been verified yet. If you did not receive, please click resend to get email verification link.</p>
+            <input type="button" title="Login" value="Resend" class="btn btn-primary" onclick="location.href='@Url.Action("ResendEmailVerification", "Account", new { userId = ViewBag.UserId, code = ViewBag.EmailVerificationCode })'" />
+        </div>
+    </div>
+</div>

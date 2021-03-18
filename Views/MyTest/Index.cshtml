@@ -1,0 +1,260 @@
+﻿@model OnlineExam.Models.ViewModels.QuestionViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Scripts.Render("~/bundles/jquery")
+<style>
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+    availableFonts: [],
+    preferredFonts: "TeX",
+    webFont:"",
+    imageFont:"",
+    undefinedFamily:"'Arial"
+    }
+    });
+</script>
+<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        //DISABLE F12 TO SEE THE SOURCE CODE
+        $(document).keydown(function (event) {
+            if (event.keyCode == 123) {
+                return false;
+            }
+            else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+                return false;  //Prevent from ctrl+shift+i
+            }
+            else if (event.keyCode == 116) {
+                return false;  //Prevent from ctrl+shift+i
+            }
+            else if (event.ctrlKey && event.keyCode == 82) {
+                return false;  //Prevent from ctrl+shift+i
+            }
+        });
+        //DISABLE RIGHT CLICK
+        $(this).bind("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    });
+    $(window).on('load', function () {
+        sessionStorage.CurrentTimer = 0;
+        MyTimer();
+    });
+
+    var _timerHandler = 0;
+    _timerHandler = setInterval("MyTimer()", 1000);
+
+    function MyTimer() {
+        //alert($('#Minute').val());
+        debugger;
+        var valueTimer = (sessionStorage.CurrentTimer == undefined || sessionStorage.CurrentTimer == 0) ? $('#Minute').val() : sessionStorage.CurrentTimer;
+        //debugger;
+        if (valueTimer > 0) {
+            valueTimer = valueTimer - 1;
+
+            hours = (valueTimer / 3600).toString().split('.')[0];
+            mins = ((valueTimer % 3600) / 60).toString().split('.')[0];
+            secs = ((valueTimer % 3600) % 60).toString();
+
+            if (hours.length == 1) hours = '0' + hours;
+            if (mins.length == 1) mins = '0' + mins;
+            if (secs.length == 1) secs = '0' + secs;
+
+            $('#idTimerLCD').text(hours + ':' + mins + ':' + secs);
+            $('#Minute').val(valueTimer);
+            sessionStorage.CurrentTimer = valueTimer;
+
+            // document.title = $('#idTimerLCD').text();
+        }
+        else {
+            // $('#btnSubmitTest').attr('disabled', 'disabled');
+            alert(" Your time is up ! \n\n Let's see the Result & Statistics of the Test.");
+            clearInterval(_timerHandler);
+            //$('#Minute').val('60');
+            sessionStorage.CurrentTimer = 0;
+            var questionViewModel = {
+                "Id": $("#Id").val(),
+                "Minute": $("#Minute").val(),
+                "QuestionPaparId": $("#QuestionPaparId").val(),
+                "AttemptedQuestionId": $("#AttemptedQuestionId").val(),
+                "PageIndex": $("#PageIndex").val(),
+                "Command": "SubmitTest",// e.id == "btnNext" ? "Next" : "Previous",
+                "SelectedOptionA": $('input:radio[id^=SelectedOptionA]:checked').length > 0 ? $('input:radio[id^=SelectedOptionA]:checked')[0].value : null
+            };
+            $.ajax({
+                url: '@Url.Action("Index", "MyTest")',
+                type: 'POST',
+                async: false,
+                data: JSON.stringify({ questionViewModel: questionViewModel }),
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    debugger;
+                    window.location.href = '@Url.Action("ShowResult", "MyTest", new{ id= Model.QuestionPaparId})';
+                },
+                error: function (data) {
+                    debugger;
+
+                }
+            });
+        }
+    }
+    function PostForm(e) {
+        // debugger;
+        // alert($("#Id").val());
+        var command = "Next";
+        var questionPaparId = $("#QuestionPaparId").val();
+        switch (e.id) {
+            case "btnNext":
+                command = "Next";
+                break;
+            case "btnPre":
+                command = "Previous";
+                break;
+            case "btnSubmit":
+                command = "SubmitTest";
+                break;
+        }
+        var childQuestions = new Array();
+        debugger;
+        if ($("#FormatType").val() == "CP") {
+            for (var ichildCount = 0; ichildCount < $('#ChildCount').val() ; ichildCount++) {
+                {
+                    childQuestions[ichildCount] = {
+                        "Id": $('#childQuestionId' + (ichildCount + 1)).val(),
+                        "SelectedOptionA": $('input:radio[id^=SelectedOptionA' + (ichildCount + 1) + ']:checked').length > 0 ? $('input:radio[id^=SelectedOptionA' + (ichildCount + 1) + ']:checked')[0].value : null
+                    };
+                }
+            }
+        }
+
+        sessionStorage.QuestionPaparId = $("#QuestionPaparId").val();
+        sessionStorage.PageIndex = $("#PageIndex").val();
+        sessionStorage.AttemptedQuestionPaparId = $("#AttemptedQuestionPaparId").val();
+        sessionStorage.command = command;
+
+        var questionViewModel = {
+            "Id": $("#QuestionId").val(),
+            "Minute": $("#Minute").val(),
+            "FormatType": $("#FormatType").val(),
+            "TotalMarks": $("#TotalMarks").val(),
+            "TotalQuestion": $("#TotalQuestion").val(),
+
+            "QuestionPaparId": $("#QuestionPaparId").val(),
+            "AttemptedQuestionId": $("#AttemptedQuestionId").val(),
+            "AttemptedQuestionPaparId": $("#AttemptedQuestionPaparId").val(),
+            "PageIndex": $("#PageIndex").val(),
+            "Command": command,// e.id == "btnNext" ? "Next" : "Previous",
+            "ChildQuestions": childQuestions,
+            "SelectedOptionA": $('input:radio[id^=SelectedOptionA]:checked').length > 0 ? $('input:radio[id^=SelectedOptionA]:checked')[0].value : null
+        };
+        $.ajax({
+            url: '@Url.Action("Index", "MyTest")',
+            type: 'POST',
+            async: false,
+            data: JSON.stringify({ questionViewModel: questionViewModel }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                debugger;
+                if (command == "SubmitTest") {
+                    window.location.href = '@Url.Action("ShowResult", "MyTest", new{ id= Model.QuestionPaparId})';
+                } else {
+                    $("#divMyTest").empty();
+                    $("#divMyTest").html(data);
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "divMyTest"]);
+                }
+            },
+            error: function (data) {
+                debugger;
+
+            }
+        });
+    }
+</script>
+<div class="page-head">
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">@Model.QuestionPaparName</li>
+    </ol>
+    <div class="row">
+        <div class="col-md-10"><h3>@Model.QuestionPaparName</h3></div>
+        <div class="col-md-2 text-right">
+            @Html.HiddenFor(x => x.Minute)
+            @*<input type="hidden" id="Minute" value="3600" />*@
+            <span id="idTimerSpan"><strong> Time Left: <b style="color: #fff; font-size: 27px;" class="badge badge-info" id="idTimerLCD">00:00:00</b></strong></span>
+        </div>
+    </div>
+</div>
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="divMyTest">
+                @Html.Partial("_DisplayQuestion", this.Model)
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="test-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header btn-success">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <h4 class="modal-title" id="myModalLabel">Test Current Status</h4>
+                        </div>
+                        <div class="col-md-3">
+                            Attempted&nbsp;<div class="badge">11</div>
+                        </div>
+                        <div class="col-md-3">
+                            UnAttempted&nbsp;<div class="badge">6</div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="text-center">Question No</td>
+                            <td class="text-center">Attempted</td>
+                            <td class="text-center">Skipped</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center"><span class="label label-primary">1</span></td>
+                            <td class="text-center">yes</td>
+                            <td class="text-center"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center"><span class="label label-primary">2</span></td>
+                            <td class="text-center">yes</td>
+                            <td class="text-center"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center"><span class="label label-primary">3</span></td>
+                            <td class="text-center">yes</td>
+                            <td class="text-center"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer form-inline">
+                    <strong> Submit test?</strong>  <a href="@Url.Action("ShowResult", "MyTest")" id="btnSubmitTest" class="btn btn-success btn-ok">Yes</a>
+                    <a href="#" class="btn btn-default " data-dismiss="modal">No</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

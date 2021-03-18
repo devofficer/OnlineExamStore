@@ -1,0 +1,97 @@
+@model OnlineExam.Models.LoginViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .container-fluid {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#footerDiv").hide();
+        $('body').addClass('texture');
+    });
+</script>
+<div id="cl-wrapper" class="login-container">
+    <div class="middle-login">
+        <div class="block-flat">
+            <div class="header">
+                <h3 class="text-center"><img src="~/images/logo-icon.png" alt="logo" class="logo-img">ACADA Store</h3>
+            </div>
+            <div>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @style = "margin-bottom: 0px !important;", @class = "form-horizontal", role = "form", @id = "frmLogin" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                            <div class="col-sm-12">
+                                @Html.ValidationSummary("", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    @*<form style="margin-bottom: 0px !important;" class="form-horizontal">*@
+                    <div class="content">
+                        <h4 class="title">Login Access</h4>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                    @*<input id="username" type="text" placeholder="Username" class="form-control">*@
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email" })
+                                    @*@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger", @placeholder="Email" })*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                    @*<input id="password" type="password" placeholder="Password" class="form-control">*@
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
+                                    @*@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", @placeholder = "Password" })*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <div class="checkbox-inline">
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    @Html.LabelFor(m => m.RememberMe)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="pull-right">
+                                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="foot">
+                        <button data-dismiss="modal" type="button" onclick="location.href = 'PreRegister';" class="btn btn-default">Register</button>
+                        <button data-dismiss="modal" type="submit" class="btn btn-success">Log me in</button>
+                    </div>
+                    @*</form>*@
+                }
+            </div>
+        </div>
+        <div class="text-center out-links"><a href="#">© @DateTime.Now.Year - ACADAStore.com</a></div>
+    </div>
+</div>
+
+@*<div class="col-md-6">
+        <div class="form-group">
+            <p>
+                @Html.ActionLink("Register a new user?", "Register")
+            </p>
+            <p>
+                @Html.ActionLink("Forgot your password?", "ForgotPassword")
+            </p>
+            <p>
+                @Html.ActionLink("Register a new School?", "Index", "School")
+            </p>
+        </div>
+
+    </div>*@
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

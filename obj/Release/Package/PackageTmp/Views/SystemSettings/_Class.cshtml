@@ -1,0 +1,71 @@
+﻿<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/lookup/lookup-lib.js"></script>
+@*@{
+        ViewBag.Title = "Index";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }*@
+<script type="text/javascript">
+    $(function () {
+        $(this).BindTable('tab_ClassType', 'GET', '/SystemSettings/GetLookups/?moduleCode=ClassType', 'operateClassType', 'EventsClassType');
+        $('#btnClass').click(function () {
+            var isValid = true;
+            if ($('#textClassType').val() == "") {
+                $('#divTextClass').addClass('has-error has-feedback');
+                $('#textClassType').focus();
+                isValid = false;
+            } else {
+                $('#divTextClass').removeClass('has-error has-feedback');
+            }
+            if (isValid)
+                $(this).callModalPopup('POST', '@Url.Action("_Class", "SystemSettings")', JSON.stringify({ text: $("#textClassType").val(), id: $("#hdnClassType").val() }), "ClassType");
+
+            return isValid;
+        });
+    });
+
+    function operateClassType(value, row, index) {
+        return [
+            '<a class="editClass ml10" href="javascript:void(0)" title="Edit">',
+                '<i class="glyphicon glyphicon-edit"></i>',
+            '</a>',
+            '<a class="removeClass ml10" href="javascript:void(0)" title="Remove">',
+                '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.EventsClassType = {
+        'click .editClass': function (e, value, row, index) {
+            $('#textClassType').val(row.Text);
+            $('#hdnClassType').val(row.LookupId);
+        },
+        'click .removeClass': function (e, value, row, index) {
+            if (confirm('You Want to Delete This')) {
+                //debugger;
+                $(this).callModalPopup('GET', '@Url.Action("DeleteLookup", "SystemSettings")', { id: row.LookupId, moduleCode: row.ModuleCode }, "ClassType");
+            }
+        }
+    };
+</script>
+
+<div class="row">
+    <div class="col-md-6">
+        @Html.Label("Class", new { @class = "col-md-2" })
+        <div class="col-md-8">
+            <div id="divTextClass">
+                @Html.TextBox("textClassType", null, new { @class = "form-control" })
+            </div>
+            @Html.Hidden("hdnClassType")
+            @*@Html.ValidationMessageFor(model => model.VendorCode)*@
+        </div>
+        <div class="col-md-2">
+            <button id="btnClass" type="button" class="btn btn-success"><i class="fa fa-save"></i> Add/Edit</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table id="tab_ClassType"></table>
+</div>
+
+

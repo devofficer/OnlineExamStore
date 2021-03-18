@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+
+<div class="page-head">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Role Index</h3>
+            <ol class="breadcrumb">
+                <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+                <li class="active">Role List</li>
+            </ol>
+        </div>
+        <div class="col-md-8 text-right">
+            <a href="@Url.Action("Create", "RolesAdmin")" class="btn btn-primary" title="Create"><span class="glyphicon glyphicon-plus-sign"></span></a>
+        </div>
+    </div>
+</div>
+<div class="block-flat form-horizontal">
+    <div class="row">
+        <table class="table table-bordered table-condensed table-hover table-responsive">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th style="width:15%">
+                    Action
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", new { id = item.Id })" title="Edit" class="label label-success">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </a>&nbsp;
+                        <a href="@Url.Action("Delete", new { id = item.Id })" title="Delete" id="deleteAction" class="label label-danger">
+                            <span class="fa fa-times"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

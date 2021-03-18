@@ -1,0 +1,230 @@
+﻿
+@*@Scripts.Render("~/bundles/bootstrap")*@
+
+<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="~/Scripts/bootbox.min.js"></script>
+<script type="text/javascript">
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="edit ml10  label label-info" href="javascript:void(0)" title="Edit">',
+            '<i class="fa fa-pencil"></i>',
+            '</a>', '&nbsp;',
+            '<a class="remove ml10  label label-danger" href="javascript:void(0)" title="Remove">',
+            '<i class="fa fa-trash-o"></i>',
+            '</a>'
+        ].join('');
+    }
+    window.operateEvents = {
+        'click .edit': function (e, value, row, index) {
+            //debugger;
+            var params = { 'id': JSON.stringify(row.Id) };
+            //$.get('/Vendor/GetVendorById', params, function (data) {
+            //    // debugger;
+            //    $('#divEditVendor').empty();
+            //    $('#divEditVendor').html(data);
+            //    $('#editDialog').modal('show');
+            //}).fail(function (result) {
+            //    debugger;
+            //});
+            //$.getJSON('/Vendor/GetVendorById', params,
+            //    function (data) {
+            //        debugger;
+            //        $('#divEditVendor').empty();
+            //        $('#divEditVendor').html(data);
+            //        $('#editDialog').modal('show');
+            //    }
+            //);
+            $.ajax({
+                url: '@Url.Action("GetVendorById", "Vendor")',
+                type: 'GET',
+                async: true,
+                cache: false,
+                data: { id: row.Id },
+                success: function (data) {
+                    //debugger;
+                    $('#divEditVendor').empty();
+                    $('#divEditVendor').html(data);
+                    $('#editDialog').modal('show');
+                },
+                error: function (data) {
+                    debugger;
+                }
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            bootbox.confirm({
+                size: 'small',
+                message: "Are your sure, you want to delete the record?",
+                buttons: {
+                    'cancel': {
+                        label: 'Cancel',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: 'Delete',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    debugger;
+                    /* your callback code */
+                    if (result) {
+                        var params = { 'id': JSON.stringify(row.Id) };
+                        $.get('/Vendor/Delete', params, function (data) {
+                            debugger;
+                            $('#tblVendors').bootstrapTable('destroy');
+                            $('#tblVendors').bootstrapTable({
+                                //url: '@Url.Action("GetVendors", "Vendor")',
+                                data: data,
+                                pagination: true,
+                                pageSize: 6,
+                                pageList: [10, 20, 50],
+                                search: true,
+                                showColumns: true,
+                                showRefresh: true,
+                                minimumCountColumns: 3,
+                                clickToSelect: true
+                            });
+                        });
+                    }
+                }
+            });
+        }
+    };
+
+    $(function () {
+        $('#btnAdd').click(function () {
+            var params = { 'id': JSON.stringify(0) };
+            $.get('/Vendor/GetVendorById', params, function (data) {
+                $('#divEditVendor').empty();
+                $('#divEditVendor').html(data);
+                $('#editDialog').modal('show');
+            }).fail(function (result) {
+                debugger;
+            });
+            // EDIT VENDOR
+            $("#btnEditVendor").click(function (e) {
+                debugger;
+                console.log('btnEditVendor click');
+                if ($("#editVendor").valid()) {
+                    e.preventDefault();
+                    $.post('@Url.Action("Create", "Vendor")', $('#editVendor').serialize(), function (data) {
+                        debugger;
+                        if (data.success) {
+                            debugger;
+                            $('#tblVendors').bootstrapTable('destroy');
+                            $('#tblVendors').bootstrapTable({
+                                url: '@Url.Action("GetVendors", "Vendor")',
+                                pagination: true,
+                                pageSize: 6,
+                                pageList: [10, 20, 50],
+                                search: true,
+                                showColumns: true,
+                                showRefresh: true,
+                                minimumCountColumns: 3,
+                                clickToSelect: false
+                            });
+                            $('#editDialog').modal('hide');
+                        }
+                        else
+                            alert(data.errors);
+                    });
+                    return true;
+                }
+                else
+                    return false;
+            });
+        });
+
+        $('#tblVendors').bootstrapTable({
+            url: '@Url.Action("GetVendors", "Vendor")',
+            pagination: true,
+            pageSize: 6,
+            pageList: [10, 20, 50],
+            search: true,
+            showColumns: true,
+            showRefresh: true,
+            minimumCountColumns: 3,
+            clickToSelect: false
+        });
+    });
+</script>
+<style>
+    .modal-dialog {
+        position: absolute;
+        top: 50% !important;
+        -moz-transform: translate(0, -50%) !important;
+        -o-transform: translate(0, -50%) !important;
+        -ms-transform: translate(0, -50%) !important;
+        -webkit-transform: translate(0, -50%) !important;
+        transform: translate(0, -50%) !important;
+        margin: auto 5%;
+        width: 90%;
+        height: 80%;
+    }
+
+    .modal-body {
+        padding: 10px;
+        position: relative;
+    }
+    thead {
+        background-color: #2494F2;
+        color: #fff;
+    }
+</style>
+<div class="page-head">
+    <h3>Vendor List</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Vendor List</li>
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div id="editDialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header btn-success">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <h4 class="modal-title" id="myModalLabel">Add/Edit Vendor</h4>
+                            </div>
+                            <div class="col-md-1 pull-right">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div id="divEditVendor">
+                        </div>
+                        @*@Html.Partial("_Edit")*@
+                    </div>
+                    <div class="modal-footer form-inline">
+                        <strong></strong>  <a id="btnEditVendor" class="btn btn-success">Save</a>
+                        <a href="#" class="btn btn-default " data-dismiss="modal">Close</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="custom-toolbar">
+            <button id="btnAdd" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i> Add New</button>
+        </div>
+        <table id="tblVendors" data-toolbar="#custom-toolbar" data-show-export="true">
+            <thead>
+                <tr>
+                    @*<th data-field="state" data-checkbox="true"></th>*@
+                    <th data-field="Id" data-sortable="false" class="col-md-1">Id</th>
+                    <th data-field="VendorCode" data-sortable="false" class="col-md-1">Vendor Code</th>
+                    <th data-field="Name" data-sortable="false">Name</th>
+                    <th data-field="ContactPerson" data-sortable="false">Contact Person</th>
+                    <th data-field="ContactNumber" data-sortable="false">Contact Number</th>
+                    <th data-field="PrimaryEmail" data-sortable="false">Primary Email</th>
+                    <th data-field="operate" class="col-md-1" data-formatter="operateFormatter" data-events="operateEvents">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>

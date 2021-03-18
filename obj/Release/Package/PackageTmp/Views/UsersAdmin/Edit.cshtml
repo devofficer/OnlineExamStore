@@ -1,0 +1,371 @@
+﻿@model OnlineExam.Models.EditUserViewModel
+<style>
+    .bs-example {
+        /*margin: 20px;*/
+        height: 150px;
+        width: 150px;
+    }
+
+    .table {
+        background-color: #fff;
+        border-width: 0px;
+    }
+
+    .cl-mcont .row {
+        margin-top: 5px;
+    }
+    /*.col-md-6 {
+        padding-right: 0px;
+        padding-left: 0px;
+    }*/
+</style>
+<link href="~/Content/iCheck/all.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.icheck.min.js"></script>
+<link href="~/Content/bootstrap-multiselect.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Status').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+            increaseArea: '20%' // optional
+        });
+
+        $('#SelectedClasses').multiselect({
+            nonSelectedText: 'Select Class',
+            allSelectedText: 'All Selected',
+            selectAllName: true,
+            includeSelectAllOption: true,
+            numberDisplayed: 2,
+            buttonWidth: '100%'
+        });
+
+        $(document).on('change', '#CountryId', function () {
+            $.getJSON('@Url.Action("GetStates", "UsersAdmin")', { countryCode: $('#CountryId').val() },
+                function (data) {
+                    var items = '<option>Select</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#State').html(items);
+                }
+            );
+        });
+        $(document).on('change', '#State', function () {
+            $.getJSON('@Url.Action("GetCities", "UsersAdmin")', { stateCode: $('#State').val() },
+                function (data) {
+                    var items = '<option>Select</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#City').html(items);
+                }
+            );
+        });
+        //============
+        $(document).on('change', '#City', function () {
+            $.getJSON('@Url.Action("GetSchools", "UsersAdmin")', { stateCode: $('#State').val(), cityCode: $('#City').val() },
+                function (data) {
+                    var items = '<option>Select</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#SchoolName').html(items);
+                }
+            );
+        });
+
+        $(document).on('change', '#SchoolName', function (e) {
+            if (e.target.value == "Others") {
+                $('#OthersName').show();
+            }
+            else {
+                $('#OthersName').hide();
+            }
+        });
+
+
+    });
+
+</script>
+
+<div class="page-head">
+    <div class="row">
+        <div class="col-md-4">
+            @*<h3>
+                    @if (!Model.IsMyProfile)
+                    {
+                        <text>Edit User</text>
+                    }
+                    else
+                    {
+                        <text>My Profile</text>
+                    }
+                </h3>*@
+            <ol class="breadcrumb">
+                <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+                <li class="active">
+                    @if (!Model.IsMyProfile)
+                    {
+                        <text>Edit User</text>
+                    }
+                    else
+                    {
+                        <text>My Profile</text>
+                    }
+                </li>
+            </ol>
+        </div>
+        @*<div class="col-md-8 text-right">
+                <a href="@Url.Action("Index", "UsersAdmin")" class="btn btn-primary" title="Back"><span class="glyphicon glyphicon-arrow-left"></span></a>
+            </div>*@
+    </div>
+</div>
+@using (Html.BeginForm("Edit", "UsersAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal block-flat">
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.IsMyProfile)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.FirstName, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.LastName, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Email, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DisplayFor(m => m.Email, new { @class = "form-control" })
+                        @Html.HiddenFor(m => m.Email)
+                        <strong class="label label-warning"> (@Html.DisplayFor(m => m.UserType))</strong>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.DOB, new { @class = "col-md-3" })
+                    <div class="col-md-4">
+                        @Html.EditorFor(x => x.DOB)
+                    </div>
+                </div>
+                @if (OnlineExam.Helpers.CustomClaimsPrincipal.Current.IsACDAStoreUser && Model.Email != OnlineExam.Helpers.CustomClaimsPrincipal.Current.CurrentUserEmail)
+                {
+                    <style>
+                        .btn-group {
+                            margin-left: 0px;
+                        }
+                    </style>
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.SelectedClasses, new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            @*@Html.DropDownListFor(x => x.SelectedClasses, Model.ClassTypes, new { @class = "form-control", multiple = "multiple" })*@
+                            @Html.ListBoxFor(model => model.SelectedClasses, new SelectList(Model.ClassTypes, "value", "text"), new { @class = "form-control", multiple = "multiple" })
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.Status, new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <div class="checkbox">
+                                @Html.CheckBox("Status", Model.Status == "Active" ? true : false)
+                                @Html.HiddenFor(m => m.Status)
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.ClassName, new { @class = "col-md-3" })
+                        <div class="col-md-4">
+                            <div class="label label-warning">
+                                @Html.DisplayFor(x => x.ClassName)
+                                @Html.HiddenFor(m => m.ClassName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.Status, new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <div class="label label-success">
+                                @Html.DisplayFor(m => m.Status)
+                                @Html.HiddenFor(m => m.Status)
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Address, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextAreaFor(m => m.Address, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.Label("Country", new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(Model.Countries, "Value", "Text", @Model.CountryId), new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.State, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.State, Model.States, "Select", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.SchoolName, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.SchoolName, Model.Schools, "Select", new { @class = "form-control" })
+                        @if (string.IsNullOrEmpty(Model.OthersName))
+                        {
+                            @Html.TextBoxFor(m => m.OthersName, new { @class = "form-control", style = "display:none;" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.OthersName, new { @class = "form-control" })
+                        }
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.SchoolAddress, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextAreaFor(m => m.SchoolAddress, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    <div class="col-md-3">
+
+                    </div>
+                    <div class="col-md-7">
+                        @if (!string.IsNullOrWhiteSpace(Model.Avatar))
+                        {
+                        <img src="@Url.Content(Model.Avatar)" alt="Image" class="img-thumbnail" />
+                        }
+                        else
+                        {
+                        <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                        }
+                        <input type="file" name="file" id="file" class="btn btn-info" style="width: 170px;" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.City, new { @class = "col-md-3" })
+                    <div class="col-md-7">
+                        @Html.DropDownListFor(m => m.City, Model.Cities, "Select", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.SecondaryContactNo, new { @class = "col-md-3" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.SecondaryContactNo, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Hobbies, new { @class = "col-md-3" })
+                    <div class="col-md-7">
+                        @Html.TextAreaFor(m => m.Hobbies, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.ReferrerEmail, new { @class = "col-md-3" })
+                    <div class="col-md-7">
+                        @Html.DisplayFor(m => m.ReferrerEmail, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.AccountName, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @if (!Model.IsBankDetailReadOnly)
+                        {
+                            @Html.TextBoxFor(m => m.AccountName, new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(m => m.AccountName)
+                            @Html.DisplayFor(m => m.AccountName, new { @class = "form-control" })
+                        }
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.BankName, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @if (!Model.IsBankDetailReadOnly)
+                        {
+                            @Html.TextBoxFor(m => m.BankName, new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(m => m.BankName)
+                            @Html.DisplayFor(m => m.BankName, new { @class = "form-control" })
+                        }
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.IsCorrectionRequired, new { @class = "col-md-3" })
+                    @*<div class="col-md-9">
+                            @Html.CheckBoxFor(m => m.IsCorrectionRequired, new { @class = "form-control" })
+                        </div>*@
+                    <div class="col-md-9">
+                        <div class="checkbox-inline">
+                            @Html.CheckBoxFor(m => m.IsCorrectionRequired)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.AccountNumber, new { @class = "col-md-3" })
+                    <div class="col-md-7">
+
+                        @if (!Model.IsBankDetailReadOnly)
+                        {
+                            @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(m => m.AccountNumber)
+                            @Html.DisplayFor(m => m.AccountNumber, new { @class = "form-control" })
+                        }
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

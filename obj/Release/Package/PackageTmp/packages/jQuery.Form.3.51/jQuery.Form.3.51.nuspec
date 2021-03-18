@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>jQuery.Form</id>
+    <version>3.51</version>
+    <authors>M. Alsup</authors>
+    <owners>M. Alsup</owners>
+    <projectUrl>https://github.com/malsup/form/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The jQuery Form Plugin allows you to easily and unobtrusively upgrade HTML forms to use AJAX. The main methods, ajaxForm and ajaxSubmit, gather information from the form element to determine how to manage the submit process. Both of these methods support numerous options which allows you to have full control over how the data is submitted.
+
+No special markup is needed, just a normal form. Submitting a form with AJAX doesn't get any easier than this!</description>
+    <summary>A simple way to AJAX-ify any form on your page; with file upload and progress support.</summary>
+    <releaseNotes />
+    <copyright>M. Alsup</copyright>
+    <tags>jQuery.Form jQuery Form Upload AJAX</tags>
+    <dependencies>
+      <dependency id="jQuery" version="1.5.0" />
+    </dependencies>
+  </metadata>
+</package>

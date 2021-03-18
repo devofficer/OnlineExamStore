@@ -1,0 +1,396 @@
+﻿@using OnlineExam.Helpers
+@using OnlineExam.Utils
+@model Tuple<OnlineExam.Models.CompanyViewModel, OnlineExam.Models.RegisterViewModel>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+       
+        
+        if (!$('#IsSelfAdmin').is(':checked'))
+            $('#Register').show();
+
+        //if ($('#hdnCountrySelectPOP').val() == "0") {
+        //    bootbox.dialog({
+        //        message: "Choose your bussiness Country",
+        //        title: "Bussiness Country",
+        //        buttons: {
+        //            danger: {
+        //                label: "Australian Bussiness Owner",
+        //                className: "btn-Primary",
+        //                callback: function () {
+
+
+        //                    $('#lblTIN').text("ABN Number");
+        //                    $('#ddlCountry option').each(function () {
+        //                        if (this.innerHTML != 'Australia') {
+        //                            //   alert(this.innerHTML);
+        //                            $(this).remove();
+        //                        }
+
+        //                    });
+        //                    $('#hdnCountrySelectPOP').val("1");
+
+        //                }
+        //            },
+        //            main: {
+        //                label: "Non-Australian Bussiness User",
+        //                className: "btn-primary",
+        //                callback: function () {
+        //                    //do something else
+        //                    $('#lblTIN').text("TIN Number");
+        //                    $('#ddlCountry option').each(function () {
+        //                        if (this.innerHTML == 'Australia')
+        //                            $(this).remove();
+        //                    });
+        //                    $('#hdnCountrySelectPOP').val("1") ;
+        //                }
+        //            }
+        //        }
+
+        //    });
+        //}
+
+        $('#dvButton input[name="submit"]').click(function () {
+            if ($('#file').val().trim() == '') {
+                $('#VSummary').append('<span id="txtVal" class="text-danger"><ul> <li>Company document must be chosen.</li><ul></span>');
+            } else {
+                $('#VSummary').find('span').remove();
+
+            }
+        });
+        $('#IsSelfAdmin').change(function () {
+            if ($('#IsSelfAdmin').is(':checked'))
+                $('#Register').hide();
+            else {
+                $('#Register').show('slow');
+            }
+        });
+    });
+
+
+</script>
+@using (Html.BeginForm("Create", "Company", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="cl-mcont">
+        <div class="form-horizontal  block-flat">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h4>CREATE COMPANY</h4>
+                </div>
+                <div class="col-sm-offset-11">
+                    @Html.ActionLink("Back to List", "Index")
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-offset-0 col-md-8">
+                    <div id="VSummary">
+                        @Html.ValidationSummary("", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Company Code", new { @class = "control-label col-md-4" })
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Item1.CompanyCode, new { @class = "form-control", @readonly = "readonly" })
+                        @*@Html.ValidationMessageFor(model => model.CompanyCode)*@
+                    </div>
+                </div>
+
+                <div class="form-group  col-md-5">
+                    @Html.Label("Name", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.Name, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.Name)*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group  col-md-6">
+                    @Html.Label("Relationship Status", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @*@Html.TextBoxFor(model => model.RelationshipStatus, new { @class = "form-control" })*@
+                        @Html.DropDownListFor(m => m.Item1.RelationshipStatus, new SelectList(
+                       new List<Object> { "Applied", "Prospective" }), "Select", new { @class = "form-control" })
+
+                        @*@Html.ValidationMessageFor(model => model.RelationshipStatus)*@
+                    </div>
+                </div>
+
+                <div class="form-group  col-md-5">
+                    @Html.Label("Location", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.Location, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.Location)*@
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group  col-md-6">
+                    @Html.Label("Description", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextAreaFor(model => model.Item1.Description, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.CompanyDescription)*@
+                    </div>
+                </div>
+            </div>
+            <h4>ADDRESS DETAIL:</h4>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Address Line1", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextAreaFor(model => model.Item1.AddressLine1, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.Address)*@
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    @Html.Label("Address Line2", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Item1.AddressLine2, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.Address)*@
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group  col-md-6">
+                    @Html.Label("City", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(model => model.Item1.City, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.City)*@
+                    </div>
+                </div>
+
+                <div class="form-group  col-md-5">
+                    @Html.Label("State", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.State, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.State)*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Country", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @*@Html.TextBoxFor(model => model.Country, new { @class = "form-control" })*@
+                        @Html.DropDownListFor(model => model.Item1.Country, (IEnumerable<SelectListItem>)ViewBag.Countries, "Select", new { @class = "form-control", @id = "ddlCountry" })
+
+                        @*@Html.DropDownList("Country",(IEnumerable<SelectListItem>)ViewBag.Countries,new { @class = "form-control" })*@
+
+                        @*@Html.ValidationMessageFor(model => model.Country)*@
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    @Html.Label("Post Code", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.ZipCode, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.ZipCode)*@
+                    </div>
+                </div>
+            </div>
+            <h4>CONTACT DETAIL:</h4>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Contact Number", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(model => model.Item1.ContactNumber, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.ContactNumber)*@
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    @Html.Label("Contact Person", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.ContactPerson, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.ContactPerson)*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group  col-md-6">
+                    @Html.Label("Primary Email", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(model => model.Item1.PrimaryEmail, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.PrimaryEmail)*@
+                    </div>
+                </div>
+
+                <div class="form-group  col-md-5">
+                    @Html.Label("Secondary Email", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.SecondaryEmail, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.SecondaryEmail)*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Contact Detail", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextAreaFor(model => model.Item1.ContactDetail, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.ContactDetail)*@
+                    </div>
+                </div>
+            </div>
+            <h4>COMPANY DETAIL:</h4>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("TIN Number", new { @class = "control-label col-md-4", @id = "lblTIN" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(model => model.Item1.TinNumber, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.TinNumber)*@
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    @Html.Label("Service Number", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.ServiceNumber, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.ServiceNumber)*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.Label("Other Number", new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(model => model.Item1.OtherNumber, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.OtherNumber)*@
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    @Html.Label("Business Type", new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Item1.BusinessType, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(model => model.BusinessType)*@
+                    </div>
+                </div>
+            </div>
+            @if (CustomClaimsPrincipal.Current.IsInRole(AppConstants.Roles.ProspectiveClient))
+            {
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        @Html.Label("Self Admin", new {@class = "control-label col-md-4"})
+                        <div class="col-md-1">
+                            @Html.CheckBoxFor(model => model.Item1.IsSelfAdmin, new {@id = "IsSelfAdmin"})
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div id="Register" style="display: none">
+
+                    <div class="row" style="background-color: aliceblue">
+                        <h4>Register user for Company Admin:</h4>
+                        <hr />
+                        <div class="form-group col-md-6">
+                            @Html.LabelFor(m => m.Item2.FirstName, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(m => m.Item2.FirstName, new {@class = "form-control"})
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-5">
+                            @Html.LabelFor(m => m.Item2.LastName, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.Item2.LastName, new {@class = "form-control"})
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="background-color: aliceblue">
+                        <div class="form-group col-md-6">
+                            @Html.LabelFor(m => m.Item2.Email, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(m => m.Item2.Email, new {@class = "form-control", @id = "Email"})
+                                <span id="result"></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-5">
+                            @Html.LabelFor(m => m.Item2.Password, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.PasswordFor(m => m.Item2.Password, new {@class = "form-control"})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="background-color: aliceblue">
+                        <div class="form-group col-md-6">
+                            @Html.LabelFor(m => m.Item2.ConfirmPassword, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-7">
+                                @Html.PasswordFor(m => m.Item2.ConfirmPassword, new {@class = "form-control"})
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-5">
+                            @Html.LabelFor(m => m.Item2.DOB, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.EditorFor(m => m.Item2.DOB, new {@id = "DOB"})
+                            </div>
+                            <script type="text/javascript">
+                                $(document).ready(function() {
+
+                                    $('#Email').blur(function() {
+                                        var url = "/Company/CheckUserName";
+                                        var name = $('#Email').val();
+                                        $.get(url, { input: name }, function(data) {
+                                            if (data == "Available") {
+                                                $("#result").html("<span class='label-success' style='color:white'>Available</span>");
+                                                $("#Email").css('border-color', 'green');
+                                            } else {
+                                                $("#result").html("<span class='label-danger' style='color:white'>@AppConstants.EmailIsExistMessage</span>");
+                                                $("#Email").css('border-color', 'red');
+                                            }
+                                        });
+                                    });
+
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            <h4>COMPANY DOCUMENT:</h4>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-8">
+                    @using (Html.BeginForm("Create", "Company", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.Label("Document:", new { @class = "control-label col-md-3" })
+                        <div class="col-md-4">
+                            @*<input type="file" name="FileUpload1" multiple /><br />*@
+                            <input type="file" name="file" id="file" style="width: 100%;" class="btn btn-info" />
+                        </div>
+                        <div id="dvButton" class="col-md-5">
+                            <input type="submit" name="submit" value="Draft" class="btn btn-success" />
+                            <input type="submit" name="submit" value="Submit" class="btn btn-success" />
+
+                            <input type="button" title="Back" value="← Back To List" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Company")    '" />
+                            <input type="hidden" value=@ViewBag.FirstLoad id="hdnCountrySelectPOP" />
+                        </div>
+                    }
+
+                </div>
+                <div class="form-group">
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

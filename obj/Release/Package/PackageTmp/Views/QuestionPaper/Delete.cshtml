@@ -1,0 +1,97 @@
+﻿@model OnlineExam.Models.QuestionPaper
+<style>
+    .btn {
+        margin-left: 0px;
+    }
+
+    hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    dt, dd {
+        line-height: 2.0;
+    }
+</style>
+<div class="page-head">
+    <h3>Delete Question Paper</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "QuestionPaper")" title="Question Paper">Question Paper</a>
+        </li>
+        <li class="active">Delete</li>
+    </ol>
+</div>
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Are you sure you want to delete this?</h5>
+        </div>
+    </div>
+    <div class="row">
+        <hr />
+    </div>
+    <div class="row">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Minute):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Minute)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.IsActive):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.IsActive)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedOn):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedOn)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedBy):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedBy)
+            </dd>
+        </dl>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+
+        </div>
+        <div class="col-md-2">
+            @using (Html.BeginForm())
+                {
+                @Html.AntiForgeryToken()
+
+                <div class="form-actions">
+                    <button type="submit" name="command" value="Create" id="btnDelete" class="btn btn-danger" title="Delete">
+                        <span class="fa fa-trash-o"></span>
+                    </button>
+
+                    <a href="@Url.Action("Index", "QuestionPaper")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+                </div>
+                }
+        </div>
+    </div>
+</div>

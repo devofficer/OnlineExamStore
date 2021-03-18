@@ -1,0 +1,30 @@
+﻿<div class="page-head">
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">
+            @if (Convert.ToString(Request["level"]) == "1")
+            {
+                <text>1st Level Referral</text>
+            }
+            @if (Convert.ToString(Request["level"]) == "2")
+            {
+                <text>2nd Level Referral</text>
+            }
+        </li>
+    </ol>
+</div>
+<div class="block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            @if (Convert.ToString(Request["level"]) == "1")
+            {
+                @Html.Partial("_ReferralList", true)
+            }
+            @if (Convert.ToString(Request["level"]) == "2")
+            {
+                @Html.Partial("_ReferralList", false)
+            }
+
+        </div>
+    </div>
+</div>

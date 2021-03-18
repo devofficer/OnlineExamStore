@@ -1,0 +1,41 @@
+﻿@model OnlineExam.Models.RoleViewModel
+<div class="page-head">
+    <h3>Edit Role</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "RolesAdmin")" title="Role List">Role List</a>
+        </li>
+        <li class="active">Edit Role</li>
+    </ol>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="block-flat form-horizontal">
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Id)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+                @Html.DisplayNameFor(x => x.Name)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+            <div class="col-md-2 form-inline">
+                <button type="submit" name="command" value="Edit" class="btn btn-success" title="Save">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+                <a href="@Url.Action("Index", "RolesAdmin")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

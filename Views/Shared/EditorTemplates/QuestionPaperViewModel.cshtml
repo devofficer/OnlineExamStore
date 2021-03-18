@@ -1,0 +1,21 @@
+﻿@using Microsoft.Web.Mvc.Html
+@model OnlineExam.Models.QuestionPaperViewModel
+<script type="text/javascript" src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<tr>
+    <td>
+        @Model.Index<strong>.</strong>
+    </td>
+    <td>
+
+        @Html.HiddenFor(x => x.Id)
+        @Html.CheckBoxFor(x => x.IsSelected)
+        @Html.HiddenFor(x => x.IsSelected)
+        @Html.Raw(Model.Decription)
+        @Html.HiddenFor(x => x.Decription)
+    </td>
+    <td>
+        @Html.DisplayFor(x => x.QuestionFormat)
+        @Html.HiddenFor(x => x.QuestionFormat)
+    </td>
+
+</tr>

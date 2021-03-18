@@ -1,0 +1,294 @@
+﻿@using Microsoft.Web.Mvc
+@model OnlineExam.Models.ViewModels.QuestionViewModel
+<script type="text/javascript" src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<link href="~/Content/iCheck/all.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.icheck.min.js"></script>
+
+<script>
+
+    history.pushState(null, null, $("#QuestionPaparId").val());
+    window.addEventListener('popstate', function (event) {
+        history.pushState(null, null, $("#QuestionPaparId").val());
+    });
+
+    $(document).ready(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+            increaseArea: '20%' // optional
+        });
+    });
+
+    $(function () {
+        $('[id*=lnkQuestionError]').click(function (e) {
+            // debugger;
+            //alert($(this).attr("value"));
+            //$('#QuestionPaperId').val($(this).attr("value"));
+            //var description = $(this).closest("tr").find('td:eq(1)').text(); //description
+            //var duration = $(this).closest("tr").find('td:eq(2)').text();// duration
+            //var totalQuestions = $(this).closest("tr").find('td:eq(3)').text(); //total questions
+            //var totalMarks = $(this).closest("tr").find('td:eq(4)').text(); //total marks
+            $('#question-error').modal({
+                show: true
+            });
+            $('#question-error').on('shown.bs.modal', function () {
+                //$("#questionDescription").text(description);
+                //$("#duration").text(duration);
+
+                //$("#totalQuestions").text(totalQuestions);
+                //$("#totalMarks").text(totalMarks);
+            });
+        });
+    });
+</script>
+<style>
+    .block-flat, .block-wizard {
+        padding: 0px 20px;
+    }
+</style>
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script src="~/Content/angular/mytest/display-question.js"></script>
+
+<div class="row">
+    <div class="col-md-12">
+        <style>
+            .form-horizontal .form-group {
+                margin-right: 0px;
+                margin-left: 0px;
+            }
+        </style>
+        <div>
+            <link href="~/Content/bootstrap-combined.min.css" rel="stylesheet" />
+        </div>
+        <div id="question-error" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" ng-app="mytest" ng-controller="displayQuestionController">
+                    <div class="modal-header default">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            Report an error for #
+                            <span>@Model.QuestionId</span>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name="questionErrorForm" ng-submit="save()">
+                            @*<div class="control-group" ng-class="{true: 'error'}[submitted && questionErrorForm.email.$invalid]">
+                                <label class="control-label" for="email">Your email address</label>
+                                <div class="controls">
+                                    <input type="email" name="email" ng-model="newError.Email" required class="form-control" />
+                                    <span class="help-inline" ng-show="submitted && questionErrorForm.email.$error.required"></span>
+                                    <span class="help-inline" ng-show="submitted && questionErrorForm.email.$error.email">Invalid email</span>
+                                </div>
+                            </div>*@
+                            <div class="control-group" ng-class="{true: 'error'}[submitted && questionErrorForm.description.$invalid]">
+                                <label class="control-label" for="description">PLEASE DESCRIBE THE ERROR BELOW:</label>
+                                <div class="controls">
+                                    <input type="hidden" id="questionId" name="questionId" ng-model="newError.QuestionId" ng-init="newError.QuestionId=@Model.QuestionId" />
+                                    <textarea cols="40" rows="10" name="description" ng-model="newError.Discription" required class="form-control" ng-minlength="50"
+                                              ng-maxlength="1000"></textarea>
+                                    <span class="help-inline" ng-show="submitted && questionErrorForm.description.$error.required"></span>
+                                    <!-- show an error if username is too short -->
+                                    <span class="help-inline" ng-show="submitted && questionErrorForm.description.$error.minlength">Minimum 50 charactors</span>
+
+                                    <!-- show an error if username is too long -->
+                                    <span class="help-inline" ng-show="submitted && questionErrorForm.description.$error.maxlength">Maximum 1000 charactors</span>
+                                </div>
+                            </div>
+                            <input type="submit" class="btn" value="Save" ng-click="submitted=true" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Index", "MyTest", FormMethod.Post, new { id = "questionForm" }))
+{
+    @*@Html.AntiForgeryToken()*@
+
+    <div class="row">
+        <div class="col-md-10">
+            @Html.HiddenFor(x => x.PageIndex)
+            @Html.Hidden("QuestionId", Model.Id)
+            @Html.Hidden("OrininalQuestionId", Model.QuestionId)
+            @Html.HiddenFor(x => x.QuestionPaparId)
+            @Html.HiddenFor(x => x.AttemptedQuestionId)
+            @Html.Hidden("AttemptedQuestionPaparId", Model.AttemptedQuestionPaparId)
+            @Html.HiddenFor(x => x.FormatType)
+            @Html.HiddenFor(x => x.TotalMarks)
+            @Html.HiddenFor(x => x.TotalQuestion)
+            <strong>Q @Html.DisplayFor(x => x.PageIndex)</strong> | <span class="text-muted"> #@Html.DisplayFor(x => x.QuestionId)</span><strong>&nbsp;<br /> @Html.Raw(Model.Description) </strong>
+        </div>
+        <div class="col-md-2">
+            <div class="pull-right">
+                <a href="#" id="lnkQuestionError" title="Report an error" class="text-muted">
+                    <span class="glyphicon glyphicon-alert"></span>
+                </a>
+                | <a href="#" title="Ask a doubt">
+                    <span class="text-muted">? Ask a doubt</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    if (Model.ChildQuestions.Any())
+    {
+        @Html.Hidden("ChildCount", Model.ChildQuestions.Count)
+        foreach (var item in Model.ChildQuestions.Select((x, i) => new { Data = x, Index = i + 1 }))
+        {
+            <strong>Q @Html.DisplayFor(x => item.Data.QuestionId)</strong><strong>.&nbsp;@Html.Raw(item.Data.Description) </strong>
+            @Html.Hidden("childQuestionId" + item.Index, item.Data.Id)
+            <div class="row">
+                <div class="col-md-10">
+                    @if (item.Data.SelectedOptionA == "A")
+                    {
+                        <strong>A.</strong>  @Html.RadioButton("SelectedOptionA" + item.Index, "A", true)
+                    }
+                    else
+                    {
+                        <strong>A.</strong>  @Html.RadioButton("SelectedOptionA" + item.Index, "A", false)
+                    }
+                    <label for="OptionA">@Html.Raw(item.Data.OptionA)</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @if (item.Data.SelectedOptionA == "B")
+                    {
+                        <strong>B.</strong>  @Html.RadioButton("SelectedOptionA" + item.Index, "B", true)
+                    }
+                    else
+                    {
+                        <strong>B.</strong>  @Html.RadioButton("SelectedOptionA" + item.Index, "B", false)
+                    }
+                    <label for="OptionB">@Html.Raw(item.Data.OptionB)</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @if (item.Data.SelectedOptionA == "C")
+                    {
+                        <strong>C.</strong>   @Html.RadioButton("SelectedOptionA" + item.Index, "C", true)
+                    }
+                    else
+                    {
+                        <strong>C.</strong>   @Html.RadioButton("SelectedOptionA" + item.Index, "C", false)
+                    }
+                    <label for="OptionC">@Html.Raw(item.Data.OptionC)</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @if (item.Data.SelectedOptionA == "D")
+                    {
+                        <strong>D.</strong>   @Html.RadioButton("SelectedOptionA" + item.Index, "D", true)
+                    }
+                    else
+                    {
+                        <strong>D.</strong>   @Html.RadioButton("SelectedOptionA" + item.Index, "D", false)
+                    }
+                    <label for="OptionD">@Html.Raw(item.Data.OptionD)</label>
+                </div>
+            </div>
+            if (!string.IsNullOrWhiteSpace(item.Data.OptionE))
+            {
+                <div class="row">
+                    <div class="col-md-10">
+                        @if (item.Data.SelectedOptionA == "E")
+                        {
+                            <strong>E.</strong>   @Html.RadioButton("SelectedOptionA" + item.Index, "E", true)
+                        }
+                        else
+                        {
+                            <strong>E.</strong>   @Html.RadioButton("SelectedOptionA" + item.Index, "E", false)
+                        }
+                        <label for="OptionE">@Html.Raw(item.Data.OptionE)</label>
+                    </div>
+                </div>
+            }
+        }
+    }
+    else
+    {
+        if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <img src="@Url.Content(Model.ImagePath)" height="250px" class="img-responsive" />
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-10">
+                <strong>A.</strong>  @Html.RadioButtonFor(x => x.SelectedOptionA, "A")
+                <label for="OptionA">@Html.Raw(Model.OptionA)</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <strong>B.</strong>  @Html.RadioButtonFor(x => x.SelectedOptionA, "B")
+                <label for="OptionB">@Html.Raw(Model.OptionB)</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <strong>C.</strong>   @Html.RadioButtonFor(x => x.SelectedOptionA, "C")
+                <label for="OptionC">@Html.Raw(Model.OptionC)</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <strong>D.</strong>   @Html.RadioButtonFor(x => x.SelectedOptionA, "D")
+                <label for="OptionD">@Html.Raw(Model.OptionD)</label>
+            </div>
+        </div>
+        if (!string.IsNullOrWhiteSpace(Model.OptionE))
+        {
+            <div class="row">
+                <div class="col-md-10">
+                    <strong>E.</strong>   @Html.RadioButtonFor(x => x.SelectedOptionA, "E")
+                    <label for="OptionE">@Html.Raw(Model.OptionE)</label>
+                </div>
+            </div>
+        }
+    }
+
+    <div class="row"><hr /> </div>
+    <div class="row">
+        <div class="col-md-2">
+            @if (Model.IsPreButtonEnabled)
+            {
+            <button id="btnPre" type="button" class="btn btn-default" onclick="PostForm(this);">
+                <i class="fa fa-arrow-left"></i>Previous Question
+            </button>
+            }
+            else
+            {
+            <button id="btnPre" type="button" class="btn btn-default disabled" onclick="PostForm(this);">
+                <i class="fa fa-arrow-left"></i>Previous Question
+            </button>
+            }
+        </div>
+        <div class="col-md-1">
+            @Model.PageIndex/@Model.QuestionCount
+        </div>
+        <div class="col-md-2">
+            @if (Model.IsNxtButtonEnabled)
+            {
+            <button type="button" id="btnNext" class="btn btn-default" onclick="PostForm(this);">
+                Next Question <i class="fa fa-arrow-right"></i>
+            </button>
+            }
+            else
+            {
+            <button type="button" id="btnNext" class="btn btn-default disabled" onclick="PostForm(this);">
+                Next Question <i class="fa fa-arrow-right"></i>
+            </button>
+            }
+        </div>
+        <div class="col-md-1">
+            <input id="btnSubmit" type="button" value="Submit Test" onclick="PostForm(this);" class="btn btn-success" />
+        </div>
+    </div>
+}

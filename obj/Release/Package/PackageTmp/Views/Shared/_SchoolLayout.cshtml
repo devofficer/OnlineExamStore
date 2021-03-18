@@ -1,0 +1,196 @@
+﻿@using Microsoft.AspNet.Identity
+@using OnlineExam.Controllers
+@using OnlineExam.Helpers
+@using OnlineExam.Utils
+@model OnlineExam.Models.School
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Testing Free Quiz Maker Create the Best web-based quizzes  ACADAStore</title>
+    <meta name="description" content="The ACADAStore.com online quiz website, is a professional, easy to use, online quiz that marks your tests and quizzes for you. Create online quizzes free quiz maker." />
+    <meta name="keywords" content="Online testing, Create online quizzes, free quiz maker, web based tests, online quiz maker, testing, test maker,  assesments, quiz software, quizzes, exams, free, classmarker, schools, teachers, students, instant marking, multiple choice" />
+    <link rel="shortcut icon" href="~/images/favicon.png">
+    
+    <!-- Custom styles for this template -->
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <link href="~/Content/static-style.css" rel="stylesheet" />
+
+    <style>
+        .site-header {
+            min-height: 95px;
+        }
+
+
+        .navbar-nav > li {
+            float: left;
+            padding-left: 5px;
+        }
+
+        .cl-mcont {
+            padding: 5px 0 0;
+            min-height: 495px;
+        }
+
+        .block-flat, .block-wizard {
+            margin-bottom: 0px;
+            padding: 10px 20px;
+            -ms-border-radius: 0px;
+            border-radius: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed navbar -->
+    <div id="head-nav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="fa fa-gear"></span>
+                </button>
+                @if (Model.Id > 0)
+                {
+                    <img src="@Model.Logo" alt="Avatar" width="140px" height="50px" />
+                }
+                else
+                {
+                  <img src="~/images/logo.png" alt="Avatar" width="140px" height="50px" />  
+                }
+
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+                @*@Html.Partial("_LoginPartial")*@
+            </div><!--/.nav-collapse animate-collapse -->
+        </div>
+    </div>
+
+    <div id="cl-wrapper" class="fixed-menu">
+        <div class="container-fluid">
+            <div class="cl-mcont">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row">
+                        <img src="~/images/foot-logo.png" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-title">
+                        <h1>Useful Link</h1>
+                    </div>
+                    <div class="fnav">
+                        <ul>
+                            <li><a href="/Home/Index">Home</a></li>
+                            <li><a href="/Home/About">About Us</a></li>
+                            <li><a href="/Home/Contact">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-title">
+                        <h1>Other Links</h1>
+                    </div>
+                    <div class="fnav">
+                        <ul>
+                            <li><a href="/Home/OnlineCbt">Online CBTs</a></li>
+                            <li><a href="/Home/DownloadMaterial">Download Material</a></li>
+                            <li><a href="/Home/Faq">FAQs</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-title">
+                        <h1>Tag Cloud</h1>
+                    </div>
+                    <div class="fnav">
+                        <ul>
+                            <li><a href="/Home/Index">Home</a></li>
+                            <li><a href="/Home/About">About Us</a></li>
+                            <li><a>Gallery</a></li>
+                            <li><a href="/Home/Policy">Term</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-title">
+                        <h1>Contact</h1>
+                    </div>
+                    <p>
+                        <address style="color: #fff">
+                            <strong style="font-size: 20px;">acadastore.com</strong><br>
+                            169 ABA ROAD, PORT HARCOURT<br>
+                            RIVERS STATE, NIGERIA<br>
+                            <abbr title="Phone">P:</abbr> +2348056282125, +2348183607887
+                            <a href="mailto:support@acadastore.com" style="text-decoration: underline;">support@acadastore.com</a>
+                        </address>
+                    </p>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="row">
+                <div class="copyright">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="row">
+                            <p>&copy;2015 Acadastore Terms of Service Privacy Policy </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="row">
+                            <div class="right-foter-social">
+                                <ul>
+                                    <li><a href="#"><img src="~/images/fb-footer.png" alt="" /></a></li>
+                                    <li><a href="#"><img src="~/images/tweeter-footer.png" alt="" /></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    @*<footer class="navbar-fixed-bottom">
+            <p class="text-center">
+                &copy; @DateTime.Now.Year -
+                @if (string.IsNullOrWhiteSpace(Model.Url))
+                {
+                    @Model.Name;
+                }
+                else
+                {
+                    @Model.Url;
+                }
+            </p>
+        </footer>*@
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <!-- Bootstrap core JavaScript
+      ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //initialize the javascript
+            App.init();
+            //App.dashBoard();
+        });
+    </script>
+</body>
+</html>

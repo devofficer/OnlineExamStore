@@ -1,0 +1,179 @@
+﻿@using Microsoft.Web.Mvc.Html
+@model OnlineExam.Models.ContactUsViewModel
+@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+}
+<style>
+    .contact-me textarea {
+        margin-top: 0px;
+    }
+
+    .email-contact {
+        margin-top: 0px;
+    }
+
+    .contact-form-fields {
+        width: 100% !important;
+    }
+
+    .login-form h3 {
+        margin: 5px 0 5px;
+        background-color: #f39c12;
+        color: white;
+    }
+
+    .login-form {
+        padding: 5px;
+        margin: 30px auto 0px;
+        min-height: 330px;
+        width: 60%;
+        /*background-color: #f39c12;*/
+    }
+
+       
+    .contact-me textarea {
+        border: 1px solid #ccc;
+    }
+
+    select.form-control, textarea.form-control {
+        padding: 6px 8px;
+    }
+
+    .validation-summary-errors {
+        text-align: left;
+    }
+    .field-validation-error {
+        float: left;
+    }
+    .content-alpage {
+        background: none;
+        background-color: white;
+    }
+</style>
+<section class="heading-about-page">
+    <div class="container">
+        <div class="row">
+            <div class="headings-allpage">
+                <h1>CONTACT ACADASTORE</h1><span><img src="~/images/about-heading-img.png" alt="" /></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bredcums-sec">
+    <div class="container">
+        <div class="row">
+            <h6><span>Home</span>  // Contact Us</h6>
+        </div>
+    </div>
+</section>
+
+<section class="content-alpage">
+    <div class="container">
+        <div class="row">
+            <div class="login-sec">
+                <div class="login-form">
+                    <h3>Contact Form</h3>
+                    @*<input class="contact-form-fields space-left-form" type="text" name="fname" value="" placeholder="First Name">
+                        <input class="contact-form-fields" type="text" name="lrname" value="" placeholder="Last Name">
+                        <input class="email-contact" type="email" name="entername" value="" placeholder="Enter email">
+                        <textarea rows="3" cols="30" placeholder="Enter Message"></textarea>
+                        <input type="submit" name="submit" value="Submit">*@
+
+                    @using (Html.BeginForm("Contact", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
+
+                        if (!string.IsNullOrWhiteSpace(ViewBag.Message))
+                        {
+                            if (ViewBag.IsError)
+                            {
+                                <div class="alert alert-danger">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    @ViewBag.Message
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    @ViewBag.Message
+                                </div>
+                            }
+
+                        }
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.FirstName)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.LastName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Email)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", @rows = "5", @cols = "30" })
+                                    @Html.ValidationMessageFor(m => m.Description)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-8">
+                                <button class="btn btn-warning" value="Send">
+                                    <span class="glyphicon glyphicon-envelope"></span> SUBMIT
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+                <div class="address-right">
+                    <h4>Our Location</h4>
+                    <address>
+                        <strong style="font-size: 20px;">acadastore.com</strong><br>
+                        169 ABA ROAD, PORT HARCOURT<br>
+                        RIVERS STATE, NIGERIA<br>
+                        <abbr title="Phone">P:</abbr> +2348056282125, +2348183607887
+                    </address>
+
+                    <address style="font-size: 20px;">
+                        <strong>Email:</strong>
+                        <a href="mailto:contactus@acadastore.com" style="text-decoration: underline;">contactus@acadastore.com</a>
+                    </address>
+                    @*<h4>Our Location</h4>
+                        <p>Contact at : acadastore.com</p>
+                        <p>Mobile : +2348056282125, +2348183607887</p>
+                        <p>Address : 169 ABA ROAD, PORT HARCOURT, RIVERS STATE, NIGERIA.</p>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

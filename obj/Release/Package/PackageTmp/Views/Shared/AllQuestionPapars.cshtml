@@ -1,0 +1,185 @@
+﻿@model OnlineExam.Models.QuestionPaperDefaultViewModel
+@using OnlineExam.Helpers
+@using PagedList
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<style>
+    hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pager {
+        margin: 0px;
+    }
+
+        .pager li {
+            padding-right: 5px;
+        }
+    /*.pager li > a, .pager li > span {
+            padding: 15px 14px;
+        }*/
+</style>
+<div class="row">
+    <div class="pull-left">
+        <strong> Total Count:&nbsp;</strong><span class="label label-warning"> @Model.QuestionPaperList.ToPagedList(Model.QuestionPaperSearchViewModel.PageIndex, Model.QuestionPaperSearchViewModel.PageSize).TotalItemCount</span>
+    </div>
+</div>
+@if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+{
+    <div class="row">
+        <table id="tblAdmin" class="table table-condensed table-hover table-bordered table-responsive">
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    @Html.DisplayName("Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Duration")
+                </th>
+                <th>
+                    @Html.DisplayName("Class Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Exam Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Subject")
+                </th>
+                <th>
+                    @Html.DisplayName("Is Active?")
+                </th>
+                <th>
+                    @Html.DisplayName("Created On")
+                </th>
+                <th>Action</th>
+            </tr>
+
+            @foreach (var item in Model.QuestionPaperList.Select((x, i) => new { Data = x, Index = i + 1 }))
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Index)<strong>.</strong>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.Minute)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.ClassName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.ExamName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.Subject)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.IsActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data.CreatedOn)
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                    <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                </td>
+            </tr>
+            }
+
+        </table>
+    </div>
+    <div class="row alert">
+        <div id="div1" class="form-inline">
+            <div class="pull-left">
+                <strong> Total Count:&nbsp;</strong><span class="label label-warning"> @Model.QuestionPaperList.ToPagedList(Model.QuestionPaperSearchViewModel.PageIndex, Model.QuestionPaperSearchViewModel.PageSize).TotalItemCount</span>   &nbsp;&nbsp;<strong> Page</strong> @(Model.QuestionPaperList.ToPagedList(Model.QuestionPaperSearchViewModel.PageIndex, Model.QuestionPaperSearchViewModel.PageSize).PageCount < Model.QuestionPaperList.ToPagedList(Model.QuestionPaperSearchViewModel.PageIndex, Model.QuestionPaperSearchViewModel.PageSize).PageNumber ? 0 : Model.QuestionPaperList.ToPagedList(Model.QuestionPaperSearchViewModel.PageIndex, Model.QuestionPaperSearchViewModel.PageSize).PageNumber) of @Model.QuestionPaperList.ToPagedList(Model.QuestionPaperSearchViewModel.PageIndex, Model.QuestionPaperSearchViewModel.PageSize).PageCount
+            </div>
+            <div class="pull-right">
+                @using (Html.BeginForm("Index", "QuestionPaper"))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.DropDownListFor(x => x.QuestionPaperSearchViewModel.PageSize, Model.QuestionPaperSearchViewModel.PageSizeList, htmlAttributes: new
+                        {
+                            @class = "form-control",
+                            onchange = "this.form.submit();"
+                        })
+                }
+            </div>
+            <div id="div2" class="pull-right" style="padding-right: 10px">
+                @Html.PagedListPager(
+            Model.QuestionPaperList.ToPagedList(
+            Model.QuestionPaperSearchViewModel.PageIndex,
+            Model.QuestionPaperSearchViewModel.PageSize),
+            page => Url.Action("Index", new { page, Model.QuestionPaperSearchViewModel.CurrentFilter }),
+             PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                                       PagedListRenderOptions.TwitterBootstrapPagerAligned,
+                                       new AjaxOptions
+                                       {
+                                           HttpMethod = "POST",
+                                           UpdateTargetId = "tblQuestionPapars",
+                                           LoadingElementId = "loading"
+                                       })
+            )
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <table id="tblUser" class="table table-condensed table-hover table-bordered table-responsive">
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    @Html.DisplayName("Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Duration")
+                </th>
+                <th>
+                    @Html.DisplayName("Class Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Exam Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Subject")
+                </th>
+                <th>Take Test</th>
+            </tr>
+
+            @foreach (var item in Model.QuestionPaperList.Select((x, i) => new { Data = x, Index = i + 1 }))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Index)<strong>.</strong>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.Minute)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.ClassName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.ExamName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.Subject)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Take Test"><span class="fa fa-hand-o-right"></span></a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}

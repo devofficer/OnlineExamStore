@@ -1,0 +1,355 @@
+﻿@using Microsoft.AspNet.Identity
+@using OnlineExam.Controllers
+@using OnlineExam.Helpers
+@using OnlineExam.Utils
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="~/images/favicon.png">
+    <title>Online Testing Free Quiz Maker Create the Best web-based quizzes  ACADAStore</title>
+    <meta name="description" content="The ACADAStore.com online quiz website, is a professional, easy to use, online quiz that marks your tests and quizzes for you. Create online quizzes free quiz maker." />
+    <meta name="keywords" content="Online testing, Create online quizzes, free quiz maker, web based tests, online quiz maker, testing, test maker,  assesments, quiz software, quizzes, exams, free, classmarker, schools, teachers, students, instant marking, multiple choice" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Scripts/pace/themes/red/pace-theme-minimal.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+
+
+    <style>
+        .datepicker {
+            padding: 4px;
+            -ms-border-radius: 0px;
+            border-radius: 0px;
+            direction: ltr;
+        }
+
+        /*.navbar-fixed-top, .navbar-fixed-bottom {
+            left: 0;
+            min-height: 5px;
+            position: fixed;
+            right: 0;
+            z-index: 1030;
+        }*/
+        .page-head {
+            padding: 5px 10px;
+        }
+
+        .cl-mcont {
+            padding: 5px 0 0;
+            min-height: 0px;
+        }
+
+        h1, .h1, h2, .h2, h3, .h3 {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .block-flat, .block-wizard {
+            margin-bottom: 0px;
+            padding: 10px 20px;
+            -ms-border-radius: 0px;
+            border-radius: 0px;
+        }
+
+        .navbar-default .navbar-brand {
+            background: url('../../images/logo.png') no-repeat;
+        }
+
+        .cl-vnavigation .parent a {
+            background: url("../../images/arrow.png") no-repeat scroll right 14px top 18px transparent;
+        }
+
+        .sb-collapsed .cl-vnavigation .parent > a {
+            background: url("../../images/arrow.png") no-repeat scroll right 14px top 18px rgba(0, 0, 0, 0);
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+
+        .alert-dismissable .close {
+            right: 0px;
+        }
+        /* styles for validation helpers */
+        .field-validation-error {
+            color: #b94a48;
+        }
+
+        .field-validation-valid {
+            display: none;
+        }
+
+        input.input-validation-error,
+        textarea.input-validation-error,
+        select.input-validation-error {
+            border: 1px solid #b94a48;
+            background-color: #ffeeee;
+        }
+
+        input[type="checkbox"].input-validation-error {
+            border: 0 none;
+        }
+
+        .validation-summary-errors {
+            color: #b94a48;
+        }
+
+        .validation-summary-valid {
+            display: none;
+        }
+
+        .btn {
+            margin-left: 0px;
+        }
+    </style>
+    @*<script type="text/javascript">
+            $(document).ready(function () {
+                $(".datepicker").datepicker({
+                    format: "dd/mm/yyyy",
+                    todayBtn: "linked",
+                    multidateSeparator: "/",
+                    autoclose: true,
+                    todayHighlight: true
+                });
+
+                $('.dateOfBirth').datepicker({
+                    format: "dd/mm/yyyy",
+                    todayBtn: "linked",
+                    multidateSeparator: "/",
+                    autoclose: true,
+                    todayHighlight: true,
+                    endDate: '+0d',
+                    onRender: function (date) {
+                        return date.valueOf() > now.valueOf() ? 'disabled' : '';
+                    }
+                });
+            });
+
+        </script>*@
+</head>
+<body>
+    <!-- Fixed navbar -->
+    <div id="head-nav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="fa fa-gear"></span>
+                </button>
+                <img src="~/images/logo.png" alt="Avatar" width="140px" height="50px" />
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    }
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+
+                    @if (Request.IsAuthenticated && !CustomClaimsPrincipal.Current.IsACDAStoreUser && CustomClaimsPrincipal.Current.MembershipPlan == MembershipPlanType.Trial.ToString())
+                    {
+                        <li>
+                            <a href="@Url.Action("MembershipExpired", "Account")" title="Upgrade Membership">
+                                <span>
+                                    <i class="glyphicon glyphicon-shopping-cart"></i>
+                                    <span>&nbsp;Upgrade Membership</span>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div><!--/.nav-collapse animate-collapse -->
+        </div>
+    </div>
+
+    <div id="cl-wrapper" class="fixed-menu sb-collapsed">
+        @if (Request.IsAuthenticated && (User.IsInRole(AppConstants.Roles.StaffAdmin)))
+        {
+            <div class="cl-sidebar">
+                <div class="cl-toggle"><i class="fa fa-bars"></i></div>
+                <div class="cl-navblock">
+                    <div class="menu-space" style="background-color: #272930;">
+                        <div class="content">
+                            <div class="side-user">
+                                <div class="avatar">
+                                    @if (!string.IsNullOrWhiteSpace(CustomClaimsPrincipal.Current.Avatar))
+                                    {
+                                        <img src="@Url.Content(CustomClaimsPrincipal.Current.Avatar)" alt="Avatar" height="50px" width="50px" />
+                                    }
+                                    else
+                                    {
+                                        <img alt="Avatar" src="~/Content/Images/ContactPerson.jpg" alt="Avatar" height="50px" width="50px" />
+                                    }
+                                    <b class="caret"></b>
+                                </div>
+                                <div class="info">
+                                    <a href="#">
+                                        @(string.IsNullOrWhiteSpace(CustomClaimsPrincipal.Current.UserFullName) ? User.Identity.Name : CustomClaimsPrincipal.Current.UserFullName)
+                                    </a>
+                                    <img src="~/images/state_online.png" alt="Status" /> <span>Online</span>
+                                </div>
+                            </div>
+                            <ul class="cl-vnavigation">
+                                <li class="active"><a href="@Url.Action("Dashboard", "Account")"><i class="fa fa-home"></i><span>Dashboard</span></a></li>
+                                <li>
+                                    <a href="@Url.Action("Index", "UsersAdmin")" title="Manage Users">
+                                        <i class="fa fa-users"></i>
+                                        <span>&nbsp;Manage Users</span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "UsersAdmin")" title="Manage Users">
+                                                <span>&nbsp;User List</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "RolesAdmin")" title="Manage Roles">
+                                        <i class="fa fa-lock"></i>
+                                        <span>&nbsp;Manage Roles</span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "RolesAdmin")" title="Manage Roles">
+                                                <span>&nbsp;Role List</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "SystemSettings")" title="System Settings"><i class="fa fa-gear"></i><span>&nbsp;System Setting</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "SystemSettings")" title="System Settings"><span>&nbsp;System Settings</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("UploadExcel", "LinqToExcel")" title="System Settings"><i class="fa fa-book"></i><span>&nbsp;Upload Questions</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("UploadExcel", "LinqToExcel")" title="System Settings"><span>&nbsp;Upload Questions</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("Index", "Vendor")" title="Vendor"><i class="fa fa-group"></i><span>&nbsp;Vendor</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Vendor")" title="Vendor"><span>&nbsp;Vendor List</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "Voucher")" title="Voucher"><i class="fa fa-list"></i><span>&nbsp;Voucher</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Voucher")" title="Voucher"><span>&nbsp;Voucher List</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "Question")" title="Question Bank"><i class="fa fa-desktop"></i><span>&nbsp;Question Bank</span></a>
+
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Question")" title="Question Bank"><span>&nbsp;Question List</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "QuestionError")" title="Question Error List"><span>&nbsp;Question Error List</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Create", "Question")" title="Question Bank"><span>&nbsp;Create Question</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "QuestionPaper")" title="Question Paper"><i class="fa fa-list"></i><span>&nbsp;Standard CBTs</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "QuestionPaper")" title="Question Paper"><span>&nbsp;Standard CBTs</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Create", "QuestionPaper")" title="Question Paper"><span>&nbsp;Create New CBT</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("ManageBankPayment", "Account")" title="Manage Bank Payment"><i class="fa fa-usd"></i><span>&nbsp;Manage Bank Payment</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("ManageBankPayment", "Account")" title="Manage Bank Payment"><span>&nbsp;Manage Bank Payment</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "School")" title="Manage School"><i class="fa fa-building"></i><span>&nbsp;School</span></a>
+                                    <ul class="sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "School")" title="Manage School"><span>&nbsp;School</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-right collapse-button" style="padding: 7px 9px;">
+                        <input type="text" class="form-control search" placeholder="Search..." />
+                        <button id="sidebar-collapse" class="btn btn-default" style=""><i style="color: #fff;" class="fa fa-angle-left"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid" id="pcont">
+                <div class="cl-mcont">
+                    @Html.Partial("_Alerts")
+                    @RenderBody()
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="container-fluid">
+                <div class="cl-mcont">
+                    @Html.Partial("_Alerts")
+                    @RenderBody()
+                </div>
+            </div>
+        }
+    </div>
+
+    <footer class="navbar-default" id="footerDiv">
+        <p class="text-center">&copy; @DateTime.Now.Year - ACADAStore.com</p>
+    </footer>
+        @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/pace/pace.min.js"></script>
+    @RenderSection("scripts", required: false)
+    @*<script src="~/Scripts/jquery-2.1.1.min.js"></script>*@
+    @*<script type="text/javascript" src="~/Scripts/clean-zone-admin-template/js/jquery.js"></script>*@
+    @*<script src="~/Scripts/clean-zone-admin-template/js/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/clean-zone-admin-template/js/jquery.nanoscroller/jquery.nanoscroller.js"></script>
+        <script type="text/javascript" src="~/Scripts/clean-zone-admin-template/js/behaviour/general.js"></script>
+        <script src="~/Scripts/clean-zone-admin-template/js/jquery.ui/jquery-ui.js" type="text/javascript"></script>*@
+
+    <!-- Bootstrap core JavaScript
+      ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //initialize the javascript
+            App.init();
+            //App.dashBoard();
+        });
+    </script>
+</body>
+</html>

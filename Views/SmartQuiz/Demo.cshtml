@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.InitModule = "ngExampleJax";
+    ViewBag.Title = "Summary";
+    Layout = "~/Views/Shared/_SmartQuizLayout.cshtml";
+}
+
+<script src="../Scripts/jquery-2.1.1.min.js"></script>
+<script src="../Scripts/angular/angular.min.js"></script>
+<script src="~/Scripts/MathJax/ng-mathjax.js"></script>
+<script>
+    var app = angular.module("ngExampleJax", ["ngJaxBind"]);
+    app.controller("jaxCtrl", function ($scope, $http) {
+        debugger;
+        $scope.exampleText = "$\\int x^2dx = 2x + C$ is worth \\$2.00.  Even display math works: $$ A = \\left( \\begin{array}{cc}1 & 2 \\\\ 3 & 4 \\end{array}\\right).$$ ";
+    })
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+    }
+    });
+</script>
+<style>
+    .MathJax {
+        font-size: 3.0em;
+    }
+</style>
+<div class="container" ng-controller="jaxCtrl">
+
+
+    <h1>Live LaTeX rendering with AngularJS and MathJax</h1>
+    <p>
+        Use the MathJax CDN, configure inline math with dollar signs, and allow escape characters by adding the following to your header:
+    </p>
+
+    Here is an example.  Edit the text in the box below to see the results:
+    <div ng-init="'exampleText'">
+        <span mathjax-bind="exampleText"></span>
+        <br>
+        <textarea ng-model="exampleText" class="form-control" rows=10 cols=50></textarea>
+    </div>
+
+</div>

@@ -1,0 +1,54 @@
+﻿@model OnlineExam.Models.QuestionFilterViewModel
+@using OnlineExam.Helpers
+@using PagedList;
+@using PagedList.Mvc
+
+<div class="row">
+    <div class="col-md-2">
+        <strong> Total Count:&nbsp;</strong><span class="label label-warning">
+            @if (@Model.Questions != null)
+            { @Model.Questions.TotalItemCount}
+        </span>
+    </div>
+    <div class="col-md-4">
+        <div id="questionListAlert" class="alert-danger" style="display: none">Alert! Please select atleast one question.</div>
+    </div>
+</div>
+
+<div class="row">
+    <table class="table" id="tblQuestionList">
+        <tr>
+            <th style="width: 5px;">
+                #
+            </th>
+            <th>
+                @Html.DisplayName("Question Description")
+            </th>
+            <th style="width: 20%">
+                @Html.DisplayName("Question Format")
+            </th>
+        </tr>
+        @if (@Model.Questions != null)
+        {
+            foreach (var item in Model.Questions.Select((x, i) => new { Data = x, Index = i + 1 }))
+            {
+                <tr>
+                    <td>
+                        @item.Index<strong>.</strong>
+                        @Html.HiddenFor(x => item.Data.Id)
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(x => item.Data.IsSelected)
+                        @Html.Raw(item.Data.Decription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => item.Data.QuestionFormat)
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+    <div id="contentPager">
+        @Html.PagedListPager(Model.Questions, page => Url.Action("Create", new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+<style>
+    .cl-mcont {
+        min-height: 545px;
+    }
+
+    .page-error {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        min-height: 555px;
+    }
+</style>
+<div style="opacity: 1; margin-left: 0px; background: url(../images/bg.jpg)">
+    <div id="cl-wrapper" class="error-container">
+        <div class="page-error">
+            <h1 class="number text-center">401</h1>
+            <h2 class="description text-center">An error occurred while processing your request.</h2>
+            @Model.ActionName
+            @Model.ControllerName
+            @Model.Exception
+        </div>
+    </div>
+</div>
+
+
