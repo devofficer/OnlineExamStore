@@ -26,6 +26,16 @@
             numberDisplayed: 1,
             buttonWidth: '100%'
         });
+
+        $('#SubjectCategories').multiselect({
+            nonSelectedText: 'Select Category',
+            allSelectedText: 'All Selected',
+            selectAllName: true,
+            includeSelectAllOption: true,
+            numberDisplayed: 1,
+            buttonWidth: '100%'
+        });
+
         $("#footerDiv").hide();
         $('body').addClass('texture');
         //$("#UserType").on('change', function () {
@@ -129,10 +139,16 @@
                                     @Html.DropDownListFor(x => x.UserType, Model.UserTypes, "Select Role", new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <div id="classRow" class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-book" aria-hidden="true"></i></span>
                                     @Html.DropDownListFor(x => x.SelectedClasses, Model.ClasseTypes, new { @class = "form-control", multiple = "multiple" })
+                                </div>
+                            </div>
+                            <div id="categoryRow" class="col-sm-12 col-xs-12 col-lg-6 col-md-6" style="display:none; position:absolute; left:230px;">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-book" aria-hidden="true"></i></span>
+                                    @Html.DropDownListFor(x => x.SubjectCategories, Model.SubjectCategory, new { @class = "form-control", multiple = "multiple" })
                                 </div>
                             </div>
                         </div>
@@ -184,5 +200,26 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $("#UserType").change(function () {
+        UnCheckAll();
+        if ($(this).val() == "Teacher") {
+            $("#SelectedClasses").val('');
+             $("#classRow").css('display', 'none');
+            $("#categoryRow").css('display', '');
+        }
+        else {
+            $("#SubjectCategories").val('');
+            $("#categoryRow").css('display', 'none');
+            $("#classRow").css('display', '');
+        }
+    });
+
+    function UnCheckAll() {
+        $("#SelectedClasses").multiselect('refresh');
+        $("#SubjectCategories").multiselect('refresh');        
+    }
+
+    </script>
 }
 

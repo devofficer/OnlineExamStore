@@ -236,6 +236,11 @@ namespace OnlineExam.Models
         [Display(Name = "User Type")]
         public IEnumerable<SelectListItem> UserTypes { get; set; }
 
+        public string[] SubjectCategories { get; set; }
+
+        [Display(Name = "Category")]
+        public IEnumerable<SelectListItem> SubjectCategory { get; set; }
+
         public string RoleId { get; set; }
         [Display(Name = "Role")]
         public List<SelectListItem> Roles { get; set; }

@@ -81,7 +81,7 @@ namespace OnlineExam.Models
         public string State { get; set; }
         public string Country { get; set; }
         public string ClassTypes { get; set; }
-
+        public string SubjectCategory { get; set; }
         public bool IsCorrectionRequired { get; set; }
         public bool IsBankDetailReadOnly { get; set; }
         public string AccountName { get; set; }
@@ -91,6 +91,7 @@ namespace OnlineExam.Models
         public DateTime CreatedOn { get; set; }
         [Timestamp]
         public byte[] RowVersion { get; set; }
+        
         [Required]
         [Index(IsUnique = true)]
         public ApplicationUser ApplicationUser { get; set; }

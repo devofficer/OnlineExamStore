@@ -221,6 +221,7 @@ namespace OnlineExam.Repositories
                     }).OrderBy(x => x.Text);
             }
         }
+
         public static int GetCustomCBTCounter()
         {
             int counter = 1;//MIN QUESTION

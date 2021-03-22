@@ -775,7 +775,8 @@ namespace OnlineExam.Controllers
             var registerViewModel = new RegisterViewModel
             {
                 UserTypes = CommonRepository.GetLookups(Enums.LookupType.UserType.ToString()),
-                ClasseTypes = CommonRepository.GetLookups(Enums.LookupType.ClassType.ToString())
+                ClasseTypes = CommonRepository.GetLookups(Enums.LookupType.ClassType.ToString()),
+                SubjectCategory = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString()).DistinctBy(x=>x.Value)
             };
             using (var dbContext = new ApplicationDbContext())
             {
@@ -823,9 +824,20 @@ namespace OnlineExam.Controllers
                 }
             }
 
-            if (model.SelectedClasses == null || !model.SelectedClasses.Any())
+            if (model.UserType == "Student")
             {
-                ModelState.AddModelError("", "Please select a Class.");
+                if (model.SelectedClasses == null || !model.SelectedClasses.Any())
+                {
+                    ModelState.AddModelError("", "Please select a Class.");
+                }
+            }
+
+            if (model.UserType == "Teacher")
+            {
+                if (model.SubjectCategories == null || !model.SubjectCategories.Any())
+                {
+                    ModelState.AddModelError("", "Please select a Category.");
+                }
             }
 
             model.RegisterType = register.ToLower() == "demo" ? AppConstants.RegisterType.Demo : AppConstants.RegisterType.Paid;
@@ -893,6 +905,7 @@ namespace OnlineExam.Controllers
                         break;
                 }
                 // bool isEmailAusVisa= model.Email.Split('@')[1] == AppConstants.DomainName;
+
                 var user = new ApplicationUser
                 {
                     IsAgreementAccpeted = true,
@@ -901,7 +914,7 @@ namespace OnlineExam.Controllers
                     Email = model.Email,
                     //ReferedBy = AppConstants.MyRMA,
                     Status = AppConstants.UserStatus.Created,
-                    UserProfile = new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, ClassTypes = string.Join("|", model.SelectedClasses) },
+                    UserProfile = model.UserType=="Teacher"? new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, SubjectCategory = string.Join("|", model.SubjectCategories) }: new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, ClassTypes = string.Join("|", model.SelectedClasses) },
                     UserPlans = new List<UserPlan> { userPlan }
                 };
                 try
@@ -1020,6 +1033,7 @@ namespace OnlineExam.Controllers
             }
             model.UserTypes = CommonRepository.GetLookups(Enums.LookupType.UserType.ToString());
             model.ClasseTypes = CommonRepository.GetLookups(Enums.LookupType.ClassType.ToString());
+            model.SubjectCategory = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString()).DistinctBy(x => x.Value);
             // If we got this far, something failed, redisplay form
             return View(model);
         }
