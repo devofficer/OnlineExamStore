@@ -15,4 +15,17 @@ namespace OnlineExam.Models
         public string Role { get; set; }
         public DateTime CreatedOn { get; set; }
     }
+
+    public class TeacherViewModel
+    {
+        public int UserProfileId { get; set; }
+        public string UserId { get; set; }
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public string Status { get; set; }
+        public string Image { get; set; }
+        public string Class { get; set; }
+        public string Subject { get; set; }
+        public string RegisterdDate { get; set; }
+    }
 }

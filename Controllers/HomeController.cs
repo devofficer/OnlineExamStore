@@ -65,9 +65,31 @@ namespace OnlineExam.Controllers
         public ActionResult Teacher()
         {
             // ViewBag.Message = "Your Teacher page.";
-            var info = db.UserProfiles.Where(x => x.ApplicationUser.UserType== "Teacher" && x.ApplicationUser.Status=="Active").ToList();
-            return View(info);
+          //  var info = db.UserProfiles.Where(x => x.ApplicationUser.UserType== "Teacher" && x.ApplicationUser.Status=="Active").ToList();
+            return View();
         }
+
+        [Route("/Home/TeachersList")]
+        private ActionResult TeachersList()
+        {
+            //var recordList = new List<TeacherViewModel>();
+            var dbContext = new ApplicationDbContext();
+
+              var recordList = dbContext.UserProfiles.Where(x => x.ApplicationUser.Status == "Active" && x.ApplicationUser.UserType == "Teacher")
+                    .Select(x => new TeacherViewModel
+                    {
+                        UserProfileId = x.UserProfileId,
+                        Image = x.Avatar,
+                        Email = x.Email,
+                        FullName = x.FullName,
+                        Class = x.ClassTypes,
+                        Subject = x.SubjectCategory,
+                        RegisterdDate = x.CreatedOn.ToString("yyyy-MM-dd")
+                    }).ToList();
+
+            return Json(recordList, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Faq()
         {
             ViewBag.Message = "Your FAQs page.";

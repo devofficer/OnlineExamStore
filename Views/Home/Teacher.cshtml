@@ -1,124 +1,90 @@
-﻿@model List<OnlineExam.Models.UserProfile>
-<style>
-    .well {
-        margin: 5px;
-    }
-
-    .imgDiv {
-        max-width: 140px !important;
-        max-height: 50px;
-        padding-top: 5px;
-    }
-
-    .schoolBox {
-        max-width: 25%;
-        max-height: 50px;
-    }
-
-    /* centered columns styles */
-    .row-centered {
-        text-align: center;
-    }
-
-    .col-centered {
-        display: inline-block;
-        float: none;
-        /* reset the text-align */
-        text-align: center;
-        /* inline-block space fix */
-        margin-right: -4px;
-    }
-
-    .col-fixed {
-        /* custom width */
-        width: 25%;
-    }
-
-    .col-min {
-        /* custom min width */
-        min-width: 25%;
-    }
-
-    .col-max {
-        /* custom max width */
-        max-width: 25%;
-    }
-
-    .tile {
-        display: block;
-        cursor: pointer;
-        -webkit-perspective: 0;
-        -webkit-transform-style: preserve-3d;
-        -webkit-transition: -webkit-transform .2s;
-        float: left;
-        min-width: 25%;
-        min-height: 75px;
-        text-align: center;
-        opacity: .75;
-        /*background-color: #2e8bcc;*/
-        z-index: 1;
-        border: 1px solid #F3E917;
+﻿<style>
+    thead {
+        background-color: #2494F2;
         color: #fff;
     }
 
-        .tile.tile-orange {
-            background-color: #f39c12;
-        }
-
-        .tile.tile-wide, .tile.tile-double {
-            height: 150px;
-            width: 90%;
-        }
-
-        .tile.tile-medium {
-            /*height: 150px;
-            width: 150px;*/
-            height: 100px;
-            width: 90%;
-        }
-
-    .thumbnail {
-        border-radius: 0px;
+    .cl-mcont .row {
+        margin-top: 5px;
     }
 </style>
-<div class="page-head">
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Teachers</h3>
-        </div>
-    </div>
-</div>
-<div class="block-flat form-horizontal">
 
-    @for (int RowCount = 0; RowCount < Model.Count; RowCount++)
-    {
-        <div class="row">
-            @for (int colCount = RowCount; colCount < (Model.Count < (RowCount + 4) ? Model.Count : RowCount + 4); colCount++)
-            {
-                <div class="col-sm-3 col-md-3">
-                    <div class="thumbnail tile tile-medium">
-                        @if (string.IsNullOrWhiteSpace(@Model[colCount].Avatar))
-                        {
-                            <a href="@Url.Action("profile", "Home", new {id= @Model[colCount].UserProfileId })">
-                                <i class="fa-3x fa-building"></i>
-                                <div style="padding: 5px;">
-                                    <strong> @(Model[colCount].FirstName + " " + Model[colCount].LastName)</strong>
-                                </div>
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("Index", "School", new {id= @Model[colCount].UserProfileId })">
-                                <img src="@Model[colCount].Avatar" class="imgDiv" />
-                                <div style="padding: 5px;">
-                                    <strong> @(Model[colCount].FirstName + " " + Model[colCount].LastName)</strong>
-                                </div>
-                            </a>
-                        }
-                    </div>
-                </div>
-                RowCount++;
-            }
+<div class="row">
+            <div id="divList">
+                <table id="tblData" data-toolbar="#custom-toolbar" data-show-export="true" data-export-types="['excel']"
+                       data-export-options='{
+                                                "fileName": "testo",
+                                                "worksheetName": "test1"
+                                                }
+                                               }'>
+                    <thead>
+                        <tr>
+                            <th data-field="Image" data-sortable="false" class="col-md-1">Image</th>
+                            <th data-field="FullName" data-sortable="false">Full Name</th>
+                            <th data-field="Class" data-sortable="false">Class</th>
+                            <th data-field="Subject" data-sortable="false">Subjects</th>
+                            <th data-field="RegisterdDate" data-sortable="false">RegisterdDate</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+
+    function dateFormat(value, row, index) {
+        //debugger;
+        if (value != null && value.length > 5) {
+            var date = new Date(parseInt(value.substr(6)));
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        } else {
+            return value;
+        }
     }
-</div>
+
+    function demoFormat(value, row, index) {
+        var result = "";
+        if (row.IsDemo) {
+            result = "✔️";
+        }
+        return result;
+    }
+
+        function loadList() {
+             $.ajax({
+            url: 'TeachersList',
+                 type: 'GET',
+                 data: {},
+            datatype: "json",
+            success: function (data) {
+                    $('#tblData').bootstrapTable('destroy');
+                           $('#tblData').bootstrapTable({
+                               data: result.data,
+                               pagination: true,
+                               pageSize: 20,
+                               pageList: [10, 20, 50],
+                               search: true,
+                               showColumns: false,
+                               showRefresh: false,
+                               minimumCountColumns: 3,
+                               clickToSelect: false
+                           });
+            },
+            error: function (data) {
+                alert(data.errors);
+            },
+            complete: function () {
+
+            }
+        });
+       
+    }
+        loadList();
+</script>
+}
