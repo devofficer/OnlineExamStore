@@ -198,14 +198,31 @@ namespace OnlineExam.Repositories
                         Text = x.Text.Trim()
                     });
                 }
-                string[] classTypes = CustomClaimsPrincipal.Current.ClassTypes.Split('|');
-                return dbContext.Lookup.Where(x => x.ModuleCode == moduleCode && x.IsActive && classTypes.Contains(x.Value))
-                    .ToList()
-                    .Select(x => new SelectListItem
-                    {
-                        Value = x.Value.Trim(),
-                        Text = x.Text.Trim()
-                    });
+                if (CustomClaimsPrincipal.Current.IsInRole("Teacher"))
+                {
+                    string userId = CustomClaimsPrincipal.Current.UserId;
+                    string[] subjectCategoryTypes = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == userId).SubjectCategory.Split('|');
+                    string[] classCategoryTypes = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && subjectCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
+                    string[] classTypes = dbContext.Lookup.Where(x => x.ModuleCode == "ClassCategory" && x.IsActive && classCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
+                     return dbContext.Lookup.Where(x => x.ModuleCode == moduleCode && x.IsActive && classTypes.Contains(x.Value))
+                           .ToList()
+                           .Select(x => new SelectListItem
+                           {
+                               Value = x.Value.Trim(),
+                               Text = x.Text.Trim()
+                           });
+                }
+                else
+                {
+                    string[] classTypes = CustomClaimsPrincipal.Current.ClassTypes.Split('|');
+                    return dbContext.Lookup.Where(x => x.ModuleCode == moduleCode && x.IsActive && classTypes.Contains(x.Value))
+                        .ToList()
+                        .Select(x => new SelectListItem
+                        {
+                            Value = x.Value.Trim(),
+                            Text = x.Text.Trim()
+                        });
+                }
             }
         }
         public static IEnumerable<SelectListItem> GetLookups(string moduleCode)
