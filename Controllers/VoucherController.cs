@@ -15,7 +15,7 @@ using OnlineExam.Repositories;
 
 namespace OnlineExam.Controllers
 {
-    [Authorize(Roles = "Admin, StaffAdmin")]
+   // [Authorize(Roles = "Admin, StaffAdmin")]
     public class VoucherController : Controller
     {
         private ApplicationDbContext dbContext = new ApplicationDbContext();

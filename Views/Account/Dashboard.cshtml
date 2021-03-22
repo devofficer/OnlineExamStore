@@ -382,6 +382,7 @@
                         <ul>
                             @if (CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
                             {
+                                <li><a href="@Url.Action("Create", "Question")">Create Question</a></li>
                                 <li><a href="@Url.Action("Create", "QuestionPaper")">Create Teacher CBT</a></li>
                                 <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Teacher.ToString() })">Teacher CBT</a></li>
                             }
@@ -394,7 +395,7 @@
                                 <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Custom.ToString() })">Custom CBT</a></li>
                                 <li><a href="@Url.Action("Index", "QuestionPaper")">All CBT</a></li>
                             }
-                            
+
                         </ul>
                     </div>
                 </div>

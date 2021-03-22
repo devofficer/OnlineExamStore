@@ -125,7 +125,7 @@ namespace OnlineExam.Controllers
             var classes = CommonRepository.GetClasses(Enums.LookupType.ClassType.ToString());
             var questionFormats = CommonRepository.GetLookups(Enums.LookupType.QuestionFormatType.ToString());
             var selectListItems = classes as SelectListItem[] ?? classes.ToArray();
-            // DONT LOAD QUESTION ON PAGE LOAD
+           // DONT LOAD QUESTION ON PAGE LOAD
             //if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
             //{
             //    if (questions == null)

@@ -117,5 +117,6 @@ namespace OnlineExam.Models
         //[Display(Name = "Company")]
         public List<SelectListItem> ClassTypes { get; set; }
         public bool IsMyProfile { get; set; }
+
     }
 }

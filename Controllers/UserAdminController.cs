@@ -301,8 +301,13 @@ namespace OnlineExam.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(string id)
         {
+            var userObj = db.Users.Include("UserProfile").FirstOrDefault(a => a.Id == id);
+
+            int profileId = userObj.UserProfile.UserProfileId;
+
             return await EditUserDetail(id, false);
         }
+        [HttpPost]
         private async Task<ActionResult> EditUserDetail(string id, bool isMyProfile)
         {
             var roles = GetRolesByLoggedInUser();
@@ -400,6 +405,22 @@ namespace OnlineExam.Controllers
 
             var newItem = new SelectListItem { Text = "Others", Value = "Others" };
             editUserViewModel.Schools.Add(newItem);
+
+            ViewBag.Expertise = "";
+            ViewBag.Qualifications = "";
+            ViewBag.Offering = "";
+            ViewBag.Lessons = "";
+
+            int profileId = userObj.UserProfile.UserProfileId;
+            if (db.TeachersProfileExtended.Where(x => x.UserProfileId == profileId).Count() > 0)
+            {
+                var extendedInfo = db.TeachersProfileExtended.FirstOrDefault(x => x.UserProfileId == profileId);
+                ViewBag.Expertise = extendedInfo.Expertise;
+                ViewBag.Qualifications = extendedInfo.Qualifications;
+                ViewBag.Offering = extendedInfo.Offering;
+                ViewBag.Lessons = extendedInfo.Lessons;
+            }
+
             // ADMIN CAN CHANGE END USER'S CLASS, SO WE ARE LOADING ALL CLASSES
             if (!isMyProfile)
             {
@@ -582,7 +603,32 @@ namespace OnlineExam.Controllers
                 //    IdentityResult ResultD = await UserManager.RemovePasswordAsync(editUser.Id);
                 //    IdentityResult ResultA = await UserManager.AddPasswordAsync(editUser.Id, editUser.Password);
                 //}
+                if (User.IsInRole("Teacher"))
+                {
+                    int profileId = user.UserProfile.UserProfileId;
 
+                    if (db.TeachersProfileExtended.Where(x => x.UserProfileId == profileId).Count() > 0)
+                    {
+                        var extendedInfo = db.TeachersProfileExtended.FirstOrDefault(x => x.UserProfileId == profileId);
+                        extendedInfo.Expertise = Request.Form["txtExpertise"];
+                        extendedInfo.Qualifications = Request.Form["txtQualifications"];
+                        extendedInfo.Offering = Request.Form["txtOffering"];
+                        extendedInfo.Lessons = Request.Form["txtLesson"];
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        var extendedInfo = new TeachersProfileExtended();
+                        extendedInfo.UserProfileId = profileId;
+                        extendedInfo.Expertise = Request.Form["txtExpertise"];
+                        extendedInfo.Qualifications = Request.Form["txtQualifications"];
+                        extendedInfo.Offering = Request.Form["txtOffering"];
+                        extendedInfo.Lessons = Request.Form["txtLesson"];
+
+                        db.TeachersProfileExtended.Add(extendedInfo);
+                        db.SaveChanges();
+                    }
+                }
 
                 if (result == 0)
                 {

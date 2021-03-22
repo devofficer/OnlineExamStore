@@ -153,6 +153,8 @@ namespace OnlineExam.Models
 
         public DbSet<ReferralOrder> ReferralOrders { get; set; }
 
+        public DbSet<TeachersProfileExtended> TeachersProfileExtended { get; set; }
+
         public override int SaveChanges()
         {
             try

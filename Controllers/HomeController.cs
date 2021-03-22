@@ -15,6 +15,7 @@ namespace OnlineExam.Controllers
 {
     public class HomeController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
         public ActionResult Index()
         {
             return View();
@@ -63,8 +64,9 @@ namespace OnlineExam.Controllers
         }
         public ActionResult Teacher()
         {
-            ViewBag.Message = "Your Teacher page.";
-            return View();
+            // ViewBag.Message = "Your Teacher page.";
+            var info = db.UserProfiles.Where(x => x.ApplicationUser.UserType== "Teacher" && x.ApplicationUser.Status=="Active").ToList();
+            return View(info);
         }
         public ActionResult Faq()
         {

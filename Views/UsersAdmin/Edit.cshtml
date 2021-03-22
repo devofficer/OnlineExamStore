@@ -124,247 +124,291 @@
 @using (Html.BeginForm("Edit", "UsersAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    <div class="form-horizontal block-flat">
-        <div class="row">
+<div class="form-horizontal block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.IsMyProfile)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
             <div class="col-md-12">
-                @Html.ValidationSummary("", new { @class = "text-danger" })
-                @Html.HiddenFor(model => model.Id)
-                @Html.HiddenFor(model => model.IsMyProfile)
+                @Html.LabelFor(model => model.FirstName, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.LastName, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Email, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.DisplayFor(m => m.Email, new { @class = "form-control" })
+                    @Html.HiddenFor(m => m.Email)
+                    <strong class="label label-warning"> (@Html.DisplayFor(m => m.UserType))</strong>
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.DOB, new { @class = "col-md-3" })
+                <div class="col-md-4">
+                    @Html.EditorFor(x => x.DOB)
+                </div>
+            </div>
+            @if (OnlineExam.Helpers.CustomClaimsPrincipal.Current.IsACDAStoreUser && Model.Email != OnlineExam.Helpers.CustomClaimsPrincipal.Current.CurrentUserEmail)
+            {
+                <style>
+                    .btn-group {
+                        margin-left: 0px;
+                    }
+                </style>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.SelectedClasses, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        @*@Html.DropDownListFor(x => x.SelectedClasses, Model.ClassTypes, new { @class = "form-control", multiple = "multiple" })*@
+                        @Html.ListBoxFor(model => model.SelectedClasses, new SelectList(Model.ClassTypes, "value", "text"), new { @class = "form-control", multiple = "multiple" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Status, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        <div class="checkbox">
+                            @Html.CheckBox("Status", Model.Status == "Active" ? true : false)
+                            @Html.HiddenFor(m => m.Status)
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.ClassName, new { @class = "col-md-3" })
+                    <div class="col-md-4">
+                        <div class="label label-warning">
+                            @Html.DisplayFor(x => x.ClassName)
+                            @Html.HiddenFor(m => m.ClassName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Status, new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        <div class="label label-success">
+                            @Html.DisplayFor(m => m.Status)
+                            @Html.HiddenFor(m => m.Status)
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Address, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.Address, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.Label("Country", new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.CountryId, new SelectList(Model.Countries, "Value", "Text", @Model.CountryId), new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.State, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(m => m.State, Model.States, "Select", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.SchoolName, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(m => m.SchoolName, Model.Schools, "Select", new { @class = "form-control" })
+                    @if (string.IsNullOrEmpty(Model.OthersName))
+                    {
+                        @Html.TextBoxFor(m => m.OthersName, new { @class = "form-control", style = "display:none;" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.OthersName, new { @class = "form-control" })
+                    }
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.SchoolAddress, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.SchoolAddress, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-7">
+                    @if (!string.IsNullOrWhiteSpace(Model.Avatar))
+                    {
+                        <img src="@Url.Content(Model.Avatar)" alt="Image" class="img-thumbnail" />
+                    }
+                    else
+                    {
+                        <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                    }
+                    <input type="file" name="file" id="file" class="btn btn-info" style="width: 170px;" />
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.City, new { @class = "col-md-3" })
+                <div class="col-md-7">
+                    @Html.DropDownListFor(m => m.City, Model.Cities, "Select", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.SecondaryContactNo, new { @class = "col-md-3" })
+                <div class="col-md-7">
+                    @Html.TextBoxFor(m => m.SecondaryContactNo, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Hobbies, new { @class = "col-md-3" })
+                <div class="col-md-7">
+                    @Html.TextAreaFor(m => m.Hobbies, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.ReferrerEmail, new { @class = "col-md-3" })
+                <div class="col-md-7">
+                    @Html.DisplayFor(m => m.ReferrerEmail, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <hr />
+        </div>
+    </div>
+    @if (User.IsInRole("Teacher"))
+    {
         <div class="row">
             <div class="col-md-6">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.FirstName, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-                    </div>
+                <div class="col-md-3">
+                    @Html.Label("Expertise", new { @class = "col-md-3" })
                 </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.LastName, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.Email, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.DisplayFor(m => m.Email, new { @class = "form-control" })
-                        @Html.HiddenFor(m => m.Email)
-                        <strong class="label label-warning"> (@Html.DisplayFor(m => m.UserType))</strong>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.DOB, new { @class = "col-md-3" })
-                    <div class="col-md-4">
-                        @Html.EditorFor(x => x.DOB)
-                    </div>
-                </div>
-                @if (OnlineExam.Helpers.CustomClaimsPrincipal.Current.IsACDAStoreUser && Model.Email != OnlineExam.Helpers.CustomClaimsPrincipal.Current.CurrentUserEmail)
-                {
-                    <style>
-                        .btn-group {
-                            margin-left: 0px;
-                        }
-                    </style>
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.SelectedClasses, new { @class = "col-md-3" })
-                        <div class="col-md-9">
-                            @*@Html.DropDownListFor(x => x.SelectedClasses, Model.ClassTypes, new { @class = "form-control", multiple = "multiple" })*@
-                            @Html.ListBoxFor(model => model.SelectedClasses, new SelectList(Model.ClassTypes, "value", "text"), new { @class = "form-control", multiple = "multiple" })
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.Status, new { @class = "col-md-3" })
-                        <div class="col-md-9">
-                            <div class="checkbox">
-                                @Html.CheckBox("Status", Model.Status == "Active" ? true : false)
-                                @Html.HiddenFor(m => m.Status)
-                            </div>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.ClassName, new { @class = "col-md-3" })
-                        <div class="col-md-4">
-                            <div class="label label-warning">
-                                @Html.DisplayFor(x => x.ClassName)
-                                @Html.HiddenFor(m => m.ClassName)
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.Status, new { @class = "col-md-3" })
-                        <div class="col-md-9">
-                            <div class="label label-success">
-                                @Html.DisplayFor(m => m.Status)
-                                @Html.HiddenFor(m => m.Status)
-                            </div>
-                        </div>
-                    </div>
-                }
-
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.Address, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.TextAreaFor(m => m.Address, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.Label("Country", new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.DropDownListFor(model => model.CountryId, new SelectList(Model.Countries, "Value", "Text", @Model.CountryId), new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.State, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.DropDownListFor(m => m.State, Model.States, "Select", new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.SchoolName, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.DropDownListFor(m => m.SchoolName, Model.Schools, "Select", new { @class = "form-control" })
-                        @if (string.IsNullOrEmpty(Model.OthersName))
-                        {
-                            @Html.TextBoxFor(m => m.OthersName, new { @class = "form-control", style = "display:none;" })
-                        }
-                        else
-                        {
-                            @Html.TextBoxFor(m => m.OthersName, new { @class = "form-control" })
-                        }
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.SchoolAddress, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @Html.TextAreaFor(m => m.SchoolAddress, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="col-md-12">
-
+                <div class="col-md-9">
+                    <textarea id="txtExpertise" name="txtExpertise" class="form-control">@ViewBag.Expertise</textarea>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="col-md-12">
-                    <div class="col-md-3">
-
-                    </div>
-                    <div class="col-md-7">
-                        @if (!string.IsNullOrWhiteSpace(Model.Avatar))
-                        {
-                        <img src="@Url.Content(Model.Avatar)" alt="Image" class="img-thumbnail" />
-                        }
-                        else
-                        {
-                        <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
-                        }
-                        <input type="file" name="file" id="file" class="btn btn-info" style="width: 170px;" />
-                    </div>
+                <div class="col-md-3">
+                    @Html.Label("Qualifications", new { @class = "col-md-3" })
                 </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.City, new { @class = "col-md-3" })
-                    <div class="col-md-7">
-                        @Html.DropDownListFor(m => m.City, Model.Cities, "Select", new { @class = "form-control" })
-                    </div>
+                <div class="col-md-9">
+                    <textarea id="txtQualifications" name="txtQualifications" class="form-control">@ViewBag.Qualifications</textarea>
                 </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.SecondaryContactNo, new { @class = "col-md-3" })
-                    <div class="col-md-7">
-                        @Html.TextBoxFor(m => m.SecondaryContactNo, new { @class = "form-control" })
-                    </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-3">
+                    @Html.Label("Offering", new { @class = "col-md-3" })
                 </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.Hobbies, new { @class = "col-md-3" })
-                    <div class="col-md-7">
-                        @Html.TextAreaFor(m => m.Hobbies, new { @class = "form-control" })
-                    </div>
+                <div class="col-md-9">
+                    <textarea id="txtOffering" name="txtOffering" class="form-control">@ViewBag.Offering</textarea>
                 </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.ReferrerEmail, new { @class = "col-md-3" })
-                    <div class="col-md-7">
-                        @Html.DisplayFor(m => m.ReferrerEmail, new { @class = "form-control" })
-                    </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-3">
+                    @Html.Label("Upcoming/Ongoing lesson", new { @class = "col-md-3" })
+                </div>
+                <div class="col-md-9">
+                    <textarea id="txtLesson" name="txtLesson" class = "form-control">@ViewBag.Expertise</textarea>
                 </div>
             </div>
         </div>
+
         <div class="row">
             <div class="col-md-12">
                 <hr />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.AccountName, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @if (!Model.IsBankDetailReadOnly)
-                        {
-                            @Html.TextBoxFor(m => m.AccountName, new { @class = "form-control" })
-                        }
-                        else
-                        {
-                            @Html.HiddenFor(m => m.AccountName)
-                            @Html.DisplayFor(m => m.AccountName, new { @class = "form-control" })
-                        }
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.BankName, new { @class = "col-md-3" })
-                    <div class="col-md-9">
-                        @if (!Model.IsBankDetailReadOnly)
-                        {
-                            @Html.TextBoxFor(m => m.BankName, new { @class = "form-control" })
-                        }
-                        else
-                        {
-                            @Html.HiddenFor(m => m.BankName)
-                            @Html.DisplayFor(m => m.BankName, new { @class = "form-control" })
-                        }
-
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.IsCorrectionRequired, new { @class = "col-md-3" })
-                    @*<div class="col-md-9">
-                            @Html.CheckBoxFor(m => m.IsCorrectionRequired, new { @class = "form-control" })
-                        </div>*@
-                    <div class="col-md-9">
-                        <div class="checkbox-inline">
-                            @Html.CheckBoxFor(m => m.IsCorrectionRequired)
-                        </div>
-                    </div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.AccountName, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @if (!Model.IsBankDetailReadOnly)
+                    {
+                        @Html.TextBoxFor(m => m.AccountName, new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.AccountName)
+                        @Html.DisplayFor(m => m.AccountName, new { @class = "form-control" })
+                    }
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.AccountNumber, new { @class = "col-md-3" })
-                    <div class="col-md-7">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.BankName, new { @class = "col-md-3" })
+                <div class="col-md-9">
+                    @if (!Model.IsBankDetailReadOnly)
+                    {
+                        @Html.TextBoxFor(m => m.BankName, new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.BankName)
+                        @Html.DisplayFor(m => m.BankName, new { @class = "form-control" })
+                    }
 
-                        @if (!Model.IsBankDetailReadOnly)
-                        {
-                            @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
-                        }
-                        else
-                        {
-                            @Html.HiddenFor(m => m.AccountNumber)
-                            @Html.DisplayFor(m => m.AccountNumber, new { @class = "form-control" })
-                        }
-                    </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-9">
-                        <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.IsCorrectionRequired, new { @class = "col-md-3" })
+                @*<div class="col-md-9">
+                        @Html.CheckBoxFor(m => m.IsCorrectionRequired, new { @class = "form-control" })
+                    </div>*@
+                <div class="col-md-9">
+                    <div class="checkbox-inline">
+                        @Html.CheckBoxFor(m => m.IsCorrectionRequired)
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.AccountNumber, new { @class = "col-md-3" })
+                <div class="col-md-7">
 
+                    @if (!Model.IsBankDetailReadOnly)
+                    {
+                        @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.AccountNumber)
+                        @Html.DisplayFor(m => m.AccountNumber, new { @class = "form-control" })
+                    }
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-3"></div>
+                <div class="col-md-9">
+                    <br/>
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
     </div>
+
+</div>
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
