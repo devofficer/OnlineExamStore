@@ -11,6 +11,7 @@ using OnlineExam.Models;
 using System.Net.Mail;
 using System.Net;
 using PagedList;
+using OnlineExam.Repositories;
 
 namespace OnlineExam.Controllers
 {
@@ -63,10 +64,21 @@ namespace OnlineExam.Controllers
             ViewBag.Message = "Your course page.";
             return View();
         }
-        public ActionResult Teacher(int? page, string sortOrder)
+        public ActionResult Teacher(int? page, string sortOrder, string lstClass, string lstSubject)
         {
             ViewBag.CurrentSort = sortOrder;
+            ViewBag.lstClass = lstClass;
+            ViewBag.lstSubject = lstSubject;
+            bool logged = false;
+            int currentUserProfileId = 0;
             var dbContext = new ApplicationDbContext();
+            if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+            {
+                string currentUserId = User.Identity.GetUserId();
+                currentUserProfileId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
+                logged = true;
+            }
+            
           //  IList<TeacherViewModel> recordList = new List<TeacherViewModel>();
             //  var recordList = new List<TeacherViewModel>();
            var recordList = dbContext.UserProfiles.ToList()
@@ -78,14 +90,70 @@ namespace OnlineExam.Controllers
                       FullName = x.FirstName + " " + x.LastName,
                       Class = x.ClassTypes,
                       Subject = x.SubjectCategory,
-                      RegisterdDate = x.CreatedOn.ToString("yyyy-MM-dd")
-                  }).OrderBy(x=>x.UserProfileId);
-            
+                      RegisterdDate = x.CreatedOn.ToString("yyyy-MM-dd"),
+                      Follow = IfFollowing(x.UserProfileId, currentUserProfileId, logged) == true?"Yes":"No"
+                  });
+
+            if (!string.IsNullOrEmpty(lstSubject))
+            {
+                recordList = recordList.Where(x => x.Subject != null);
+                recordList = recordList.Where(x => x.Subject.Contains(lstSubject));
+            }
+            recordList = recordList.OrderBy(x => x.UserProfileId);
             int pageSize = 20;
 
             int pageNumber = (page ?? 1);
 
+            var classCategories = CommonRepository.GetLookups("ClassCategory").DistinctBy(x=>x.Value);
+           // var subjects = CommonRepository.GetLookups("SubjectCategory");
+            ViewBag.classCategories = new SelectList(classCategories, "Value", "Text");
+           // ViewBag.subjects = new SelectList(subjects, "Value", "Text");
+
             return View(recordList.ToPagedList(pageNumber, pageSize));
+        }
+
+        [HttpGet]
+        public JsonResult GetSubjectsByClassCategory(string subjectCategory)
+        {
+            if (string.IsNullOrWhiteSpace(subjectCategory))
+                return Json(HttpNotFound());
+
+            var subjects = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString(), subjectCategory);
+            return Json(subjects, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult AddFollowsList(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            
+            string currentUserId = User.Identity.GetUserId();
+            int currentUserProfileId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
+            if (dbContext.Followers.Where(x=>x.UserProfileId == id && x.FollowersUserProfileId == currentUserProfileId).Count() == 0)
+            {
+                var info = new Followers();
+                info.UserProfileId = id;
+                info.FollowersUserProfileId = currentUserProfileId;
+                info.StartDate = DateTime.Now;
+
+                dbContext.Followers.Add(info);
+                dbContext.SaveChanges();
+            }
+            return RedirectToAction("Teacher");
+        }
+
+        public static bool IfFollowing(int userId1, int userId2, bool logged)
+        {
+            bool flag = false;
+
+            if (logged == true)
+            {
+                var dbContext = new ApplicationDbContext();
+                if (dbContext.Followers.Where(x => x.UserProfileId == userId1 && x.FollowersUserProfileId == userId2).Count() == 0)
+                {
+                    flag = true;
+                }
+            }
+            return flag;
         }
 
         public ActionResult TeacherProfile(int id)

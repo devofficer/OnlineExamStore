@@ -365,6 +365,7 @@
     <Compile Include="Models\APIViewModels\V1\TResult.cs" />
     <Compile Include="Models\AttemptedQuestion.cs" />
     <Compile Include="Models\AttemptedQuestionPapar.cs" />
+    <Compile Include="Models\Followers.cs" />
     <Compile Include="Models\MembershipPlan.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\QuestionBank.cs" />

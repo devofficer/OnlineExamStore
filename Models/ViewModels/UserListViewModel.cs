@@ -31,6 +31,8 @@ namespace OnlineExam.Models
         public string SchoolName { get; set; }
         public string SchoolAddress { get; set; }
         public string RegisterdDate { get; set; }
+        public string Follow { get; set; }
+
     }
 
    

@@ -204,7 +204,7 @@ namespace OnlineExam.Repositories
                     string[] subjectCategoryTypes = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == userId).SubjectCategory.Split('|');
                     string[] classCategoryTypes = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && subjectCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
                     string[] classTypes = dbContext.Lookup.Where(x => x.ModuleCode == "ClassCategory" && x.IsActive && classCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
-                     return dbContext.Lookup.Where(x => x.ModuleCode == moduleCode && x.IsActive && classTypes.Contains(x.Value))
+                    return dbContext.Lookup.Where(x => x.ModuleCode == moduleCode && x.IsActive && classTypes.Contains(x.Value))
                            .ToList()
                            .Select(x => new SelectListItem
                            {

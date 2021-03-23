@@ -57,3 +57,4 @@ E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineEx
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.CopyComplete
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.dll
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.pdb
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csprojAssemblyReference.cache
