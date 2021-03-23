@@ -101,8 +101,6 @@
                         <hr />
                     </div>
                 </div>
-                @if (User.IsInRole("Teacher"))
-                {
                     <div class="row">
                         <div class="col-md-6">
                             <div class="col-md-3">
@@ -140,10 +138,27 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <hr />
+                            <div class="col-md-6">
+                                @if (ViewBag.Following == "Yes")
+                                {
+                                    <div class="tags">
+                                        <a href="@Url.Action("AddFollowsList","Home",new {id=Model.UserProfileId })" class="btnFollow btn btn-success">Follow</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+                                    {
+                                        <div class="tags">
+                                            <a href="#" class="btnFollow btn btn-warning">Followed</a>
+                                        </div>
+                                    }
+                                }
+                            </div>
                         </div>
-                    </div>
-                }
+                                <hr />
+                            </div>
+                        </div>
             </div>
 
         </div>

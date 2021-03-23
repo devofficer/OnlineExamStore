@@ -158,8 +158,15 @@ namespace OnlineExam.Controllers
 
         public ActionResult TeacherProfile(int id)
         {
-            //var recordList = new List<TeacherViewModel>();
+            bool logged = false;
+            int currentUserProfileId = 0;
             var dbContext = new ApplicationDbContext();
+            if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+            {
+                string currentUserId = User.Identity.GetUserId();
+                currentUserProfileId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
+                logged = true;
+            }
 
             var info = dbContext.UserProfiles.Find(id);
 
@@ -176,6 +183,8 @@ namespace OnlineExam.Controllers
                 ViewBag.Offering = techerInfo.Offering;
                 ViewBag.Lessons = techerInfo.Lessons;
             }
+
+            ViewBag.Following = IfFollowing(id, currentUserProfileId, logged) == true ? "Yes" : "No";
 
             return View(info);
         }
