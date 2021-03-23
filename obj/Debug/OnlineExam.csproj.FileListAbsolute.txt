@@ -48,12 +48,12 @@ D:\CBT\Source\OnlineExamStore_3Phase\OnlineExamStore_India_Version\obj\Debug\Onl
 D:\CBT\Source\OnlineExamStore_3Phase\OnlineExamStore_India_Version\bin\System.Net.Http.Formatting.xml
 D:\CBT\Source\OnlineExamStore_3Phase\OnlineExamStore_India_Version\bin\System.Web.Http.xml
 D:\CBT\Source\OnlineExamStore_3Phase\OnlineExamStore_India_Version\bin\System.Web.Http.WebHost.xml
-E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.CoreCompileInputs.cache
-E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.dll
-E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.pdb
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\OnlineExam.dll.config
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\OnlineExam.dll
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\OnlineExam.pdb
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\Dapper.dll
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\Dapper.xml
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.CoreCompileInputs.cache
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.CopyComplete
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.pdb

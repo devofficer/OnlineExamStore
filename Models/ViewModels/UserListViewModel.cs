@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace OnlineExam.Models
 {
@@ -26,6 +28,10 @@ namespace OnlineExam.Models
         public string Image { get; set; }
         public string Class { get; set; }
         public string Subject { get; set; }
+        public string SchoolName { get; set; }
+        public string SchoolAddress { get; set; }
         public string RegisterdDate { get; set; }
     }
+
+   
 }

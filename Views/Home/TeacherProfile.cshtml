@@ -1,0 +1,155 @@
+﻿@model OnlineExam.Models.UserProfile
+<section class="bredcums-sec">
+    <div class="container">
+        <div class="row">
+            <h6><span>Home</span>  // Teacher Profile</h6>
+        </div>
+    </div>
+</section>
+
+<section class="Comparison heading-only color-only">
+    <div class="container">
+        <div class="row">
+            <div class="form-horizontal block-flat">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.FirstName, new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.FirstName)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.LastName, new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.LastName)
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            @Html.Label("Address", new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.AddressLine1)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.Label("Country", new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.Country)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.State, new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.State)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.SchoolName, new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.SchoolName)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.SchoolAddress, new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                @Html.DisplayFor(model => model.SchoolAddress)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="col-md-3">
+
+                            </div>
+                            <div class="col-md-7">
+                                @if (!string.IsNullOrWhiteSpace(Model.Avatar) && File.Exists(Model.Avatar))
+                                {
+                                    <img src="@Url.Content(Model.Avatar)" alt="Image" class="img-thumbnail" />
+                                }
+                                else
+                                {
+                                    <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.City, new { @class = "col-md-3" })
+                            <div class="col-md-7">
+                                @Html.DisplayFor(model => model.City)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.SecondaryContactNo, new { @class = "col-md-3" })
+                            <div class="col-md-7">
+                                @Html.DisplayFor(model => model.SecondaryContactNo)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.Hobbies, new { @class = "col-md-3" })
+                            <div class="col-md-7">
+                                @Html.DisplayFor(model => model.Hobbies)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr />
+                    </div>
+                </div>
+                @if (User.IsInRole("Teacher"))
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-3">
+                                @Html.Label("Expertise", new { @class = "col-md-3" })
+                            </div>
+                            <div class="col-md-9">
+                                @ViewBag.Expertise
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-3">
+                                @Html.Label("Qualifications", new { @class = "col-md-3" })
+                            </div>
+                            <div class="col-md-9">
+                                @ViewBag.Qualifications
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-3">
+                                @Html.Label("Offering", new { @class = "col-md-3" })
+                            </div>
+                            <div class="col-md-9">
+                                @ViewBag.Offering
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-3">
+                                @Html.Label("Upcoming/Ongoing lesson", new { @class = "col-md-3" })
+                            </div>
+                            <div class="col-md-9">
+                                @ViewBag.Expertise
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <hr />
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+</section>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }

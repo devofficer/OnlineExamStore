@@ -3455,6 +3455,7 @@
     <Content Include="Views\Account\ReferralList.cshtml" />
     <Content Include="Views\Shared\_ReferralList.cshtml" />
     <Content Include="Views\Account\ManageBonusOrder.cshtml" />
+    <Content Include="Views\Home\TeacherProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />

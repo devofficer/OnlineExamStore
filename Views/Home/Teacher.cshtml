@@ -1,90 +1,85 @@
-﻿<style>
-    thead {
-        background-color: #2494F2;
-        color: #fff;
-    }
+﻿@model PagedList.IPagedList<OnlineExam.Models.TeacherViewModel>
+@using PagedList.Mvc
 
-    .cl-mcont .row {
-        margin-top: 5px;
-    }
-</style>
+<section class="bredcums-sec">
+    <div class="container">
+        <div class="row">
+            <h6><span>Home</span>  // Teachers</h6>
+        </div>
+    </div>
+</section>
+<section class="Comparison heading-only color-only">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 packs-container">
+                @foreach (var item in Model)
+                {
+                    <div style="width:21%; float:left; border:1px solid #808080; padding:1px auto; margin:1%; text-align:center;">
+                        <div class="title">
+                            <a href="@Url.Action("TeacherProfile","Home",new {id=item.UserProfileId })"><h4 title="@item.FullName" class="ng-binding">@item.FullName</h4></a>
+                        </div>
+                        <div class="title">
+                            @if (!string.IsNullOrEmpty(item.Image) && File.Exists(item.Image))
+                            {<img src="@Url.Content(item.Image)" class="img-thumbnail" width="150" />}
+                            else
+                            {<img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" width="150" />}
+                        </div>
 
-<div class="row">
-            <div id="divList">
-                <table id="tblData" data-toolbar="#custom-toolbar" data-show-export="true" data-export-types="['excel']"
-                       data-export-options='{
-                                                "fileName": "testo",
-                                                "worksheetName": "test1"
-                                                }
-                                               }'>
-                    <thead>
-                        <tr>
-                            <th data-field="Image" data-sortable="false" class="col-md-1">Image</th>
-                            <th data-field="FullName" data-sortable="false">Full Name</th>
-                            <th data-field="Class" data-sortable="false">Class</th>
-                            <th data-field="Subject" data-sortable="false">Subjects</th>
-                            <th data-field="RegisterdDate" data-sortable="false">RegisterdDate</th>
-                        </tr>
-                    </thead>
-                </table>
+                        <div class="details">
+                            <ul class="list-unstyled">
+                                <li>
+                                    @if (!string.IsNullOrEmpty(item.Subject))
+                                    {<span class="ng-binding">Subjects: @item.Subject.Replace("|", ", ")</span>}
+                                </li>
+                                <li>
+
+                                    <span class="ng-binding">Registerd Date: @item.RegisterdDate</span>
+                                </li>
+                            </ul>
+                        </div>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+                        {
+                            <div class="tags">
+                                <a href="#" class="btnFollow btn btn-success" onclick="startFollow(this)">Follow</a>
+                            </div>
+                        }
+                    </div>
+                }
+
+            </div>
+            <div id="contentPager">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("Teacher", "Home",
+            new { page, sortOrder = ViewBag.CurrentSort }))
             </div>
         </div>
+    </div>
+</section>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+        <script type="text/javascript">
 
-<script type="text/javascript">
-
-    function dateFormat(value, row, index) {
-        //debugger;
-        if (value != null && value.length > 5) {
-            var date = new Date(parseInt(value.substr(6)));
-            var day = date.getDate();
-            var month = date.getMonth() + 1;
-            var year = date.getFullYear();
-            return day + '/' + month + '/' + year;
-        } else {
-            return value;
-        }
-    }
-
-    function demoFormat(value, row, index) {
-        var result = "";
-        if (row.IsDemo) {
-            result = "✔️";
-        }
-        return result;
-    }
-
-        function loadList() {
-             $.ajax({
-            url: 'TeachersList',
-                 type: 'GET',
-                 data: {},
-            datatype: "json",
-            success: function (data) {
-                    $('#tblData').bootstrapTable('destroy');
-                           $('#tblData').bootstrapTable({
-                               data: result.data,
-                               pagination: true,
-                               pageSize: 20,
-                               pageList: [10, 20, 50],
-                               search: true,
-                               showColumns: false,
-                               showRefresh: false,
-                               minimumCountColumns: 3,
-                               clickToSelect: false
-                           });
-            },
-            error: function (data) {
-                alert(data.errors);
-            },
-            complete: function () {
-
+            function dateFormat(value, row, index) {
+                //debugger;
+                if (value != null && value.length > 5) {
+                    var date = new Date(parseInt(value.substr(6)));
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                } else {
+                    return value;
+                }
             }
-        });
-       
+
+            function demoFormat(value, row, index) {
+                var result = "";
+                if (row.IsDemo) {
+                    result = "✔️";
+                }
+                return result;
+            }
+
+        </script>
     }
-        loadList();
-</script>
-}

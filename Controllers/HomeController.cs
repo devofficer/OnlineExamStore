@@ -10,6 +10,7 @@ using OnlineExam.Utils;
 using OnlineExam.Models;
 using System.Net.Mail;
 using System.Net;
+using PagedList;
 
 namespace OnlineExam.Controllers
 {
@@ -62,32 +63,53 @@ namespace OnlineExam.Controllers
             ViewBag.Message = "Your course page.";
             return View();
         }
-        public ActionResult Teacher()
+        public ActionResult Teacher(int? page, string sortOrder)
         {
-            // ViewBag.Message = "Your Teacher page.";
-          //  var info = db.UserProfiles.Where(x => x.ApplicationUser.UserType== "Teacher" && x.ApplicationUser.Status=="Active").ToList();
-            return View();
+            ViewBag.CurrentSort = sortOrder;
+            var dbContext = new ApplicationDbContext();
+          //  IList<TeacherViewModel> recordList = new List<TeacherViewModel>();
+            //  var recordList = new List<TeacherViewModel>();
+           var recordList = dbContext.UserProfiles.ToList()
+                  .Select(x => new TeacherViewModel
+                  {
+                      UserProfileId = x.UserProfileId,
+                      Image = x.Avatar,
+                      Email = x.Email,
+                      FullName = x.FirstName + " " + x.LastName,
+                      Class = x.ClassTypes,
+                      Subject = x.SubjectCategory,
+                      RegisterdDate = x.CreatedOn.ToString("yyyy-MM-dd")
+                  }).OrderBy(x=>x.UserProfileId);
+            
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(recordList.ToPagedList(pageNumber, pageSize));
         }
 
-        [Route("/Home/TeachersList")]
-        private ActionResult TeachersList()
+        public ActionResult TeacherProfile(int id)
         {
             //var recordList = new List<TeacherViewModel>();
             var dbContext = new ApplicationDbContext();
 
-              var recordList = dbContext.UserProfiles.Where(x => x.ApplicationUser.Status == "Active" && x.ApplicationUser.UserType == "Teacher")
-                    .Select(x => new TeacherViewModel
-                    {
-                        UserProfileId = x.UserProfileId,
-                        Image = x.Avatar,
-                        Email = x.Email,
-                        FullName = x.FullName,
-                        Class = x.ClassTypes,
-                        Subject = x.SubjectCategory,
-                        RegisterdDate = x.CreatedOn.ToString("yyyy-MM-dd")
-                    }).ToList();
+            var info = dbContext.UserProfiles.Find(id);
 
-            return Json(recordList, JsonRequestBehavior.AllowGet);
+            ViewBag.Expertise = "";
+            ViewBag.Qualifications = "";
+            ViewBag.Offering = "";
+            ViewBag.Lessons = "";
+
+            if(dbContext.TeachersProfileExtended.Where(x=>x.UserProfileId == id).Count() > 0)
+            {
+                var techerInfo = dbContext.TeachersProfileExtended.FirstOrDefault(x => x.UserProfileId == id);
+                ViewBag.Expertise = techerInfo.Expertise;
+                ViewBag.Qualifications = techerInfo.Qualifications;
+                ViewBag.Offering = techerInfo.Offering;
+                ViewBag.Lessons = techerInfo.Lessons;
+            }
+
+            return View(info);
         }
 
         public ActionResult Faq()
