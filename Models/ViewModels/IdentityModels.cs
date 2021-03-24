@@ -156,6 +156,7 @@ namespace OnlineExam.Models
 
         public DbSet<TeachersProfileExtended> TeachersProfileExtended { get; set; }
         public DbSet<Followers> Followers { get; set; }
+        public DbSet<LessonNotes> Lessons { get; set; }
 
         public override int SaveChanges()
         {

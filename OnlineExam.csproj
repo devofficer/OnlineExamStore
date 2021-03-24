@@ -293,6 +293,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CascadingDropDownController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LessonsController.cs" />
     <Compile Include="Controllers\LinqToExcelController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MyTestController.cs" />
@@ -366,6 +367,7 @@
     <Compile Include="Models\AttemptedQuestion.cs" />
     <Compile Include="Models\AttemptedQuestionPapar.cs" />
     <Compile Include="Models\Followers.cs" />
+    <Compile Include="Models\LessonNotes.cs" />
     <Compile Include="Models\MembershipPlan.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\QuestionBank.cs" />
@@ -3457,6 +3459,8 @@
     <Content Include="Views\Shared\_ReferralList.cshtml" />
     <Content Include="Views\Account\ManageBonusOrder.cshtml" />
     <Content Include="Views\Home\TeacherProfile.cshtml" />
+    <Content Include="Views\Lessons\CreateNote.cshtml" />
+    <Content Include="Views\Lessons\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />
