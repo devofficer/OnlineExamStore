@@ -914,7 +914,7 @@ namespace OnlineExam.Controllers
                     Email = model.Email,
                     //ReferedBy = AppConstants.MyRMA,
                     Status = AppConstants.UserStatus.Created,
-                    UserProfile = model.UserType=="Teacher"? new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, SubjectCategory = string.Join("|", model.SubjectCategories) }: new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, ClassTypes = string.Join("|", model.SelectedClasses) },
+                    UserProfile = model.UserType=="Teacher"? new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, ClassTypes = string.Join("|", model.SelectedClasses), SubjectCategory = string.Join("|", model.SubjectCategories) }: new UserProfile { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, DOB = DateTime.UtcNow, ClassTypes = string.Join("|", model.SelectedClasses) },
                     UserPlans = new List<UserPlan> { userPlan }
                 };
                 try

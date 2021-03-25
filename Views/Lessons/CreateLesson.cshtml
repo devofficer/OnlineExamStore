@@ -1,0 +1,123 @@
+﻿@model OnlineExam.Models.Lessons
+
+@{
+    ViewBag.Title = "Create Lesson";
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<div class="page-head">
+    <h3>Create Lesson Note</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Lessons")" title="Lessons">Lessons</a>
+        </li>
+        <li class="active">Create</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("CreateLesson", "Lessons", FormMethod.Post, new { id = "frmCreateLesson", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal  block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            @Html.ValidationSummary(true)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "Select Class Type", new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ClassType, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownList("SubjectCategory", ViewBag.subjectCategory as SelectList, "Select Subject", new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.SubjectCategory, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-8 text-right">
+            <button type="submit" name="command" value="Create" class="btn btn-success">
+                <span class="fa fa-floppy-o"></span>
+            </button>
+            <a href="@Url.Action("Index", "Lessons")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @Html.LabelFor(model => model.Title, new { @class = "col-md-12" })
+            <div class="col-md-12">
+                @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @Html.LabelFor(model => model.Description, new { @class = "col-md-12" })
+            <div class="col-md-12">
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control ckeditor" })
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.Label("Start Date", new { @class = "col-md-12" })
+            <div class="col-md-4">
+                    @Html.EditorFor(model => model.StartDate)
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("End Date", new { @class = "col-md-12" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.EndDate)
+            </div>
+        </div>
+        <div class="col-md-4">
+
+        </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.PaymentType, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    <select id="PaymentType" name="PaymentType" class="form-control">
+                        <option value="Free">Free</option>
+                        <option value="Paid">Paid</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.Amount, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.IsActive, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.IsActive)
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        $(function () {
+            $.validator.methods.date = function (value, element) {
+                return this.optional(element) || moment(value, "DD.MM.YYYY", true).isValid();
+            }
+
+            $("#StartDate").val('');
+            $("#EndDate").val('');
+          
+        });
+
+    </script>
+}

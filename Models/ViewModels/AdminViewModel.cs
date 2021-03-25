@@ -22,6 +22,7 @@ namespace OnlineExam.Models
             States = new List<SelectListItem>();
             Cities = new List<SelectListItem>();
             ClassTypes = new List<SelectListItem>();
+            SubjectCategory = new List<SelectListItem>();
             Schools = new List<SelectListItem>();
           
             
@@ -46,6 +47,12 @@ namespace OnlineExam.Models
 
         [Display(Name = "Class Name")]
         public string[] SelectedClasses { get; set; }
+
+        [Display(Name = "Subject Category")]
+        public string SubjectCategoryName { get; set; }
+
+        [Display(Name = "Subject Category")]
+        public string[] SelectedSubjectCategories { get; set; }
 
         [Required]
         public string City { get; set; }
@@ -116,6 +123,7 @@ namespace OnlineExam.Models
         //public int CompanyId { get; set; }
         //[Display(Name = "Company")]
         public List<SelectListItem> ClassTypes { get; set; }
+        public List<SelectListItem> SubjectCategory { get; set; }
         public bool IsMyProfile { get; set; }
 
     }

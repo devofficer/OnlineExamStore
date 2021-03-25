@@ -198,20 +198,6 @@ namespace OnlineExam.Repositories
                         Text = x.Text.Trim()
                     });
                 }
-                if (CustomClaimsPrincipal.Current.IsInRole("Teacher"))
-                {
-                    string userId = CustomClaimsPrincipal.Current.UserId;
-                    string[] subjectCategoryTypes = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == userId).SubjectCategory.Split('|');
-                    string[] classCategoryTypes = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && subjectCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
-                    string[] classTypes = dbContext.Lookup.Where(x => x.ModuleCode == "ClassCategory" && x.IsActive && classCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
-                    return dbContext.Lookup.Where(x => x.ModuleCode == moduleCode && x.IsActive && classTypes.Contains(x.Value))
-                           .ToList()
-                           .Select(x => new SelectListItem
-                           {
-                               Value = x.Value.Trim(),
-                               Text = x.Text.Trim()
-                           });
-                }
                 else
                 {
                     string[] classTypes = CustomClaimsPrincipal.Current.ClassTypes.Split('|');
@@ -354,6 +340,85 @@ namespace OnlineExam.Repositories
         public static int GetPercentile(int obtainedMarks, int totalMarks)
         {
             return (int)Math.Round((double)(100 * obtainedMarks) / totalMarks); ;
+        }
+
+        public static IEnumerable<SelectListItem> GetCurrentTeacherClassTypesList()
+        {
+            var dbContext = new ApplicationDbContext();
+            string userId = CustomClaimsPrincipal.Current.UserId;
+            string[] classTypes = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == userId).ClassTypes.Split('|');
+           // string[] classCategoryTypes = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && subjectCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
+           // string[] classTypes = dbContext.Lookup.Where(x => x.ModuleCode == "ClassCategory" && x.IsActive && classCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
+            var classTypesList = dbContext.Lookup.Where(x => x.ModuleCode == "ClassType" && x.IsActive && classTypes.Contains(x.Value))
+                           .ToList()
+                           .Select(x => new SelectListItem
+                           {
+                               Value = x.Value.Trim(),
+                               Text = x.Text.Trim()
+                           });
+
+            return classTypesList;
+        }
+
+        public static IEnumerable<SelectListItem> GetCurrentTeacherSubjectCategoryList()
+        {
+            var dbContext = new ApplicationDbContext();
+            string userId = CustomClaimsPrincipal.Current.UserId;
+            string[] subjectCategory = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == userId).SubjectCategory.Split('|');
+            var subjectCategoryList = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && subjectCategory.Contains(x.Value))
+                           .ToList()
+                           .Select(x => new SelectListItem
+                           {
+                               Value = x.Value.Trim(),
+                               Text = x.Text.Trim()
+                           }).DistinctBy(x=>x.Value);
+
+            return subjectCategoryList;
+        }
+
+        public static string GetTeacherClassTypes(string sujectCategory)
+        {
+            string strClassTypes = "";
+            var dbContext = new ApplicationDbContext();
+            string[] subjectCategoryTypes = sujectCategory.Split('|');
+            string[] classCategoryTypes = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && subjectCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
+            string[] classTypes = dbContext.Lookup.Where(x => x.ModuleCode == "ClassCategory" && x.IsActive && classCategoryTypes.Contains(x.Value)).Select(x => x.Parent).ToArray();
+            var classTypesList = dbContext.Lookup.Where(x => x.ModuleCode == "ClassType" && x.IsActive && classTypes.Contains(x.Value))
+                           .ToList();
+            foreach(var item in classTypesList)
+            {
+                if (strClassTypes == "")
+                    strClassTypes = item.Value;
+                else
+                    strClassTypes += "|" + item.Value;
+            }              
+
+            return strClassTypes;
+        }
+
+        public static IEnumerable<SelectListItem> GetSubjectCategoryByClassTypes(string classTypes)
+        {
+            var dbContext = new ApplicationDbContext();
+            string[] classTypesArray = classTypes.Split('|');
+            string[] classCategoryTypes = dbContext.Lookup.Where(x => x.ModuleCode == "ClassCategory" && x.IsActive && classTypesArray.Contains(x.Parent)).Select(x => x.Value).ToArray();
+            var subjectList = dbContext.Lookup.Where(x => x.ModuleCode == "SubjectCategory" && x.IsActive && classCategoryTypes.Contains(x.Parent))
+                            .ToList()
+                           .Select(x => new SelectListItem
+                           {
+                               Value = x.Value.Trim(),
+                               Text = x.Text.Trim()
+                           }).DistinctBy(x => x.Value);
+
+            return subjectList;
+        }
+
+        public static int GetCurrentUserProfileId()
+        {
+            string currentUserId = CustomClaimsPrincipal.Current.UserId;
+            int userId = 0;
+            var dbContext = new ApplicationDbContext();
+            userId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
+            return userId;
         }
     }
 }

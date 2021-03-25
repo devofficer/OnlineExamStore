@@ -335,6 +335,7 @@ namespace OnlineExam.Controllers
                 DOB = Convert.ToDateTime(userObj.UserProfile.DOB),
                 Status = userObj.Status,
                 ClassName = userObj.UserProfile.ClassTypes,
+                SubjectCategoryName = userObj.UserProfile.SubjectCategory,
                 UserType = userObj.UserType,
                 Email = userObj.Email,
                 Address = userObj.UserProfile.AddressLine1,
@@ -401,6 +402,11 @@ namespace OnlineExam.Controllers
             else
                 editUserViewModel.SelectedClasses = new string[] { userObj.UserProfile.ClassTypes };
 
+            if (userObj.UserProfile.SubjectCategory != null && userObj.UserProfile.SubjectCategory.Contains("|"))
+                editUserViewModel.SelectedSubjectCategories = userObj.UserProfile.SubjectCategory.Split('|').ToArray();
+            else
+                editUserViewModel.SelectedSubjectCategories = new string[] { userObj.UserProfile.SubjectCategory };
+            
             // editUserViewModel.ClassName = userObj.UserProfile.ClassTypes;
 
             var newItem = new SelectListItem { Text = "Others", Value = "Others" };
@@ -517,6 +523,7 @@ namespace OnlineExam.Controllers
                 if (!editUserViewModel.IsMyProfile)
                 {
                     user.UserProfile.ClassTypes = editUserViewModel.SelectedClasses != null ? string.Join("|", editUserViewModel.SelectedClasses) : string.Empty;
+                    user.UserProfile.SubjectCategory = editUserViewModel.SubjectCategory != null ? string.Join("|", editUserViewModel.SubjectCategory) : string.Empty;
                     // UPDATE ROLE
                     if (!string.IsNullOrWhiteSpace(editUserViewModel.RoleId))
                     {

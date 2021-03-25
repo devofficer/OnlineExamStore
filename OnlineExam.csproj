@@ -367,7 +367,11 @@
     <Compile Include="Models\AttemptedQuestion.cs" />
     <Compile Include="Models\AttemptedQuestionPapar.cs" />
     <Compile Include="Models\Followers.cs" />
+    <Compile Include="Models\LessonDiscussions.cs" />
+    <Compile Include="Models\LessonItems.cs" />
     <Compile Include="Models\LessonNotes.cs" />
+    <Compile Include="Models\Lessons.cs" />
+    <Compile Include="Models\LessonUsers.cs" />
     <Compile Include="Models\MembershipPlan.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\QuestionBank.cs" />
@@ -401,6 +405,7 @@
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\InvoiceItem.cs" />
     <Compile Include="Models\Lookup.cs" />
+    <Compile Include="Models\ViewModels\LessonsViewModel.cs" />
     <Compile Include="Models\ViewModels\ManageViewModels.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Product.cs" />
@@ -3461,6 +3466,10 @@
     <Content Include="Views\Home\TeacherProfile.cshtml" />
     <Content Include="Views\Lessons\CreateNote.cshtml" />
     <Content Include="Views\Lessons\Index.cshtml" />
+    <Content Include="Views\Lessons\CreateLesson.cshtml" />
+    <Content Include="Views\Lessons\LessonList.cshtml" />
+    <Content Include="Views\Lessons\CreateLessonItem.cshtml" />
+    <Content Include="Views\Lessons\LessonDiscussion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />

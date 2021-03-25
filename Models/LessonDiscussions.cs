@@ -6,19 +6,15 @@ using System.Web;
 
 namespace OnlineExam.Models
 {
-    public class LessonNotes
+    public class LessonDiscussions
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
+        public int LessionId { get; set; }
         public int ProfileId { get; set; }
-        public string ClassType { get; set; }
-        public string Subject { get; set; }
-        public string Topic { get; set; }
-        public string Title { get; set; }
         public string Note { get; set; }
-        public string PaymentType { get; set; }
-        public decimal? Amount { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
         public bool IsActive { get; set; }
     }
 }

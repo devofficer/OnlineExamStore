@@ -122,6 +122,16 @@ namespace OnlineExam.Controllers
             return Json(subjects, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetSubjectCategoryByClassTypes(string classType)
+        {
+            if (string.IsNullOrWhiteSpace(classType))
+                return Json(HttpNotFound());
+
+            var subjects = CommonRepository.GetSubjectCategoryByClassTypes(classType);
+            return Json(subjects, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult AddFollowsList(int id)
         {
             var dbContext = new ApplicationDbContext();

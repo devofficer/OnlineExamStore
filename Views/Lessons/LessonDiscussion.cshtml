@@ -1,0 +1,25 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.LessonDiscussionsViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Discucussion";
+}
+
+<div class="page-head">
+    <h3>Lessons</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("LessonList", "Lessons")" title="Lessons">Lessons</a>
+        </li>
+        <li class="active">Discussion</li>
+    </ol>
+</div>
+
+<div class="row">
+    <div class="panel panel-info">
+        <h3 class="panel-heading">@ViewBag.LessonTitle</h3>
+        <br />
+        @Html.Raw(ViewBag.LessonDescription)
+    </div>
+</div>
+

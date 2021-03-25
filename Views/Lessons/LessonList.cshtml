@@ -1,0 +1,77 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.LessonsList>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Lessons";
+}
+<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<style>
+    #tblCustom thead {
+        background-color: #2494F2 !important;
+    }
+
+        #tblCustom thead th {
+            padding: 8px !important;
+            line-height: 24px !important;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color:#fff;
+        }
+</style>
+<div class="page-head">
+    <h3>Lessons</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("LessonList", "Lessons")" title="Lessons">Lessons</a>
+        </li>
+        <li class="active">List</li>
+    </ol>
+</div>
+<div class="row">
+    <div class="col-xs-12 packs-container">
+        <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th class="th-inner">Class Type</th>
+                    <th class="th-inner">Subject Category</th>
+                    <th class="th-inner">Title</th>
+                    <th class="th-inner">Start Date</th>
+                    <th class="th-inner">End Date</th>
+                    <th class="th-inner">Type</th>
+                    <th class="th-inner">Is Active</th>
+                    <th class="th-inner">Last Modified</th>
+                    <th class="th-inner"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ClassType</td>
+                        <td>@item.SubjectCategory</td>
+                        <td>@item.Title</td>
+                        <td>@item.StartDate</td>
+                        <td>@item.EndDate</td>
+                        <td>@item.PaymentType</td>
+                        <td>@item.IsActive</td>
+                        <td>@item.ModifiedDate</td>
+                        <td>
+                            <a href="/Lessons/CreateLessonItem/@item.LessonId" class="btn btn-success btn-xs">Materials</a>
+                            <a href="/Lessons/LessonDiscussion/@item.LessionGuId" class="btn btn-success btn-xs">Discussion</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div id="contentPager">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("LessonList", "Lessons",
+        new { page, sortOrder = ViewBag.CurrentSort }))
+        </div>
+    </div>
+   
+</div>
+

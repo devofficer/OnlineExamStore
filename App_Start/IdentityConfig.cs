@@ -187,7 +187,7 @@ namespace OnlineExam.Models
             // Creatte the credentials:
             var credentials = new System.Net.NetworkCredential(sentFrom, sendGridPassword);
 
-            client.EnableSsl = true;
+          //  client.EnableSsl = true;
             client.Credentials = credentials;
 
             // Create the message:

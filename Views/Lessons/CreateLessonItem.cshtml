@@ -1,0 +1,144 @@
+﻿@model OnlineExam.Models.LessonItems
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Create Lesson Item";
+}
+<style>
+    #tblCustom thead {
+        background-color: #2494F2 !important;
+    }
+
+        #tblCustom thead th {
+            padding: 8px !important;
+            line-height: 24px !important;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #fff;
+        }
+</style>
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<div class="page-head">
+    <h3>Create Lesson Item</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Lessons")" title="Lessons">Lessons</a>
+        </li>
+        <li class="active">Create Item</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("CreateLessonItem", "Lessons", FormMethod.Post, new { id = "frmCreateLesson", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal  block-flat">
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ValidationSummary(true)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+            </div>
+
+            <div class="col-md-2 text-right">
+                <button type="submit" name="command" value="Create" class="btn btn-success">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+                <a href="@Url.Action("Index", "Lessons")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.ItemTitle, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextBoxFor(model => model.ItemTitle, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.ItemDescription, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.ItemDescription, new { @class = "form-control ckeditor" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                @Html.Label("Contents", new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    <input type="file" name="files" id="files" multiple="multiple" class="btn btn-info" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.IsActive, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.IsActive)
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+}
+
+<hr />
+<h3>Lesson Contents</h3>
+<div class="row">
+    <div class="col-xs-12 packs-container">
+        <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th class="th-inner">Title</th>
+                    <th class="th-inner">Created Date</th>
+                    <th class="th-inner">Download</th>
+                    <th class="th-inner">Is Active</th>
+                    <th class="th-inner"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.ItemsList)
+                {
+                    <tr>
+                        <td>@item.ItemTitle</td>
+                        <td>@item.CreatedDate</td>
+                        <td>@Html.Raw(item.DownloadLinks)</td>
+                        <td>@item.IsActive</td>
+                        <td>
+                            <a href="/Lessons/DeleteLessonItem/@item.Id" class="btn btn-danger btn-xs">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div id="contentPager">
+            Page @(ViewBag.ItemsList.PageCount < ViewBag.ItemsList.PageNumber ? 0 : ViewBag.ItemsList.PageNumber) of @ViewBag.ItemsList.PageCount
+            @*@Html.PagedListPager(ViewBag.ItemsList, page => Url.Action("CreateLessonItem", "Lessons",
+        new { page, sortOrder = ViewBag.CurrentSort }))*@
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        $(function () {
+            $.validator.methods.date = function (value, element) {
+                return this.optional(element) || moment(value, "DD.MM.YYYY", true).isValid();
+            }
+
+
+        });
+
+    </script>
+}

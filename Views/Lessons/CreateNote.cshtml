@@ -26,13 +26,11 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3">
-            @Html.DropDownList("ClassCategory", ViewBag.classCategory as SelectList, "Select Class Category", new { @class = "form-control" })
+        <div class="col-md-2">
+            @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "Select Class Type", new { @class = "form-control" })
         </div>
         <div class="col-md-2">
-            <select id="Subject" name="Subject" class="form-control">
-                <option value="">Select Subject</option>
-            </select>
+            @Html.DropDownList("Subject", ViewBag.subjectCategory as SelectList, "Select Subject", new { @class = "form-control" })
         </div>
         <div class="col-md-2">
             <select id="Topic" name="Topic" class="form-control">
@@ -96,18 +94,32 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 <script type="text/javascript">
-    $("#ClassCategory").change(function () {
-        $.getJSON('/Lessons/GetSubjectCategoryByClass/', { classcategory: $(this).val() },
-            function (data) {
-                var items = '<option value="">Select Subject</option>';
-                $.each(data, function (i, state) {
-                    items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
-                });
-                $('#Subject').html(items);
-                $('#Topic').html('<option value="">Select Topic</option>');
-            }
-        );
-    });
+    //$("#ClassType").change(function () {
+    //    $.getJSON('/Lessons/GetClassCategoryByClassType/', { classtype: $(this).val() },
+    //        function (data) {
+    //            var items = '<option value="">Select Class Category</option>';
+    //            $.each(data, function (i, state) {
+    //                items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+    //            });
+    //            $('#ClassCategory').html(items);
+    //            $('#Subject').html('<option value="">Select Subject</option>');
+    //            $('#Topic').html('<option value="">Select Topic</option>');
+    //        }
+    //    );
+    //});
+
+    //$("#ClassCategory").change(function () {
+    //    $.getJSON('/Lessons/GetSubjectCategoryByClass/', { classcategory: $(this).val() },
+    //        function (data) {
+    //            var items = '<option value="">Select Subject</option>';
+    //            $.each(data, function (i, state) {
+    //                items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+    //            });
+    //            $('#Subject').html(items);
+    //            $('#Topic').html('<option value="">Select Topic</option>');
+    //        }
+    //    );
+    //});
 
     $("#Subject").change(function () {
         $.getJSON('/Lessons/GetTopicBySubjectCategory/', { subjectcategory: $(this).val() },

@@ -36,9 +36,7 @@ namespace OnlineExam.Models
         public bool IsAgreementAccpeted { get; set; }
         public string UserType { get; set; }
         public UserProfile UserProfile { get; set; }
-
         public ICollection<UserPlan> UserPlans { get; set; }
-
         public ICollection<AttemptedQuestionPapar> AttemptedQuestionPapars { get; set; }
 
         [ForeignKey("CompanyId")]
@@ -156,7 +154,11 @@ namespace OnlineExam.Models
 
         public DbSet<TeachersProfileExtended> TeachersProfileExtended { get; set; }
         public DbSet<Followers> Followers { get; set; }
-        public DbSet<LessonNotes> Lessons { get; set; }
+        public DbSet<LessonNotes> LessonNotes { get; set; }
+        public DbSet<Lessons> Lessons { get; set; }
+        public DbSet<LessonItems> LessonItems { get; set; }
+        public DbSet<LessonDiscussions> LessonDiscussions { get; set; }
+        public DbSet<LessonUsers> LessonUsers { get; set; }
 
         public override int SaveChanges()
         {

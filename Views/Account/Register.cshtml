@@ -3,6 +3,12 @@
 @model OnlineExam.Models.RegisterViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var regType = "Free";
+    if (Model.RegisterType == AppConstants.RegisterType.Paid)
+    {
+        regType = "Paid";
+    }
 }
 <link href="~/Content/bootstrap-multiselect.css" rel="stylesheet" />
 <script src="~/Scripts/bootstrap-multiselect.js"></script>
@@ -21,20 +27,21 @@
         $('#SelectedClasses').multiselect({
             nonSelectedText: 'Select Class',
             allSelectedText: 'All Selected',
-            selectAllName: true,
-            includeSelectAllOption: true,
+            selectAllName: false,
+            includeSelectAllOption: false,
             numberDisplayed: 1,
+            numberSelectedOptions: 3,
             buttonWidth: '100%'
         });
 
-        $('#SubjectCategories').multiselect({
-            nonSelectedText: 'Select Category',
-            allSelectedText: 'All Selected',
-            selectAllName: true,
-            includeSelectAllOption: true,
-            numberDisplayed: 1,
-            buttonWidth: '100%'
-        });
+        //$('#SubjectCategories').multiselect({
+        //    nonSelectedText: 'Select Category',
+        //    allSelectedText: 'All Selected',
+        //    selectAllName: false,
+        //    includeSelectAllOption: false,
+        //    numberDisplayed: 1,
+        //    buttonWidth: '100%'
+        //});
 
         $("#footerDiv").hide();
         $('body').addClass('texture');
@@ -94,64 +101,69 @@
                     @Html.HiddenFor(x => x.RegisterType)
                     @Html.HiddenFor(x => x.ReferralCode)
                     @*@Html.HiddenFor(x => x.VoucherCode)*@
-                    <div class="content">
-                        @*<h5 class="title text-center"><strong>Sign Up</strong></h5>
-                            <hr>*@
-                        <span id="result"></span>
-                        @*<div class="form-group">
-                                <div class="col-md-6 col-sm-6 col-xs-6">
-                                    <button type="button" class="btn btn-block btn-trans btn-facebook bg btn-rad"><i class="fa fa-facebook"></i> Sign in with Facebook</button>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6">
-                                    <button type="button" class="btn btn-block btn-trans btn-twitter bg btn-rad"><i class="fa fa-twitter"></i> Sign in with Twitter</button>
-                                </div>
-                            </div>
-                            <p class="text-center">Or</p>*@
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                @Html.ValidationSummary("", new { @class = "text-danger" })
-                            </div>
+                <div class="content">
+                    @*<h5 class="title text-center"><strong>Sign Up</strong></h5>
+        <hr>*@
+                    <span id="result"></span>
+                    @*<div class="form-group">
+            <div class="col-md-6 col-sm-6 col-xs-6">
+                <button type="button" class="btn btn-block btn-trans btn-facebook bg btn-rad"><i class="fa fa-facebook"></i> Sign in with Facebook</button>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-6">
+                <button type="button" class="btn btn-block btn-trans btn-twitter bg btn-rad"><i class="fa fa-twitter"></i> Sign in with Twitter</button>
+            </div>
+        </div>
+        <p class="text-center">Or</p>*@
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            @Html.ValidationSummary("", new { @class = "text-danger" })
                         </div>
-                        @if (Model.RegisterType == AppConstants.RegisterType.Paid)
-                        {
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-tags"></i></span>
-                                        @Html.TextBoxFor(x => x.VoucherCode, new { @class = "form-control", @placeholder = "Voucher Code" })
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                    </div>
+                    @if (Model.RegisterType == AppConstants.RegisterType.Paid)
+                    {
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "E-mail" })
+                                    <span class="input-group-addon"><i class="fa fa-tags"></i></span>
+                                    @Html.TextBoxFor(x => x.VoucherCode, new { @class = "form-control", @placeholder = "Voucher Code" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "E-mail" })
 
-                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-users"></i></span>
-                                    @Html.DropDownListFor(x => x.UserType, Model.UserTypes, "Select Role", new { @class = "form-control" })
-                                </div>
-                            </div>
-                            <div id="classRow" class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-book" aria-hidden="true"></i></span>
-                                    @Html.DropDownListFor(x => x.SelectedClasses, Model.ClasseTypes, new { @class = "form-control", multiple = "multiple" })
-                                </div>
-                            </div>
-                            <div id="categoryRow" class="col-sm-12 col-xs-12 col-lg-6 col-md-6" style="display:none; position:absolute; left:230px;">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-book" aria-hidden="true"></i></span>
-                                    @Html.DropDownListFor(x => x.SubjectCategories, Model.SubjectCategory, new { @class = "form-control", multiple = "multiple" })
-                                </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-users"></i></span>
+                                @Html.DropDownListFor(x => x.UserType, Model.UserTypes, "Select Role", new { @class = "form-control" })
                             </div>
                         </div>
+                        <div id="classRow" class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-book" aria-hidden="true"></i></span>
+                                @Html.DropDownListFor(x => x.SelectedClasses, Model.ClasseTypes, new { @class = "form-control", multiple = "multiple" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="categoryRow" style="display: none;height: 60px;">
+                        <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6" style="position:absolute; height:90px; left:15px; z-index:99999;">
+                            <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-book" aria-hidden="true"></i></span>
+                                    @*@Html.DropDownListFor(x => x.SubjectCategories, Model.SubjectCategory, new { @class = "form-control", multiple = "multiple" })*@
+                                    <select id="SubjectCategories" name="SubjectCategories" class="form-control" , multiple="multiple" size="1">
+                                        <option value="">Select Subject Category</option>
+                                    </select>
+                                </div>
+                        </div>
+                    </div>
                         <div class="form-group">
                             <div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
                                 <div class="input-group">
@@ -191,8 +203,8 @@
                         <p class="spacer">By creating an account, you agree with the <a href="#">Terms</a> and <a href="#">Conditions</a>.</p>
                         <button type="submit" class="btn btn-block btn-success btn-rad btn-lg">Sign Up</button>
                     </div>
-                }
-            </div>
+                    }
+                </div>
         </div>
         <div class="text-center out-links"><a href="#">© @DateTime.Now.Year - ACADAStore.com</a></div>
     </div>
@@ -201,25 +213,91 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 <script type="text/javascript">
+    var reg_type = "@regType";
+    var countX = 1;
+    if (reg_type == "Paid") {
+        countX = 3;
+    }
     $("#UserType").change(function () {
         UnCheckAll();
         if ($(this).val() == "Teacher") {
             $("#SelectedClasses").val('');
-             $("#classRow").css('display', 'none');
+            $("#SubjectCategories").val('');
+             $("#classRow").css('display', '');
             $("#categoryRow").css('display', '');
         }
         else {
+            $("#SelectedClasses").val('');
             $("#SubjectCategories").val('');
             $("#categoryRow").css('display', 'none');
-            $("#classRow").css('display', '');
         }
     });
 
     function UnCheckAll() {
         $("#SelectedClasses").multiselect('refresh');
-        $("#SubjectCategories").multiselect('refresh');        
+        $('#SubjectCategories').html('');
+    }
+    var last_valid_class_selection = null;
+    $("#SelectedClasses").change(function (event) {
+        var strVal = "";
+        strVal = $(this).val();
+        var strValArray = strVal.toString().split(",");
+
+        if (strValArray.length > countX) {
+            $(this).prop("selected",false);
+            $(this).val(last_valid_class_selection);
+            alert("You can select maximum " + countX + " class only");
+        }
+        else {
+            last_valid_class_selection = $(this).val();
+            var strclass = "";
+            strclass = strVal.toString();
+            if (strValArray.length > 1) {
+                strclass = strVal.toString().replaceAll(",", "|");
+            }
+            GetSubjectCategory(strclass);
+        }
+
+    });
+
+    function GetSubjectCategory(str) {
+        $.getJSON('/Home/GetSubjectCategoryByClassTypes/', { classType: str },
+            function (data) {
+                var items = '';
+                $.each(data, function (i, state) {
+                    items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                });
+                $('#SubjectCategories').html(items);
+                $('#SubjectCategories').multiselect({
+                    nonSelectedText: 'Select Subject Category',
+                    allSelectedText: 'All Selected',
+                    selectAllName: false,
+                    includeSelectAllOption: false,
+                    numberDisplayed: 1,
+                    buttonWidth: '100%'
+                });
+            }
+        );
+
     }
 
+    var last_valid_subject_selection = null;
+    $("#SubjectCategories").change(function (event) {
+        var strVal = "";
+        strVal = $(this).val();
+        var strValArray = strVal.toString().split(",");
+
+        if (strValArray.length > countX) {
+            $(this).prop("selected", false);
+            $(this).val(last_valid_subject_selection);
+            alert("You can select maximum " + countX + " subjects only");
+        }
+        else {
+            last_valid_subject_selection = $(this).val();
+        }
+
+    });
+    
     </script>
 }
 
