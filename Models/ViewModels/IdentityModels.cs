@@ -89,7 +89,7 @@ namespace OnlineExam.Models
         public DateTime CreatedOn { get; set; }
         [Timestamp]
         public byte[] RowVersion { get; set; }
-        
+
         [Required]
         [Index(IsUnique = true)]
         public ApplicationUser ApplicationUser { get; set; }

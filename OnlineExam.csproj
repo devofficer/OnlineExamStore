@@ -3470,6 +3470,7 @@
     <Content Include="Views\Lessons\LessonList.cshtml" />
     <Content Include="Views\Lessons\CreateLessonItem.cshtml" />
     <Content Include="Views\Lessons\LessonDiscussion.cshtml" />
+    <Content Include="Views\Lessons\Followers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />

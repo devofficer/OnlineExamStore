@@ -9,7 +9,7 @@ namespace OnlineExam.Models
     public class Followers
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
         public int UserProfileId { get; set; }
         public int FollowersUserProfileId { get; set; }
         public DateTime StartDate { get; set; }

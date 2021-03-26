@@ -19,6 +19,7 @@ using OnlineExam.Infrastructure.Alerts;
 using OnlineExam.Infrastructure.Attributes;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
+using PagedList;
 
 namespace OnlineExam.Controllers
 {
@@ -764,5 +765,7 @@ namespace OnlineExam.Controllers
             var code = await UserManager.GeneratePasswordResetTokenAsync(CustomClaimsPrincipal.Current.UserId);
             return RedirectToAction("ResetPassword", "Account", new { code = code });
         }
+
+       
     }
 }

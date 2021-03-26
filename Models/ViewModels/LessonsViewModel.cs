@@ -40,12 +40,25 @@ namespace OnlineExam.Models.ViewModels
     public class LessonDiscussionsViewModel
     {
         public long Id { get; set; }
-        public int LessionId { get; set; }
+        public int LessonId { get; set; }
         public int ProfileId { get; set; }
         public string UserName { get; set; }
+        public string UserAvater { get; set; }
         public string Note { get; set; }
         public string CreatedDate { get; set; }
         public string ModifiedDate { get; set; }
         public string IsActive { get; set; }
+    }
+
+    public class TeacherFollowViewModel
+    {
+        public long Id { get; set; }
+        public int TeacherId { get; set; }
+        public int FollowUserId { get; set; }
+        public string TeacherName { get; set; }
+        public string FollowUserName { get; set; }
+        public string StartDate { get; set; }
+        public string UserType { get; set; }
+
     }
 }

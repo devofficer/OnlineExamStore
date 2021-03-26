@@ -323,15 +323,95 @@ namespace OnlineExam.Controllers
         }
 
 
-        public ActionResult LessonDiscussion(Guid id)
+        public ActionResult LessonDiscussion(Guid id, int? page)
         {
             var dbContext = new ApplicationDbContext();
 
             var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessionGuId == id);
             ViewBag.LessonTitle = lessonInfo.Title;
             ViewBag.LessonDescription = lessonInfo.Description;
+            ViewBag.ClassType = lessonInfo.ClassType;
+            ViewBag.Subject = lessonInfo.SubjectCategory;
+            int profileId = lessonInfo.ProfileId;
+            var teacherInfo = dbContext.UserProfiles.Find(profileId);
+            ViewBag.Teacher = teacherInfo.FullName;
+            ViewBag.LessonGuid = id;
 
-            return View();
+            var info = dbContext.LessonDiscussions.Where(x=>x.LessonId == lessonInfo.LessonId && x.IsActive==true)
+                       .ToList()
+                       .Select(x=> new LessonDiscussionsViewModel()
+                       {
+                           Id = x.Id,
+                           LessonId = x.LessonId,
+                           ProfileId = x.ProfileId,
+                           UserName = dbContext.UserProfiles.Find(x.ProfileId).FirstName,
+                           UserAvater = dbContext.UserProfiles.Find(x.ProfileId).Avatar,
+                           Note = x.Note,
+                           CreatedDate = x.CreatedDate.ToString("dd/MM/yyyy HH:mm"),
+                           ModifiedDate = x.ModifiedDate.ToString("dd/MM/yyyy HH:mm"),
+                           IsActive = x.IsActive == true ? "Yes" : "No"
+                       });
+
+                
+
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
         }
+
+        [HttpPost, ValidateInput(false)]
+        public ActionResult CreatePost(Guid id, FormCollection f)
+        {
+            var dbContext = new ApplicationDbContext();
+            var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessionGuId == id);
+            int lessonId = lessonInfo.LessonId;
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+
+            var strNote = f["txtPost"];
+            if (!string.IsNullOrEmpty(strNote))
+            {
+                var info = new LessonDiscussions();
+                info.LessonId = lessonId;
+                info.ProfileId = profileId;
+                info.Note = strNote;
+                info.CreatedDate = DateTime.Now;
+                info.ModifiedDate = DateTime.Now;
+                info.IsActive = true;
+
+                dbContext.LessonDiscussions.Add(info);
+                dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("LessonDiscussion",new {id=id });
+        }
+
+        public ActionResult Followers(int? page)
+        {
+            var dbContext = new ApplicationDbContext();
+            int teacherProfileId = CommonRepository.GetCurrentUserProfileId();
+
+            var info = dbContext.Followers.Where(x => x.UserProfileId == teacherProfileId)
+                .ToList()
+                .Select(x => new TeacherFollowViewModel()
+                {
+                    Id = x.Id,
+                    TeacherId = x.UserProfileId,
+                    TeacherName = dbContext.UserProfiles.Find(x.UserProfileId).FullName,
+                    FollowUserId = x.FollowersUserProfileId,
+                    FollowUserName = dbContext.UserProfiles.Find(x.FollowersUserProfileId).FullName,
+                    StartDate = x.StartDate.ToString("dd/MM/yyyy"),
+                    UserType = CommonRepository.GetUserTypeByProfileId(x.FollowersUserProfileId)
+                }); ;
+
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
+        }
+
+        
     }
 }

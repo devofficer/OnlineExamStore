@@ -420,5 +420,24 @@ namespace OnlineExam.Repositories
             userId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
             return userId;
         }
+
+        public static string GetUserTypeByProfileId(int profileId)
+        {
+            string userType = "Free";
+            try
+            {
+                var dbContext = new ApplicationDbContext();
+                if (dbContext.UserProfiles.Where(x => x.UserProfileId == profileId).Count() > 0)
+                {
+                    string currentUserId = dbContext.UserProfiles.FirstOrDefault(x => x.UserProfileId == profileId).ApplicationUser.Id;
+                    userType = dbContext.UserPlans.FirstOrDefault(x => x.UserId == currentUserId).MembershipPlanId == 1 ? "Free" : "Paid";
+                }
+            }
+            catch
+            {
+                userType = "Free";
+            }
+            return userType;
+        }
     }
 }

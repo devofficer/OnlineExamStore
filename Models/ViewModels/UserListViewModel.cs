@@ -34,6 +34,4 @@ namespace OnlineExam.Models
         public string Follow { get; set; }
 
     }
-
-   
 }
