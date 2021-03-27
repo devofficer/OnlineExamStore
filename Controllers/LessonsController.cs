@@ -20,9 +20,59 @@ namespace OnlineExam.Controllers
     public class LessonsController : Controller
     {
         // GET: Lessons
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
-            return View();
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+            var dbContext = new ApplicationDbContext();
+
+            string[] classTypes = dbContext.UserProfiles.Find(profileId).ClassTypes.Split('|');
+
+            var info = dbContext.Lessons.Where(x => classTypes.Contains(x.ClassType) && x.IsActive==true).ToList()
+                .Select(x => new LessonsViewModel
+                {
+                    LessonId = x.LessonId,
+                    LessonGuId = x.LessonGuId,
+                    ProfileId = x.ProfileId,
+                    TeacherName = dbContext.UserProfiles.Find(x.ProfileId).FullName,
+                    ClassType = x.ClassType,
+                    SubjectCategory = x.SubjectCategory,
+                    Title = x.Title,
+                    Description = x.Description,
+                    StartDate = x.StartDate.ToString("dd/MM/yyyy"),
+                    EndDate = x.EndDate.ToString("dd/MM/yyyy"),
+                    CreatedDate = x.CreatedDate.ToString("dd/MM/yyyy"),
+                    PaymentType = x.PaymentType,
+                    Amount = x.Amount,
+                    IsActive = x.IsActive == true ? "Yes" : "No",
+                    ModifiedDate = x.ModifiedDate.ToString("dd/MM/yyyy"),
+                    IsEnroll = dbContext.LessonUsers.Where(t=>t.LessonId == x.LessonId && t.IsActive==true).Count()>0? "Yes":"No"
+                });
+
+            info = info.OrderByDescending(x => x.StartDate);
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
+        }
+
+        public ActionResult LessonEnroll(int id)
+        {
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+            var dbContext = new ApplicationDbContext();
+            var info = new LessonUsers();
+            info.LessonId = id;
+            info.AttendUserProfileId = profileId;
+            info.AttendDate = DateTime.Now;
+            info.ExpiredDate = DateTime.Now.AddDays(365);
+            info.ModifiedDate = DateTime.Now;
+            info.IsActive = true;
+
+            dbContext.LessonUsers.Add(info);
+            dbContext.SaveChanges();
+
+
+            return RedirectToAction("Index");
         }
 
         public ActionResult CreateNote()
@@ -114,7 +164,7 @@ namespace OnlineExam.Controllers
                 string currentUserId = User.Identity.GetUserId();
                 int currentUserProfileId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
 
-                model.LessionGuId = Guid.NewGuid();
+                model.LessonGuId = Guid.NewGuid();
                 model.ProfileId = currentUserProfileId;
                 model.CreatedDate = DateTime.Now;
                 model.ModifiedDate = DateTime.Now;
@@ -147,7 +197,7 @@ namespace OnlineExam.Controllers
                 .Select(x => new LessonsList
                 {
                     LessonId = x.LessonId,
-                    LessionGuId = x.LessionGuId,
+                    LessonGuId = x.LessonGuId,
                     ProfileId=x.ProfileId,
                     ClassType = x.ClassType,
                     SubjectCategory = x.SubjectCategory,
@@ -174,7 +224,7 @@ namespace OnlineExam.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var info = dbContext.LessonItems.Where(x => x.LessonId == id).ToList()
-                .Select(x => new LessonItemssViewModel
+                .Select(x => new LessonItemsViewModel
                 {
                     Id=x.Id,
                     LessonId = x.LessonId,
@@ -192,6 +242,43 @@ namespace OnlineExam.Controllers
             int pageNumber = (page ?? 1);
             ViewBag.ItemsList = info.ToPagedList(pageNumber, pageSize);
             return View();
+        }
+
+        public ActionResult LessonMaterials(Guid id, int? page)
+        {
+            var dbContext = new ApplicationDbContext();
+            var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessonGuId == id);
+
+            int profileId = lessonInfo.ProfileId;
+            int currentUserProfileId = CommonRepository.GetCurrentUserProfileId();
+
+            if (profileId != currentUserProfileId)
+            {
+                if (dbContext.LessonUsers.Where(t => t.AttendUserProfileId == currentUserProfileId && t.IsActive == true).Count() == 0)
+                    return HttpNotFound();
+            }
+
+            ViewBag.LessonTitle = lessonInfo.Title;
+            ViewBag.LessonGuid = lessonInfo.LessonGuId;
+            var info = dbContext.LessonItems.Where(x => x.LessonId == lessonInfo.LessonId).ToList()
+                .Select(x => new LessonItemsViewModel
+                {
+                    Id = x.Id,
+                    LessonId = x.LessonId,
+                    ItemTitle = x.ItemTitle,
+                    ItemDescription = x.ItemDescription,
+                    FileNames = x.FileNames,
+                    DownloadLinks = GetDownloadLinks(x.Id),
+                    CreatedDate = x.CreatedDate.ToString("dd/MM/yyyy"),
+                    IsActive = x.IsActive == true ? "Yes" : "No",
+                    ModifiedDate = x.ModifiedDate.ToString("dd/MM/yyyy")
+                });
+
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
         }
 
         public static string GetDownloadLinks(long id)
@@ -229,7 +316,7 @@ namespace OnlineExam.Controllers
         public ActionResult CreateLessonItem(int id, LessonItems model, HttpPostedFileBase[] files)
         {
             var dbContext = new ApplicationDbContext();
-            string lessonGuid = dbContext.Lessons.Find(id).LessionGuId.ToString();
+            string lessonGuid = dbContext.Lessons.Find(id).LessonGuId.ToString();
             string strFileNames = "";
             string folderId = Guid.NewGuid().ToString();
             string filePath = "~/FileUploads/Lessons/" + lessonGuid + "/" + folderId;
@@ -289,7 +376,7 @@ namespace OnlineExam.Controllers
             
             var info = dbContext.LessonItems.Find(id);
             int lessonId = info.LessonId;
-            string lessonGuid = dbContext.Lessons.Find(lessonId).LessionGuId.ToString();
+            string lessonGuid = dbContext.Lessons.Find(lessonId).LessonGuId.ToString();
             string folderPath = Server.MapPath("~/FileUploads/Lessons/" + lessonGuid + "/" + info.FolderName);
             DeleteDirectory(folderPath);
 
@@ -326,13 +413,22 @@ namespace OnlineExam.Controllers
         public ActionResult LessonDiscussion(Guid id, int? page)
         {
             var dbContext = new ApplicationDbContext();
+            var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessonGuId == id);
+            int profileId = lessonInfo.ProfileId;
+            int currentUserProfileId = CommonRepository.GetCurrentUserProfileId();
 
-            var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessionGuId == id);
+            if(profileId != currentUserProfileId)
+            {
+                if(dbContext.LessonUsers.Where(t=>t.AttendUserProfileId == currentUserProfileId && t.IsActive == true).Count() == 0)
+                    return HttpNotFound();
+            }
+
+
             ViewBag.LessonTitle = lessonInfo.Title;
             ViewBag.LessonDescription = lessonInfo.Description;
             ViewBag.ClassType = lessonInfo.ClassType;
             ViewBag.Subject = lessonInfo.SubjectCategory;
-            int profileId = lessonInfo.ProfileId;
+            
             var teacherInfo = dbContext.UserProfiles.Find(profileId);
             ViewBag.Teacher = teacherInfo.FullName;
             ViewBag.LessonGuid = id;
@@ -365,7 +461,7 @@ namespace OnlineExam.Controllers
         public ActionResult CreatePost(Guid id, FormCollection f)
         {
             var dbContext = new ApplicationDbContext();
-            var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessionGuId == id);
+            var lessonInfo = dbContext.Lessons.FirstOrDefault(x => x.LessonGuId == id);
             int lessonId = lessonInfo.LessonId;
             int profileId = CommonRepository.GetCurrentUserProfileId();
 

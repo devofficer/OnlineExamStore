@@ -3471,6 +3471,7 @@
     <Content Include="Views\Lessons\CreateLessonItem.cshtml" />
     <Content Include="Views\Lessons\LessonDiscussion.cshtml" />
     <Content Include="Views\Lessons\Followers.cshtml" />
+    <Content Include="Views\Lessons\LessonMaterials.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />

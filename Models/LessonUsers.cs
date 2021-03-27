@@ -10,7 +10,7 @@ namespace OnlineExam.Models
     {
         [Key]
         public int Id { get; set; }
-        public int LessionId { get; set; }
+        public int LessonId { get; set; }
         public int AttendUserProfileId { get; set; }
         public DateTime AttendDate { get; set; }
         public DateTime ExpiredDate { get; set; }

@@ -5,10 +5,29 @@ using System.Web;
 
 namespace OnlineExam.Models.ViewModels
 {
+    public class LessonsViewModel
+    {
+        public int LessonId { get; set; }
+        public Guid LessonGuId { get; set; }
+        public int ProfileId { get; set; }
+        public string TeacherName { get; set; }
+        public string ClassType { get; set; }
+        public string SubjectCategory { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string PaymentType { get; set; }
+        public decimal? Amount { get; set; }
+        public string CreatedDate { get; set; }
+        public string ModifiedDate { get; set; }
+        public string IsActive { get; set; }
+        public string IsEnroll { get; set; }
+    }
     public class LessonsList
     {
         public int LessonId { get; set; }
-        public Guid LessionGuId { get; set; }
+        public Guid LessonGuId { get; set; }
         public int ProfileId { get; set; }
         public string ClassType { get; set; }
         public string SubjectCategory { get; set; }
@@ -22,7 +41,7 @@ namespace OnlineExam.Models.ViewModels
         public string ModifiedDate { get; set; }
         public string IsActive { get; set; }
     }
-    public class LessonItemssViewModel
+    public class LessonItemsViewModel
     {
         public long Id { get; set; }
         public int LessonId { get; set; }

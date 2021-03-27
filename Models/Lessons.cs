@@ -10,7 +10,7 @@ namespace OnlineExam.Models
     {
         [Key]
         public int LessonId { get; set; }
-        public Guid LessionGuId { get; set; }
+        public Guid LessonGuId { get; set; }
         public int ProfileId { get; set; }
         [Required(ErrorMessage = "Class Type is required")]
         public string ClassType { get; set; }
