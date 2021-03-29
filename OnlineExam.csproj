@@ -305,6 +305,7 @@
     <Compile Include="Controllers\SmartQuizController.cs" />
     <Compile Include="Controllers\SmartQuizApiController.cs" />
     <Compile Include="Controllers\SystemSettingsController.cs" />
+    <Compile Include="Controllers\TeachersController.cs" />
     <Compile Include="Controllers\UserAdminController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Controllers\VoucherController.cs" />
@@ -366,6 +367,7 @@
     <Compile Include="Models\APIViewModels\V1\TResult.cs" />
     <Compile Include="Models\AttemptedQuestion.cs" />
     <Compile Include="Models\AttemptedQuestionPapar.cs" />
+    <Compile Include="Models\FollowerGroups.cs" />
     <Compile Include="Models\Followers.cs" />
     <Compile Include="Models\LessonDiscussions.cs" />
     <Compile Include="Models\LessonItems.cs" />
@@ -3472,6 +3474,8 @@
     <Content Include="Views\Lessons\LessonDiscussion.cshtml" />
     <Content Include="Views\Lessons\Followers.cshtml" />
     <Content Include="Views\Lessons\LessonMaterials.cshtml" />
+    <Content Include="Views\Teachers\Followers.cshtml" />
+    <Content Include="Views\Teachers\AssignUserToGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />

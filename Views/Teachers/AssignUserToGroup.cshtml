@@ -1,0 +1,77 @@
+﻿
+@{
+    ViewBag.Title = "AssignUserToGroup";
+}
+
+<style>
+    #tblCustom thead {
+        background-color: #2494F2 !important;
+    }
+
+        #tblCustom thead th {
+            padding: 8px !important;
+            line-height: 24px !important;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #fff;
+        }
+</style>
+
+<div class="page-head">
+    <h3>Followers</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Followers</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("AssignUserToGroup", "Teachers", new {@id= ViewBag.UserId }, FormMethod.Post, new { id = "frmCreate", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal  block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Assign Group</h3>
+            @Html.ValidationSummary(true)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" name="command" value="Create" class="btn btn-success">
+                <span class="fa fa-floppy-o"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Label("Full Name", new { @class = "col-md-12" })
+            <div class="col-md-4">
+                @ViewBag.UserName
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Label("Class Types", new { @class = "col-md-12" })
+            <div class="col-md-4">
+                @ViewBag.ClassType
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Label("Group", new { @class = "col-md-12" })
+            <div class="col-md-4">
+                @Html.DropDownList("lstGroup", ViewBag.GroupList as SelectList,"-Select Group", new { @class = "form-control", required = "required" })
+            </div>
+        </div>
+    </div>
+
+</div>
+}
+

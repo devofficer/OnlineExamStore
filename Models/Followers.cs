@@ -12,6 +12,7 @@ namespace OnlineExam.Models
         public long Id { get; set; }
         public int UserProfileId { get; set; }
         public int FollowersUserProfileId { get; set; }
+        public int? GroupId { get; set; }
         public DateTime StartDate { get; set; }
     }
 }

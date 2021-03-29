@@ -1,0 +1,98 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.TeacherFollowViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Followers";
+}
+
+<style>
+    #tblCustom thead {
+        background-color: #2494F2 !important;
+    }
+
+        #tblCustom thead th {
+            padding: 8px !important;
+            line-height: 24px !important;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #fff;
+        }
+</style>
+
+<div class="page-head">
+    <h3>Followers</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Followers</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("CreateGroup", "Teachers", FormMethod.Post, new { id = "frmCreate", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal  block-flat">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Create Group</h3>
+                @Html.ValidationSummary(true)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <button type="submit" name="command" value="Create" class="btn btn-success">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                @Html.Label("Group Name", new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.TextBox("txtGroup",null, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 packs-container">
+            <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th class="th-inner">Group</th>
+                        <th class="th-inner">Class</th>
+                        <th class="th-inner">User Fullname</th>
+                        <th class="th-inner">Start Date</th>
+                        <th class="th-inner">User Type</th>
+                        <th class="th-inner"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>@item.GroupName</td>
+                        <td>@item.ClassType</td>
+                        <td>@item.FollowUserName</td>
+                        <td>@item.StartDate</td>
+                        <td>@item.UserType</td>
+                        <td><a href="/Teachers/AssignUserToGroup/@item.FollowUserId" class="btn btn-success btn-xs">Assign Group</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div id="contentPager">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("Followers", "UserAdmin",
+            new { page, sortOrder = ViewBag.CurrentSort }))
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -78,6 +78,17 @@ namespace OnlineExam.Models.ViewModels
         public string FollowUserName { get; set; }
         public string StartDate { get; set; }
         public string UserType { get; set; }
+        public string ClassType { get; set; }
+        public int? GroupId { get; set; }
+        public string GroupName { get; set; }
 
+    }
+
+    public class GroupsViewModel
+    {
+        public int Id { get; set; }
+        public int ProfileId { get; set; }
+        public string GroupName { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

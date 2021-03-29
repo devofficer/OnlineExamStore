@@ -482,32 +482,6 @@ namespace OnlineExam.Controllers
 
             return RedirectToAction("LessonDiscussion",new {id=id });
         }
-
-        public ActionResult Followers(int? page)
-        {
-            var dbContext = new ApplicationDbContext();
-            int teacherProfileId = CommonRepository.GetCurrentUserProfileId();
-
-            var info = dbContext.Followers.Where(x => x.UserProfileId == teacherProfileId)
-                .ToList()
-                .Select(x => new TeacherFollowViewModel()
-                {
-                    Id = x.Id,
-                    TeacherId = x.UserProfileId,
-                    TeacherName = dbContext.UserProfiles.Find(x.UserProfileId).FullName,
-                    FollowUserId = x.FollowersUserProfileId,
-                    FollowUserName = dbContext.UserProfiles.Find(x.FollowersUserProfileId).FullName,
-                    StartDate = x.StartDate.ToString("dd/MM/yyyy"),
-                    UserType = CommonRepository.GetUserTypeByProfileId(x.FollowersUserProfileId)
-                }); ;
-
-            int pageSize = 20;
-
-            int pageNumber = (page ?? 1);
-
-            return View(info.ToPagedList(pageNumber, pageSize));
-        }
-
         
     }
 }
