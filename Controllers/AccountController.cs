@@ -774,9 +774,9 @@ namespace OnlineExam.Controllers
         {
             var registerViewModel = new RegisterViewModel
             {
-                UserTypes = CommonRepository.GetLookups(Enums.LookupType.UserType.ToString()),
+                UserTypes = register== "Paid"?CommonRepository.GetLookups(Enums.LookupType.UserType.ToString()).Where(x=>x.Value != "Teacher"): CommonRepository.GetLookups(Enums.LookupType.UserType.ToString()),
                 ClasseTypes = CommonRepository.GetLookups(Enums.LookupType.ClassType.ToString()),
-                SubjectCategory = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString()).DistinctBy(x=>x.Value)
+               // SubjectCategory = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString()).DistinctBy(x=>x.Value)
             };
             using (var dbContext = new ApplicationDbContext())
             {

@@ -237,7 +237,8 @@
             onChange: function (option, checked) {
                 // Get selected options.
                 var selectedOptions = jQuery('#SelectedClasses option:selected');
-
+                
+                //GetSubjectCategory(selectedOptions.val());
                 if (selectedOptions.length >= countX) {
                     // Disable all other checkboxes.
                     var nonSelectedOptions = jQuery('#SelectedClasses option').filter(function () {
@@ -283,73 +284,75 @@
         $('#SubjectCategories').html('');
     }
     var last_valid_class_selection = null;
-    $("#SelectedClasses").on("change",function (event) {
-        var strVal = "";
-        strVal = $(this).val();
-        if (strVal != null) {
-            var strValArray = strVal.toString().split(",");
-            if (strValArray.length > countX) {
-                $(this).val(last_valid_class_selection);
+        $("body").on("change","#SelectedClasses", function () {
+            var strVal = "";
+            var strclass = "";
+            strVal = $(this).val();
+
+            if (strVal != null) {
+                strclass = strVal.toString().replaceAll(",", "|");
+                 GetSubjectCategory(strclass);
             }
             else {
-                last_valid_class_selection = $(this).val();
-                var strclass = "";
-                strclass = strVal.toString();
-                if (strValArray.length > 1) {
-                    strclass = strVal.toString().replaceAll(",", "|");
-                }
-                GetSubjectCategory(strclass);
+                GetSubjectCategory(null);
+            }
+    });
+
+        function GetSubjectCategory(str) {
+            if (str != null) {
+                $.getJSON('/Home/GetSubjectCategoryByClassTypes/', { classType: str },
+                    function (data) {
+                        var items = '';
+                        $.each(data, function (i, state) {
+                            items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                        });
+                        classMultiSelect(items);
+                    }
+                );
+            }
+            else {
+                classMultiSelect(null)
             }
         }
 
-    });
+        function classMultiSelect(items) {
+            $('#SubjectCategories').html(items);
+            $('#SubjectCategories').multiselect({
+                nonSelectedText: 'Select Subject Category',
+                allSelectedText: 'All Selected',
+                selectAllName: false,
+                includeSelectAllOption: false,
+                numberDisplayed: 1,
+                buttonWidth: '100%',
+                maxHeight: 400,
+                onChange: function (option, checked) {
+                    // Get selected options.
+                    var selectedOptions = jQuery('#SubjectCategories option:selected');
 
-    function GetSubjectCategory(str) {
-        $.getJSON('/Home/GetSubjectCategoryByClassTypes/', { classType: str },
-            function (data) {
-                var items = '';
-                $.each(data, function (i, state) {
-                    items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
-                });
-                $('#SubjectCategories').html(items);
-                $('#SubjectCategories').multiselect({
-                    nonSelectedText: 'Select Subject Category',
-                    allSelectedText: 'All Selected',
-                    selectAllName: false,
-                    includeSelectAllOption: false,
-                    numberDisplayed: 1,
-                    buttonWidth: '100%',
-                    maxHeight: 400,
-                    onChange: function (option, checked) {
-                        // Get selected options.
-                        var selectedOptions = jQuery('#SubjectCategories option:selected');
+                    if (selectedOptions.length >= countX) {
+                        // Disable all other checkboxes.
+                        var nonSelectedOptions = jQuery('#SubjectCategories option').filter(function () {
+                            return !jQuery(this).is(':selected');
+                        });
 
-                        if (selectedOptions.length >= countX) {
-                            // Disable all other checkboxes.
-                            var nonSelectedOptions = jQuery('#SubjectCategories option').filter(function () {
-                                return !jQuery(this).is(':selected');
-                            });
-
-                            nonSelectedOptions.each(function () {
-                                var input = jQuery('input[value="' + jQuery(this).val() + '"]');
-                                input.prop('disabled', true);
-                                input.parent('li').addClass('disabled');
-                            });
-                        }
-                        else {
-                            // Enable all checkboxes.
-                            jQuery('#SubjectCategories option').each(function () {
-                                var input = jQuery('input[value="' + jQuery(this).val() + '"]');
-                                input.prop('disabled', false);
-                                input.parent('li').addClass('disabled');
-                            });
-                        }
+                        nonSelectedOptions.each(function () {
+                            var input = jQuery('input[value="' + jQuery(this).val() + '"]');
+                            input.prop('disabled', true);
+                            input.parent('li').addClass('disabled');
+                        });
                     }
-                });
-             }
-        );
-
-    }
+                    else {
+                        // Enable all checkboxes.
+                        jQuery('#SubjectCategories option').each(function () {
+                            var input = jQuery('input[value="' + jQuery(this).val() + '"]');
+                            input.prop('disabled', false);
+                            input.parent('li').addClass('disabled');
+                        });
+                    }
+                }
+            });
+            $("#SubjectCategories").multiselect('rebuild');
+        }
 
     var last_valid_subject_selection = null;
     $("#SubjectCategories").on("change",function (event) {
