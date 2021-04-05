@@ -1,5 +1,6 @@
 ﻿using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
+using OnlineExam.Helpers;
 using OnlineExam.Infrastructure;
 using OnlineExam.Infrastructure.Alerts;
 using OnlineExam.Models;
@@ -25,9 +26,7 @@ namespace OnlineExam.Controllers
             int profileId = CommonRepository.GetCurrentUserProfileId();
             var dbContext = new ApplicationDbContext();
 
-            string[] classTypes = dbContext.UserProfiles.Find(profileId).ClassTypes.Split('|');
-
-            var info = dbContext.Lessons.Where(x => classTypes.Contains(x.ClassType) && x.IsActive==true).ToList()
+            var info = dbContext.Lessons.Where(x => x.IsActive==true).ToList()
                 .Select(x => new LessonsViewModel
                 {
                     LessonId = x.LessonId,
@@ -48,10 +47,18 @@ namespace OnlineExam.Controllers
                     IsEnroll = dbContext.LessonUsers.Where(t=>t.LessonId == x.LessonId && t.IsActive==true).Count()>0? "Yes":"No"
                 });
 
-            info = info.OrderByDescending(x => x.StartDate);
+            if (!CustomClaimsPrincipal.Current.IsACDAStoreUser)
+            {
+                string[] classTypes = dbContext.UserProfiles.Find(profileId).ClassTypes.Split('|');
+                info = info.Where(x => classTypes.Contains(x.ClassType));
+            }
+
+                info = info.OrderByDescending(x => x.StartDate);
             int pageSize = 20;
 
             int pageNumber = (page ?? 1);
+
+            ViewBag.IsAdmin = CustomClaimsPrincipal.Current.IsACDAStoreUser;
 
             return View(info.ToPagedList(pageNumber, pageSize));
         }
@@ -252,7 +259,7 @@ namespace OnlineExam.Controllers
             int profileId = lessonInfo.ProfileId;
             int currentUserProfileId = CommonRepository.GetCurrentUserProfileId();
 
-            if (profileId != currentUserProfileId)
+            if (!CustomClaimsPrincipal.Current.IsACDAStoreUser && profileId != currentUserProfileId)
             {
                 if (dbContext.LessonUsers.Where(t => t.AttendUserProfileId == currentUserProfileId && t.IsActive == true).Count() == 0)
                     return HttpNotFound();
@@ -417,7 +424,7 @@ namespace OnlineExam.Controllers
             int profileId = lessonInfo.ProfileId;
             int currentUserProfileId = CommonRepository.GetCurrentUserProfileId();
 
-            if(profileId != currentUserProfileId)
+            if(!CustomClaimsPrincipal.Current.IsACDAStoreUser && profileId != currentUserProfileId)
             {
                 if(dbContext.LessonUsers.Where(t=>t.AttendUserProfileId == currentUserProfileId && t.IsActive == true).Count() == 0)
                     return HttpNotFound();

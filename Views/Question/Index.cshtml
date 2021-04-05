@@ -1,4 +1,5 @@
-﻿@model OnlineExam.Models.QuestionBankIndexViewModel
+﻿@using OnlineExam.Helpers
+@model OnlineExam.Models.QuestionBankIndexViewModel
 @using PagedList.Mvc;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @*<script type="text/javascript" src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>*@
@@ -17,32 +18,32 @@
     });
 </script>
 @*<script type="text/javascript"
-        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
-</script>*@
+            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+    </script>*@
 @*<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    "HTML-CSS": {availableFonts: ["TeX"]}, MMLorHTML: {prefer: "HTML"}
-    });
-    MathJax.Hub.Register.StartupHook("HTML-CSS Jax Ready",function () {
-    var VARIANT = MathJax.OutputJax["HTML-CSS"].FONTDATA.VARIANT;
-    VARIANT["normal"].fonts.unshift("MathJax_SansSerif");
-    VARIANT["bold"].fonts.unshift("MathJax_SansSerif-bold");
-    VARIANT["italic"].fonts.unshift("MathJax_SansSerif-italic");
-    VARIANT["-tex-mathit"].fonts.unshift("MathJax_SansSerif-italic");
-    });
-</script>*@
+        MathJax.Hub.Config({
+        "HTML-CSS": {availableFonts: ["TeX"]}, MMLorHTML: {prefer: "HTML"}
+        });
+        MathJax.Hub.Register.StartupHook("HTML-CSS Jax Ready",function () {
+        var VARIANT = MathJax.OutputJax["HTML-CSS"].FONTDATA.VARIANT;
+        VARIANT["normal"].fonts.unshift("MathJax_SansSerif");
+        VARIANT["bold"].fonts.unshift("MathJax_SansSerif-bold");
+        VARIANT["italic"].fonts.unshift("MathJax_SansSerif-italic");
+        VARIANT["-tex-mathit"].fonts.unshift("MathJax_SansSerif-italic");
+        });
+    </script>*@
 <style>
-        .MathJax {
-            font-size: 1.2em;
-            /*font-style: normal !important;*/
-        }
+    .MathJax {
+        font-size: 1.2em;
+        /*font-style: normal !important;*/
+    }
 
-        .MathJax_Display {
-            text-align: left !important;
-            display: inline !important;
-            margin: 0px !important;
-        }
-    </style>
+    .MathJax_Display {
+        text-align: left !important;
+        display: inline !important;
+        margin: 0px !important;
+    }
+</style>
 <style>
     /*.MathJax {
         font-size: 12px;
@@ -160,7 +161,7 @@
                     @Html.TextBoxFor(model => model.QuestionBankSearchViewModel.QuestionId, new { @class = "form-control" })
                 </div>
             </div>
-            </div>
+        </div>
         <div class="row">
             <hr />
         </div>
@@ -226,8 +227,11 @@
                             </table>
                         </td>
                         <td>
-                            <a href="@Url.Action("Edit", "Question", new { id = item.QuestionId })" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
-                            <a href="@Url.Action("Delete", "Question")" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                            @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || (item.CreatedBy == CustomClaimsPrincipal.Current.UserId))
+                            {
+                                <a href="@Url.Action("Edit", "Question", new { id = item.QuestionId })" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                                <a href="@Url.Action("Delete", "Question")" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                            }
                         </td>
                     </tr>
                 }

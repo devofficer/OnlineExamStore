@@ -62,7 +62,12 @@
                     <td>@item.IsActive</td>
                     <td>@item.ModifiedDate</td>
                     <td>
-                        @if (item.IsEnroll == "Yes")
+                        @if (ViewBag.IsAdmin == true)
+                        {
+                            <a href="/Lessons/LessonDiscussion/@item.LessonGuId" class="btn btn-success btn-xs">View</a>
+                            <a href="/Lessons/LessonMaterials/@item.LessonGuId" class="btn btn-success btn-xs">Materials</a>
+                        }
+                        else if (item.IsEnroll == "Yes")
                         {
                             <a href="/Lessons/LessonDiscussion/@item.LessonGuId" class="btn btn-success btn-xs">View</a>
                             <a href="/Lessons/LessonMaterials/@item.LessonGuId" class="btn btn-success btn-xs">Materials</a>

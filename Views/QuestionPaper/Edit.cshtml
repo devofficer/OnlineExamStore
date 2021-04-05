@@ -1,4 +1,5 @@
-﻿@model OnlineExam.Models.QuestionPaperIndexViewModel
+﻿@using OnlineExam.Helpers
+@model OnlineExam.Models.QuestionPaperIndexViewModel
 @using PagedList.Mvc;
 <script type="text/javascript">
     window.MathJax = {
@@ -92,9 +93,10 @@
                     <th style="width: 20%">
                         Question Format
                     </th>
+                    <th>Action</th>
                 </tr>
                 @foreach (var item in Model.QuestionPaperMappings)
-                    {
+                {
                     <tr>
                         <td>
                             @Html.Raw(@Html.DisplayFor(modelItem => item.QuestionBank.QuestionId))
@@ -105,6 +107,13 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.QuestionBank.QuestionFormat)
                         </td>
+                        <td>
+                            @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || (item.QuestionBank.CreatedBy == CustomClaimsPrincipal.Current.UserId))
+                            {
+                                <a href="@Url.Action("Edit", "Question", new { id = item.QuestionBank.Id })" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                                <a href="@Url.Action("Delete", "Question", new { id = item.QuestionBank.Id })" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                            }
+                        </td>
                         @*<td>
                                 @Html.DisplayFor(modelItem => item.QuestionBank.ExamName)
                             </td>
@@ -112,7 +121,7 @@
                                 @Html.DisplayFor(modelItem => item.QuestionBank.Subject)
                             </td>*@
                     </tr>
-                    }
+                }
             </table>
         </div>
     </div>
