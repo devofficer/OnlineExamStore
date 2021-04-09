@@ -170,13 +170,18 @@ namespace OnlineExam.Controllers
             int pageNumber = (page ?? 1);
 
             ViewBag.IsAdmin = CustomClaimsPrincipal.Current.IsACDAStoreUser;
+            ViewBag.BookList = null;
 
             string userId = CustomClaimsPrincipal.Current.UserId;
-            string[] classTypes = dbContext.UserProfiles.FirstOrDefault(x => x.UserProfileId == profileId).ClassTypes.Split('|');
 
-            var booksInfo = dbContext.Books.Where(x => x.IsActive == true && classTypes.Contains(x.ClassType)).ToList();
-            ViewBag.BookList = new SelectList(booksInfo, "Id", "Title");
+            if (!CustomClaimsPrincipal.Current.IsACDAStoreUser)
+            {
+                string[] classTypes = dbContext.UserProfiles.FirstOrDefault(x => x.UserProfileId == profileId).ClassTypes.Split('|');
 
+                var booksInfo = dbContext.Books.Where(x => x.IsActive == true && classTypes.Contains(x.ClassType)).ToList();
+                ViewBag.BookList = new SelectList(booksInfo, "Id", "Title");
+            }
+            
             ViewBag.BookTitle = "";
             ViewBag.TimeFrame = "";
             ViewBag.ItemId = 0;

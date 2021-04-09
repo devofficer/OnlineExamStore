@@ -22,64 +22,84 @@
 </style>
 
 <div class="page-head">
-    <h3>Assign Book</h3>
-    <ol class="breadcrumb">
-        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
-        <li>
-            <a href="@Url.Action("AssignBooks", "Books")" title="books">Books</a>
-        </li>
-        <li class="active">Assign Books</li>
-    </ol>
+    @if (User.IsInRole("Teacher"))
+    {
+        <h3>Assign Book</h3>
+        <ol class="breadcrumb">
+            <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+            <li>
+                <a href="@Url.Action("AssignBooks", "Books")" title="books">Books</a>
+            </li>
+            <li class="active">Assign Books</li>
+        </ol>
+    }
+    else
+    {
+        <h3>Assign Books</h3>
+        <ol class="breadcrumb">
+            <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+            <li>
+                <a href="@Url.Action("AssignBooks", "Books")" title="books">Books</a>
+            </li>
+            <li class="active">Assign Books</li>
+        </ol>
+    }
 </div>
 
-@using (Html.BeginForm("AssignBooksCreate", "Books", FormMethod.Post, new { id = "frmCreate", enctype = "multipart/form-data" }))
+@if (User.IsInRole("Teacher"))
 {
-    @Html.AntiForgeryToken()
-    <div class="form-horizontal  block-flat">
-        <div class="row">
-            <div class="col-md-12">
-                @Html.ValidationSummary(true)
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                <input type="hidden" name="Id" id="Id" value="@ViewBag.ItemId" />
-            </div>
-
-            <div class="col-md-8 text-right">
-                <button type="submit" name="command" value="Create" class="btn btn-success">
-                    <span class="fa fa-floppy-o"></span>
-                </button>
-                <a href="@Url.Action("Index", "Books")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                @Html.Label("Books", new { @class = "col-md-12" })
+    using (Html.BeginForm("AssignBooksCreate", "Books", FormMethod.Post, new { id = "frmCreate", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal  block-flat">
+            <div class="row">
                 <div class="col-md-12">
-                    @Html.DropDownList("BookId", ViewBag.BookList as SelectList, "Select Book", new { @class = "form-control", requied=true })
+                    @Html.ValidationSummary(true)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="hidden" name="Id" id="Id" value="@ViewBag.ItemId" />
+                </div>
+
+                <div class="col-md-8 text-right">
+                    <button type="submit" name="command" value="Create" class="btn btn-success">
+                        <span class="fa fa-floppy-o"></span>
+                    </button>
+                    <a href="@Url.Action("Index", "Books")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.Label("Books", new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownList("BookId", ViewBag.BookList as SelectList, "Select Book", new { @class = "form-control", requied = true })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.Label("Time Frame", new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <select name="TimeFrame" id="TimeFrame" class="form-control" required>
+                            <option value="">Select Time Frame</option>
+                            <option value="One Week">One Week</option>
+                            <option value="Two Weeks">Two Weeks</option>
+                            <option value="One Month">One Month</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                @Html.Label("Time Frame", new { @class = "col-md-12" })
-                <div class="col-md-12">
-                    <select name="TimeFrame" id="TimeFrame" class="form-control" required>
-                        <option value="">Select Time Frame</option>
-                        <option value="One Week">One Week</option>
-                        <option value="Two Weeks">Two Weeks</option>
-                        <option value="One Month">One Month</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
+    }
+}
+@if (User.IsInRole("Teacher"))
+{
+    <h2>My Assign Books</h2>
 }
 
-<h2>Assign List</h2>
 <div class="row">
     <div class="col-xs-12 packs-container">
         <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
@@ -98,26 +118,30 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                <tr>
-                    <td>@item.ClassType</td>
-                    <td>@item.BookTitle</td>
-                    <td>@item.TimeFrame</td>
-                    <td>@item.StartDate</td>
-                    <td>@item.EndDate</td>
-                    <td>@item.ModifiedDate</td>
-                    <td>@item.IsActive</td>
-                    <td>
-                        @if (ViewBag.IsOwner == "Yes")
-                        {
-                            if (item.IsActive == "Yes" && item.dtEndDate >= DateTime.Now)
+                    <tr>
+                        <td>@item.ClassType</td>
+                        <td>@item.BookTitle</td>
+                        <td>@item.TimeFrame</td>
+                        <td>@item.StartDate</td>
+                        <td>@item.EndDate</td>
+                        <td>@item.ModifiedDate</td>
+                        <td>@item.IsActive</td>
+                        <td>
+                            @if (ViewBag.IsOwner == "Yes" && ViewBag.IsAdmin == false)
                             {
-                                <a href="/Books/AssignBooks/@item.Id" class="btn btn-success btn-xs">Edit</a>
-                                <a href="/Books/AssignBooksDelete/@item.Id" class="btn btn-danger btn-xs">Delete</a>
+                                if (item.IsActive == "Yes" && item.dtEndDate >= DateTime.Now)
+                                {
+                                    <a href="/Books/AssignBooks/@item.Id" class="btn btn-success btn-xs">Edit</a>
+                                    <a href="/Books/AssignBooksDelete/@item.Id" class="btn btn-danger btn-xs">Delete</a>
+                                }
+                                <a href="/Books/BooksReview/@item.AssignGuId" class="btn btn-success btn-xs">Review</a>
                             }
-                            <a href="/Books/BooksReview/@item.AssignGuId" class="btn btn-success btn-xs">Review</a>
-                        }
-                    </td>
-                </tr>
+                            @if (ViewBag.IsAdmin == true)
+                            {
+                                    <a href="/Books/BooksReview/@item.AssignGuId" class="btn btn-success btn-xs">Review</a>
+                            }
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
@@ -133,8 +157,8 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script type="text/javascript">
+    <script type="text/javascript">
     $("#BookId").val("@ViewBag.BookId");
     $("#TimeFrame").val("@ViewBag.TimeFrame");
-</script>
+    </script>
 }

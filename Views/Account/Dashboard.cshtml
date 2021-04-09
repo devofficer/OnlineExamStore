@@ -416,7 +416,14 @@
                         <ul>
                             <li><a href="@Url.Action("Create", "Books")">Add Book</a></li>
                             <li><a href="@Url.Action("Index", "Books")">Books List</a></li>
-                            <li><a href="@Url.Action("AssignBooks", "Books")">Teachers Books</a></li>
+                            @if (CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
+                            {
+                                <li><a href="@Url.Action("AssignBooks", "Books")">My Books</a></li>
+                            }
+                            else
+                            {
+                                <li><a href="@Url.Action("AssignBooks", "Books")">Teachers Books</a></li>
+                            }
                         </ul>
                     </div>
                 </div>
