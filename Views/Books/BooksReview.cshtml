@@ -1,0 +1,112 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.BooksReviewViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Discucussion";
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<div class="page-head">
+    <h3>Books Reviews</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("AssignBooks", "Books")" title="Books">Assign Books</a>
+        </li>
+        <li class="active">Books Reviews</li>
+    </ol>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel panel-info">
+            <h3 class="panel-heading">@ViewBag.BookTitle</h3>
+            <div style="padding:5px; text-align:center; background-color:#afe3fa;">
+                <span><strong>ClassType:</strong> @ViewBag.ClassType</span>
+                <span style="margin-left:20px;"><strong>Teacher:</strong> @ViewBag.Teacher</span>
+            </div>
+            <div style="padding:5px;">
+                @Html.Raw(ViewBag.BookDescription)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel panel-info">
+            @foreach (var item in Model)
+            {
+            <div class="col-md-12" style="padding:5px; width:100%; border:1px solid #808080;">
+                <div class="col-md-1 text-center">
+                    @if (item.UserAvater == null || !File.Exists(item.UserAvater))
+                    {
+                        <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                    }
+                    else
+                    {
+                        <img src="@item.UserAvater" alt="Image" class="img-thumbnail" />
+                    }
+                    <span style="display:block">@item.UserName</span>
+                    <span style="display:block">@item.CreatedDate</span>
+                </div>
+                <div class="col-md-10 text-left" style="background-color:#ffffff;">
+                    @if (item.IsActive == "Yes")
+                    {
+
+                        <span style="background-color:#ffffff;">@Html.Raw(item.Note)</span>
+
+                    }
+                    else
+                    {
+                        <span style="background-color:#ffffff;">----This post has been deleted----</span>
+                    }
+                </div>
+
+                <div class="col-md-1 text-center">
+                    @if ((ViewBag.CurrentUserId == item.ProfileId || ViewBag.CurrentUserId == ViewBag.CurrentTecherId) && item.IsActive == "Yes")
+                    {
+                    <a href="/Books/DeleteBooksReview/@item.Id" class="btn btn-danger btn-xs">Delete</a>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+        <div id="contentPager">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("BoosReview", "Books",
+        new { page, sortOrder = ViewBag.CurrentSort }))
+        </div>
+    </div>
+
+    @if (ViewBag.IsActive == "Yes")
+    {
+    <div class="row">
+        <div class="panel panel-info">
+            @using (Html.BeginForm("CreateReview/", "Books", new { id = @ViewBag.AssignGuid }, FormMethod.Post, new { id = "frmCreatePost", enctype = "multipart/form-data" }))
+            {
+                <div class="form-horizontal  block-flat">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.ValidationSummary(true)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                        </div>
+
+                        <div class="col-md-2 text-right">
+                            <button type="submit" name="command" value="Add Post" class="btn btn-success">
+                                <span class="fa fa-floppy-o"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.Label("Post", new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextArea("txtPost", new { @class = "form-control ckeditor" })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+    }
+</div>

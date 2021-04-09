@@ -239,7 +239,7 @@
                 var selectedOptions = jQuery('#SelectedClasses option:selected');
                 
                 //GetSubjectCategory(selectedOptions.val());
-                if (selectedOptions.length >= countX) {
+                if (selectedOptions.length >= 1) {
                     // Disable all other checkboxes.
                     var nonSelectedOptions = jQuery('#SelectedClasses option').filter(function () {
                         return !jQuery(this).is(':selected');

@@ -291,6 +291,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\CascadingDropDownController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LessonsController.cs" />
@@ -367,6 +368,9 @@
     <Compile Include="Models\APIViewModels\V1\TResult.cs" />
     <Compile Include="Models\AttemptedQuestion.cs" />
     <Compile Include="Models\AttemptedQuestionPapar.cs" />
+    <Compile Include="Models\Books.cs" />
+    <Compile Include="Models\BooksAssign.cs" />
+    <Compile Include="Models\BooksReview.cs" />
     <Compile Include="Models\FollowerGroups.cs" />
     <Compile Include="Models\Followers.cs" />
     <Compile Include="Models\LessonDiscussions.cs" />
@@ -395,6 +399,7 @@
     <Compile Include="Models\ViewModels\AttemptedQuestionPaparViewModel.cs" />
     <Compile Include="Models\ViewModels\AttemptedQuestionViewModel.cs" />
     <Compile Include="Models\ViewModels\BankPaymentViewModel.cs" />
+    <Compile Include="Models\ViewModels\BooksViewModel.cs" />
     <Compile Include="Models\ViewModels\ClassViewModel.cs" />
     <Compile Include="Models\ViewModels\CompanyViewModel.cs" />
     <Compile Include="Models\Country.cs" />
@@ -3476,6 +3481,11 @@
     <Content Include="Views\Lessons\LessonMaterials.cshtml" />
     <Content Include="Views\Teachers\Followers.cshtml" />
     <Content Include="Views\Teachers\AssignUserToGroup.cshtml" />
+    <Content Include="Views\Books\Create.cshtml" />
+    <Content Include="Views\Books\Edit.cshtml" />
+    <Content Include="Views\Books\Index.cshtml" />
+    <Content Include="Views\Books\AssignBooks.cshtml" />
+    <Content Include="Views\Books\BooksReview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\static\" />

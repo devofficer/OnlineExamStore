@@ -454,7 +454,7 @@ namespace OnlineExam.Controllers
         }
 
         // GET: /QuestionPaper/Delete/5
-        public async Task<ActionResult> Delete(int? id)
+        public async Task<ActionResult> Delete(int? id, string type)
         {
             if (id == null)
             {
@@ -481,7 +481,41 @@ namespace OnlineExam.Controllers
             }
             //db.QuestionPapers.Remove(questionpaper);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            var strType = Request.Form["strType"];
+
+            if (strType == "Teacher")
+            {
+                return RedirectToAction("Index",new { type="Teacher"});
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        public ActionResult DeleteMapping(int? id, int paperId, string type)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var questionPaperMapingObj =  db.QuestionPaperMappings.FirstOrDefault(x=>x.QuestionBankId == id && x.QuestionPaperId== paperId);
+            if (questionPaperMapingObj == null)
+            {
+                return HttpNotFound();
+            }
+            db.QuestionPaperMappings.Remove(questionPaperMapingObj);
+            db.SaveChanges();
+
+            if (type == "Teacher")
+            {
+                return RedirectToAction("Index", new { type = "Teacher" });
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         protected override void Dispose(bool disposing)

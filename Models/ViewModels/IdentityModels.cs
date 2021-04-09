@@ -160,6 +160,9 @@ namespace OnlineExam.Models
         public DbSet<LessonDiscussions> LessonDiscussions { get; set; }
         public DbSet<LessonUsers> LessonUsers { get; set; }
         public DbSet<FollowerGroups> FollowerGroups { get; set; }
+        public DbSet<Books> Books { get; set; }
+        public DbSet<BooksAssign> BooksAssign { get; set; }
+        public DbSet<BooksReview> BooksReview { get; set; }
 
         public override int SaveChanges()
         {

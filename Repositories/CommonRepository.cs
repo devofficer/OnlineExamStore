@@ -342,6 +342,20 @@ namespace OnlineExam.Repositories
             return (int)Math.Round((double)(100 * obtainedMarks) / totalMarks); ;
         }
 
+        public static IEnumerable<SelectListItem> GetAllClassTypesList()
+        {
+            var dbContext = new ApplicationDbContext();
+            var classTypesList = dbContext.Lookup.Where(x => x.ModuleCode == "ClassType" && x.IsActive)
+                           .ToList()
+                           .Select(x => new SelectListItem
+                           {
+                               Value = x.Value.Trim(),
+                               Text = x.Text.Trim()
+                           });
+
+            return classTypesList;
+        }
+
         public static IEnumerable<SelectListItem> GetCurrentTeacherClassTypesList()
         {
             var dbContext = new ApplicationDbContext();

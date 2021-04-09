@@ -274,7 +274,7 @@
                     @if (item.Data.CreatedBy == CustomClaimsPrincipal.Current.UserId)
                     {
                         <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
-                        <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                        <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id, type="Teacher"})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
                     }
                 </td>
             }
