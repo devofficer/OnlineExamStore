@@ -57,4 +57,12 @@ E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineEx
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.CopyComplete
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.dll
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.pdb
-E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csprojAssemblyReference.cache
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\Paystack.Net.Contstants.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\Paystack.Net.Interfaces.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\Paystack.Net.Models.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\Paystack.Net.SDK.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Http.Extensions.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Http.Primitives.dll
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Http.Extensions.xml
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Http.Primitives.xml
+E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.App.config

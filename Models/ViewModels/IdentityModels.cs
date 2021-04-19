@@ -163,6 +163,11 @@ namespace OnlineExam.Models
         public DbSet<Books> Books { get; set; }
         public DbSet<BooksAssign> BooksAssign { get; set; }
         public DbSet<BooksReview> BooksReview { get; set; }
+        public DbSet<MessageDetails> MessageDetails { get; set; }
+        public DbSet<MessagesReplies> MessagesReplies { get; set; }
+        public DbSet<UserPayments> UserPayments { get; set; }
+        public DbSet<UserInvoices> UserInvoices { get; set; }
+        public DbSet<UserAccountBalance> UserAccountBalance { get; set; }
 
         public override int SaveChanges()
         {

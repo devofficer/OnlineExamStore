@@ -431,16 +431,39 @@
 
             <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
                 <div class="thumbnail tile tile-medium">
-                    <div class="servics_title servics_title-color-gray">
+                    <div class="servics_title servics_title-color-yellow">
+                        <div class="icon"><img src="@Url.Content("~/images/blueprint_icon.png")" align="" class="center-block" /></div>
+                        <h3>Messages</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="serivs_box_contnet">
+                        <ul>
+                            <li><a href="@Url.Action("Create", "Messages")">Send Message</a></li>
+                            <li><a href="@Url.Action("Index", "Messages")">Messages</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xs-12 col-lg-3 col-md-6 col-small-enlarge">
+                <div class="thumbnail tile tile-medium">
+                    <div class="servics_title servics_title-color-green">
                         <div class="icon"><img src="@Url.Content("~/images/moniter1.png")" align="" class="center-block" /></div>
                         <h3>eWallet</h3>
                         <div class="clearfix"></div>
                     </div>
                     <div class="serivs_box_contnet">
                         <ul>
-                            <li><a href="#">Coming Soon...................</a></li>
-                            <li><a href="#">Coming Soon...................</a></li>
-                            <li><a href="#">Coming Soon...................</a></li>
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li><a href="@Url.Action("MakePayment", "Payment")">Make Payment</a></li>
+                                <li><a href="@Url.Action("Index", "Payment")">My Payment Info</a></li>
+                            }
+                            @if (User.IsInRole("StaffAdmin"))
+                            {
+                                <li><a href="@Url.Action("PendingApproval", "Payment")">Pending Approval Payments</a></li>
+                                <li><a href="@Url.Action("StudentPayments", "Payment")">Student Payment History</a></li>
+                            }
                         </ul>
                     </div>
                 </div>

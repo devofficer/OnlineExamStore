@@ -1,0 +1,67 @@
+﻿@model OnlineExam.Models.MessagesReplies
+
+@{
+    ViewBag.Title = "Reply";
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<div class="page-head">
+    <h3>New Message</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Messages")" title="Messages">Messages</a>
+        </li>
+        <li class="active">Reply</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("Reply", "Messages", FormMethod.Post, new { id = "frmReply", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal  block-flat">
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ValidationSummary(true)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <input type="hidden" name="MessageId" id="MessageId" value="@ViewBag.MessageId" />
+            </div>
+
+            <div class="col-md-8 text-right">
+                <button type="submit" name="command" value="Send" class="btn btn-success">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+                <a href="@Url.Action("Index", "Messages")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+            </div>
+        </div>
+
+       
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                @Html.Label("Reply", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    <textarea name="ReplyText" id="ReplyText" class="form-control ckeditor" required></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+    </script>
+}

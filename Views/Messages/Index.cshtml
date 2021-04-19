@@ -1,0 +1,91 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.MessageDetailsViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Messages";
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<style>
+    #tblCustom thead {
+        background-color: #2494F2 !important;
+    }
+
+        #tblCustom thead th {
+            padding: 8px !important;
+            line-height: 24px !important;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #fff;
+        }
+</style>
+<div class="page-head">
+    <h3>New Message</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Messages")" title="Messages">Messages</a>
+        </li>
+        <li class="active">Messages</li>
+    </ol>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12 packs-container">
+        <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th class="th-inner col-md-1 text-center">User</th>
+                    <th class="th-inner">Message</th>
+                    <th class="th-inner text-right">Reply Count</th>
+                    <th class="th-inner"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td class="text-center col-md-1">
+                        @if (item.UserAvater == null || !File.Exists(item.UserAvater))
+                        {
+                            <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                        }
+                        else
+                        {
+                            <img src="@item.UserAvater" alt="Image" class="img-thumbnail" />
+                        }
+                        <span style="display:block">@item.UserName</span>
+                        <span style="display:block">@item.CreatedDate</span>
+
+                    </td>
+                    <td class="col-md-9">@item.MessageText</td>
+                    <td class="text-right">@item.ReplyCount</td>
+                    <td>
+                        @if (item.ReplyAllowed == true)
+                        {
+                            <a href="/Messages/Reply/@item.MessageGuId" class="btn btn-success btn-xs">Reply</a>
+                        }
+                        @if (item.CreatedBy == ViewBag.CurrentUserProfileId)
+                        {
+                            <a href="/Messages/Delete/@item.MessageGuId" class="btn btn-danger btn-xs">Delete</a>
+                        }
+                        @if (item.ReplyCount > 0)
+                        {
+                            <a href="/Messages/ViewReply/@item.MessageGuId" class="btn btn-success btn-xs">View Reply</a>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <div id="contentPager">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("Index", "Messages",
+        new { page, sortOrder = ViewBag.CurrentSort }))
+        </div>
+    </div>
+
+</div>
+

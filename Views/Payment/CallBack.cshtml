@@ -1,0 +1,8 @@
+﻿@model Paystack.Net.Models.TransactionResponseModel
+@{
+    ViewBag.Title = "CallBack";
+}
+
+<h2>CallBack</h2>
+
+@Html.Raw(Json.Encode(Model));

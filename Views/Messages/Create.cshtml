@@ -1,0 +1,126 @@
+﻿@model OnlineExam.Models.MessageDetails
+
+@{
+    ViewBag.Title = "Messages";
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<div class="page-head">
+    <h3>New Message</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Messages")" title="Messages">Messages</a>
+        </li>
+        <li class="active">Create</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("Create", "Messages", FormMethod.Post, new { id = "frmCreate", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal  block-flat">
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ValidationSummary(true)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+
+            </div>
+
+            <div class="col-md-8 text-right">
+                <button type="submit" name="command" value="Send" class="btn btn-success">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+                <a href="@Url.Action("Index", "Messages")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                @Html.Label("Send To", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    <select name="AssignUserType" id="AssignUserType" class="form-control" required>
+                        @if (User.IsInRole("Student"))
+                        {
+                            <option value="">-Select-</option>
+                            <option value="StaffAdmin">Admin</option>
+                            <option value="Teacher">Teachers</option>
+                            <option value="StaffAdmin,Teacher">Teachers and Admin</option>
+                        }
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <option value="">-Select-</option>
+                            <option value="StaffAdmin">Admin</option>
+                            <option value="Student">Students</option>
+                            <option value="StaffAdmin,Student">Students and Admin</option>
+                        }
+                        @if (User.IsInRole("StaffAdmin"))
+                        {
+                            <option value="">-Select-</option>
+                            <option value="Student">Students</option>
+                            <option value="Teacher">Teachers</option>
+                            <option value="Teacher,Student">Teachers and Students</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="classRow" class="row" style="display:none;">
+            <div class="col-md-6">
+                @Html.Label("Class Type", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "All Class", new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                @Html.Label("Allow Reply", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    <input type="checkbox" name="ReplyAllowed" id="ReplyAllowed" value="false" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                @Html.Label("Message", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    <textarea name="MessageText" id="MessageText" class="form-control ckeditor" required></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        $("#AssignUserType").change(function () {
+            if ($(this).val() == "StaffAdmin") {
+                $("#ClassType").val('');
+                $("#classRow").css("display", 'none');
+            }
+            else {
+                $("#ClassType").val('');
+                $("#classRow").css("display", '');
+            }
+        });
+
+        $("#ReplyAllowed").click(function () {
+            if ($(this).is(":checked")) {
+                $(this).val(true);
+            }
+            else {
+                $(this).val(false);
+            }
+        })
+
+    </script>
+}

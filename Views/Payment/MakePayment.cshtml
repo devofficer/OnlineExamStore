@@ -1,0 +1,98 @@
+﻿@model OnlineExam.Models.UserPayments
+
+@{
+    ViewBag.Title = "Make Payment";
+}
+
+<div class="page-head">
+    <h3>Make Payment</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Payment")" title="Payment">Payment</a>
+        </li>
+        <li class="active">Make Payment</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("MakePayment", "Payment", FormMethod.Post, new { id = "frmPayment", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal  block-flat">
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ValidationSummary(true)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Account Balance: @ViewBag.AccountBalance</h5>
+            </div>
+
+            <div class="col-md-6 text-right">
+                <button type="submit" name="btn_paynow" id="btn_paynow" value="Pay Now" class="btn btn-success">
+                    <span class="fa fa-credit-card"></span>
+                </button>
+                <a href="@Url.Action("Index", "Payment")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.Label("Payment Type", new { @class = "col-md-12" })
+                <div class="col-md-6">
+                    <select name="PaymentType" id="PaymentType" class="form-control" required>
+                        <option value="">Select Payment Type</option>
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                    </select>
+                </div>
+            </div>
+                <div class="col-md-4">
+                    @Html.Label("Amount", new { @class = "col-md-12" })
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                    </div>
+                </div>
+        </div>
+
+        <div class="row" id="OffLineRow" style="display:none;">
+            <div class="col-md-4">
+                @Html.Label("Bank", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextBoxFor(model => model.Bank, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                @Html.Label("Transaction Id", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextBoxFor(model => model.TransactionId, new { @class = "form-control ckeditor" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                @Html.Label("Proof File", new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    <input type="file" name="proof" id="proof" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        $(function () {
+            $("#PaymentType").change(function () {
+                if ($(this).val() == "Offline") {
+                    $("#OffLineRow").css("display", '');
+                }
+                else {
+                    $("#OffLineRow").css("display", 'none');
+                }
+            })
+
+        });
+
+    </script>
+}

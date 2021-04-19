@@ -1,0 +1,80 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.PaymentViewModel>
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Pending Approval Payments";
+}
+
+<link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
+<style>
+    #tblCustom thead {
+        background-color: #2494F2 !important;
+    }
+
+        #tblCustom thead th {
+            padding: 8px !important;
+            line-height: 24px !important;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #fff;
+        }
+</style>
+<div class="page-head">
+    <h3>Pending Approval Payments</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("Index", "Payment")" title="Payment History">Payment</a>
+        </li>
+        <li class="active">Pending Approval</li>
+    </ol>
+</div>
+<div class="row">
+    <div class="col-xs-12 packs-container">
+        <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th class="th-inner">Class Type</th>
+                    <th class="th-inner">Full Name</th>
+                    <th class="th-inner">Date</th>
+                    <th class="th-inner">Payment Type</th>
+                    <th class="th-inner">Payment Method</th>
+                    <th class="th-inner">Bank</th>
+                    <th class="th-inner">TxnId</th>
+                    <th class="th-inner">Transaction Id</th>
+                    <th class="th-inner">Proof</th>
+                    <th class="th-inner">Amount</th>
+                    <th class="th-inner"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@item.ClassType</td>
+                    <td>@item.UserName</td>
+                    <td>@item.Date</td>
+                    <td>@item.PaymentType</td>
+                    <td>@item.PaymentMethod</td>
+                    <td>@item.Bank</td>
+                    <td>@item.TxnId</td>
+                    <td>@item.TransactionId</td>
+                    <td><a href="/Payment/Download?strfile=@item.ProofFile" title="download proof doc">Download</a></td>
+                    <td style="text-align:right;">@item.Amount</td>
+                    <td><a href="/Payment/PaymentReview/@item.Id" class="btn btn-success btn-xs">Review</a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <div id="contentPager">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("PendingApproval", "Payment",
+        new { page, sortOrder = ViewBag.CurrentSort }))
+        </div>
+    </div>
+
+</div>
+

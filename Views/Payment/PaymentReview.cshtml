@@ -1,0 +1,137 @@
+﻿@model OnlineExam.Models.UserPayments
+
+@{
+    ViewBag.Title = "Payment Review";
+}
+
+<div class="page-head">
+    <h3>Payment Review</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li>
+            <a href="@Url.Action("PendingApproval", "Payment")" title="Payment">Payment</a>
+        </li>
+        <li class="active">Payment Review</li>
+    </ol>
+</div>
+
+@using (Html.BeginForm("PaymentReview", "Payment", FormMethod.Post, new { id = "frmPayment", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal  block-flat">
+    <div class="row">
+        <div class="col-md-12">
+            @Html.ValidationSummary(true)
+            @Html.HiddenFor(model => model.Id)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" name="btn_paynow" id="btn_paynow" value="Pay Now" class="btn btn-success">
+                <span class="fa fa-credit-card"></span>
+            </button>
+            <a href="@Url.Action("PendingApproval", "Payment")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.Label("Class Type", new { @class = "col-md-12" })
+            <div class="col-md-6">
+                @ViewBag.ClassType
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Full Name", new { @class = "col-md-12" })
+            <div class="col-md-6">
+                @ViewBag.FullName
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Date", new { @class = "col-md-12" })
+            <div class="col-md-6">
+                @Model.Date.ToString("dd/MM/yyyy HH:mm:ss")
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.Label("Payment Type", new { @class = "col-md-12" })
+            <div class="col-md-6">
+                @Model.PaymentType
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Amount", new { @class = "col-md-12" })
+            <div class="col-md-6">
+                @Model.Amount.ToString("0.00")
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Proof File", new { @class = "col-md-12" })
+            <div class="col-md-12">
+                <a href="/Payment/Download?strfile=@Model.ProofFile" title="download proof doc">Download</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.Label("Bank", new { @class = "col-md-12" })
+            <div class="col-md-12">
+                @Model.Bank
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Transaction Id", new { @class = "col-md-12" })
+            <div class="col-md-12">
+                @Model.TransactionId
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Status", new { @class = "col-md-12" })
+            <div class="col-md-12">
+                <select name="TransactionStatus" id="TransactionStatus" class="form-control">
+                    <option value="">Select Status</option>
+                    <option value="success">Success</option>
+                    <option value="faild">Faild</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.Label("Approved", new { @class = "col-md-12" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.IsApproved)
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Message", new { @class = "col-md-12" })
+            <div class="col-md-12">
+                @Html.TextBoxFor(model => model.TransactionMessage, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            @Html.Label("Note", new { @class = "col-md-12" })
+            <div class="col-md-12">
+                @Html.TextBoxFor(model => model.Note, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+</div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        $(function () {
+            $("#TransactionStatus").val("@Model.TransactionStatus");
+        });
+
+    </script>
+}
