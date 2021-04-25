@@ -414,7 +414,10 @@
                     </div>
                     <div class="serivs_box_contnet">
                         <ul>
+                            @if (User.IsInRole("StaffAdmin"))
+                            {
                             <li><a href="@Url.Action("Create", "Books")">Add Book</a></li>
+                            }
                             <li><a href="@Url.Action("Index", "Books")">Books List</a></li>
                             @if (CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
                             {
@@ -438,7 +441,10 @@
                     </div>
                     <div class="serivs_box_contnet">
                         <ul>
+                            @if ((User.IsInRole("Student") && ViewBag.UserPlanType == "Paid") || User.IsInRole("Teacher") || User.IsInRole("StaffAdmin"))
+                            {
                             <li><a href="@Url.Action("Create", "Messages")">Send Message</a></li>
+                            }
                             <li><a href="@Url.Action("Index", "Messages")">Messages</a></li>
                         </ul>
                     </div>

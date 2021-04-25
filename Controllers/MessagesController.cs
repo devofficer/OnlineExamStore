@@ -1,4 +1,5 @@
-﻿using OnlineExam.Helpers;
+﻿using Microsoft.AspNet.Identity;
+using OnlineExam.Helpers;
 using OnlineExam.Infrastructure.Alerts;
 using OnlineExam.Models;
 using OnlineExam.Models.ViewModels;
@@ -99,6 +100,17 @@ namespace OnlineExam.Controllers
         public ActionResult Create(MessageDetails model)
         {
             int profileId = CommonRepository.GetCurrentUserProfileId();
+            if (User.IsInRole("Student"))
+            {
+                string currentUserId = User.Identity.GetUserId();
+                var planInfo = _dbContext.UserPlans.FirstOrDefault(x => x.UserId == currentUserId);
+
+                if (planInfo.MembershipPlanId == 1)
+                {
+                    return HttpNotFound();
+                }
+            }
+            
             model.MessageGuId = Guid.NewGuid();
             model.CreatedBy = profileId;
             model.CreatedDate = DateTime.Now;

@@ -60,6 +60,7 @@ namespace OnlineExam.Controllers
         public ActionResult Dashboard()
         {
             var signInStatus = SignInStatus.Success;
+            ViewBag.UserPlanType = "Trial";
             // CHECK, IF LOGGED-IN USER IS ADMIN OR STAFF
             if (!CustomClaimsPrincipal.Current.CurrentUserEmail.Contains(AppConstants.DomainName))
             {
@@ -71,6 +72,7 @@ namespace OnlineExam.Controllers
                     if (userPlanObj != null && userPlanObj.MembershipPlan != null)
                     {
                         #region MyRegion
+                        ViewBag.UserPlanType = userPlanObj.MembershipPlan.Name;
 
                         if (userPlanObj.ExpiryDate.HasValue)
                         {
@@ -104,6 +106,8 @@ namespace OnlineExam.Controllers
             if (signInStatus == SignInStatus.Success)
             {
                 ViewBag.UserId = CustomClaimsPrincipal.Current.UserId;
+
+                
 
                 //int i = int.Parse("ss");
                 return View();

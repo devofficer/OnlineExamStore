@@ -1,4 +1,5 @@
-﻿using OnlineExam.Infrastructure.Alerts;
+﻿using Microsoft.AspNet.Identity;
+using OnlineExam.Infrastructure.Alerts;
 using OnlineExam.Models;
 using OnlineExam.Models.ViewModels;
 using OnlineExam.Repositories;
@@ -297,6 +298,11 @@ namespace OnlineExam.Controllers
                         balanceInfo.ModifiedDate = DateTime.Now;
                         _dbContext.SaveChanges();
                     }
+                    string currentUserId = User.Identity.GetUserId();
+                    var planInfo = _dbContext.UserPlans.FirstOrDefault(x => x.UserId == currentUserId);
+                    planInfo.MembershipPlanId = 2;
+                    planInfo.ModifiedOn = DateTime.Now;
+                    _dbContext.SaveChanges();
 
                 }
                 return RedirectToAction("PendingApproval").WithSuccess("Payment info updated! ");

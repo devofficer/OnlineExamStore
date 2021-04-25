@@ -147,7 +147,7 @@
                                 }
                                 else
                                 {
-                                    if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+                                    if (User.Identity.IsAuthenticated && (User.IsInRole("Student") || User.IsInRole("Teacher")))
                                     {
                                         <div class="tags">
                                             <a href="#" class="btnFollow btn btn-warning">Followed</a>

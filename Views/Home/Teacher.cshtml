@@ -55,16 +55,16 @@
                                 </li>
                             </ul>
                         </div>
-                        @if (item.Follow == "Yes")
+                        @if (item.Follow == "Yes" && ViewBag.CurrentUserId != item.UserProfileId)
                         {
                             <div class="tags">
                                 <a href="@Url.Action("AddFollowsList","Home",new {id=item.UserProfileId })" class="btnFollow btn btn-success">Follow</a>
                             </div>
                         }
-                else
-                {
-                    if(User.Identity.IsAuthenticated && User.IsInRole("Student"))
-                    {
+                        else
+                        {
+                            if(User.Identity.IsAuthenticated && (User.IsInRole("Student") || (User.IsInRole("Teacher") && ViewBag.CurrentUserId != item.UserProfileId)))
+                            {
                     <div class="tags">
                         <a href="#" class="btnFollow btn btn-warning">Followed</a>
                     </div>

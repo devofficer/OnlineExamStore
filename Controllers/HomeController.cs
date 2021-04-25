@@ -71,11 +71,17 @@ namespace OnlineExam.Controllers
             ViewBag.lstSubject = lstSubject;
             bool logged = false;
             int currentUserProfileId = 0;
+            ViewBag.CurrentUserId = 0;
             var dbContext = new ApplicationDbContext();
-            if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+            if (User.Identity.IsAuthenticated)
             {
                 string currentUserId = User.Identity.GetUserId();
-                currentUserProfileId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
+               
+               // if (User.IsInRole("Student"))
+                //{
+                    currentUserProfileId = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == currentUserId).UserProfileId;
+                ViewBag.CurrentUserId = currentUserProfileId;
+                // }
                 logged = true;
             }
             
