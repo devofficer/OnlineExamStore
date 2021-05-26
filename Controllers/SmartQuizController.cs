@@ -83,6 +83,11 @@ namespace OnlineExam.Controllers
         {
             return View();
         }
+
+        public ActionResult IndexV3()
+        {
+            return View();
+        }
         public ActionResult Demo(int? id)
         {
             if (id == null)
@@ -157,6 +162,18 @@ namespace OnlineExam.Controllers
 
                 return questionSummaryViewModel;
             }
+        }
+
+        public ActionResult RemoveQuestion(int id, int questionId,int sectionId)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var record = db.QuestionPaperMappings.FirstOrDefault(x => x.QuestionPaperId == id && x.QuestionBankId == questionId && x.SectionId == sectionId);
+                db.QuestionPaperMappings.Remove(record);
+                db.SaveChanges();
+            }
+            // return RedirectToAction("IndexV3", new { @id = id });
+            return Redirect("/SmartQuiz/IndexV3/#/solution/" + id.ToString());
         }
     }
 }

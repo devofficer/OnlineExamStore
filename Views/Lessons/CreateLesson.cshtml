@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Create Lesson";
 }
-<script src="~/Scripts/ckeditor/ckeditor.js"></script>
 <div class="page-head">
     <h3>Create Lesson Note</h3>
     <ol class="breadcrumb">
@@ -18,63 +17,63 @@
 @using (Html.BeginForm("CreateLesson", "Lessons", FormMethod.Post, new { id = "frmCreateLesson", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-<div class="form-horizontal  block-flat">
-    <div class="row">
-        <div class="col-md-12">
-            @Html.ValidationSummary(true)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "Select Class Type", new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.ClassType, "", new { @class = "text-danger" })
-        </div>
-        <div class="col-md-2">
-            @Html.DropDownList("SubjectCategory", ViewBag.subjectCategory as SelectList, "Select Subject", new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.SubjectCategory, "", new { @class = "text-danger" })
-        </div>
-        <div class="col-md-8 text-right">
-            <button type="submit" name="command" value="Create" class="btn btn-success">
-                <span class="fa fa-floppy-o"></span>
-            </button>
-            <a href="@Url.Action("Index", "Lessons")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            @Html.LabelFor(model => model.Title, new { @class = "col-md-12" })
+    <div class="form-horizontal  block-flat">
+        <div class="row">
             <div class="col-md-12">
-                @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                @Html.ValidationSummary(true)
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            @Html.LabelFor(model => model.Description, new { @class = "col-md-12" })
-            <div class="col-md-12">
-                @Html.TextAreaFor(model => model.Description, new { @class = "form-control ckeditor" })
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "Select Class Type", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ClassType, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2">
+                @Html.DropDownList("SubjectCategory", ViewBag.subjectCategory as SelectList, "Select Subject", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SubjectCategory, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-8 text-right">
+                <button type="submit" name="command" value="Create" class="btn btn-success">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+                <a href="@Url.Action("Index", "Lessons")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            @Html.Label("Start Date", new { @class = "col-md-12" })
+        <div class="row">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Title, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Description, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-4">
+                @Html.Label("Start Date", new { @class = "col-md-12" })
+                <div class="col-md-4">
                     @Html.EditorFor(model => model.StartDate)
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            @Html.Label("End Date", new { @class = "col-md-12" })
             <div class="col-md-4">
-                @Html.EditorFor(model => model.EndDate)
+                @Html.Label("End Date", new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.EndDate)
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
+            <div class="col-md-4">
 
-        </div>
+            </div>
         </div>
 
         <div class="row">
@@ -107,16 +106,22 @@
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
     <script type="text/javascript">
+        $(document).ready(function () {
+            CKEDITOR.replace('Description', {
+                height: 300,
+                filebrowserUploadUrl: '/Lessons/CKEditorFileUpload',
+                filebrowserBrowseUrl: '/Lessons/CKEditorFileBrowser'
+            });
 
-        $(function () {
             $.validator.methods.date = function (value, element) {
                 return this.optional(element) || moment(value, "DD.MM.YYYY", true).isValid();
             }
 
             $("#StartDate").val('');
             $("#EndDate").val('');
-          
+
         });
 
     </script>

@@ -15,8 +15,6 @@
     @Scripts.Render("~/bundles/modernizr")
     <link href="~/Scripts/pace/themes/red/pace-theme-minimal.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
-
-
     <style>
         .datepicker {
             padding: 4px;
@@ -153,7 +151,7 @@
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 
-                    @if (Request.IsAuthenticated && !CustomClaimsPrincipal.Current.IsACDAStoreUser && CustomClaimsPrincipal.Current.MembershipPlan == MembershipPlanType.Trial.ToString())
+                    @if (Request.IsAuthenticated && !CustomClaimsPrincipal.Current.IsACDAStoreUser && !User.IsInRole("Teacher") && CustomClaimsPrincipal.Current.MembershipPlan == MembershipPlanType.Trial.ToString())
                     {
                         <li>
                             <a href="@Url.Action("MembershipExpired", "Account")" title="Upgrade Membership">

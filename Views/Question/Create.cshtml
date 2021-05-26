@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Create";
 }
-<script type="text/javascript">
+@*<script type="text/javascript">
     window.MathJax = {
         showProcessingMessages: true,
         messageStyle: "none",
@@ -27,10 +27,10 @@
             MathJax.Hub.processSectionDelay = 0;
         }
     }
-</script>
+</script>*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML-full"></script>
 @*<link href="~/Scripts/ckeditor/contents.css" rel="stylesheet" />*@
-<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+
 <style>
     .radio, .radio-inline {
         padding-top: 0px;
@@ -165,37 +165,49 @@
             );
         });
 
+        $(document).on('change', '#Subject', function () {
+            $.getJSON('/Question/GetTopicsBySubject/', { subject: $('#Subject').val() },
+                function (data) {
+                    var items = '<option value="">Select Topic</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#TopicId').html(items);
+                }
+            );
+        });
+
         init();
         function init() {
             //debugger;
             var subject = $("#Subject").val();
             //alert(subject);
-            if (subject == "MATHEMATICS") {
-                if (CKEDITOR) {
-                    if (CKEDITOR.instances.Decription) {
-                        // Switch to "source" view.
-                        CKEDITOR.instances.Decription.setMode('source');
-                        CKEDITOR.instances.OptionA.setMode('source');
-                        CKEDITOR.instances.OptionB.setMode('source');
-                        CKEDITOR.instances.OptionC.setMode('source');
-                        CKEDITOR.instances.OptionD.setMode('source');
-                        CKEDITOR.instances.OptionE.setMode('source');
-                    }
-                }
-            }
-            else {
-                if (CKEDITOR) {
-                    if (CKEDITOR.instances.Decription) {
-                        // Switch to "wysiwyg" view and be notified on completion.
-                        CKEDITOR.instances.Decription.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
-                        CKEDITOR.instances.OptionA.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
-                        CKEDITOR.instances.OptionB.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
-                        CKEDITOR.instances.OptionC.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
-                        CKEDITOR.instances.OptionD.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
-                        CKEDITOR.instances.OptionE.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
-                    }
-                }
-            }
+            //if (subject == "MATHEMATICS") {
+            //    if (CKEDITOR) {
+            //        if (CKEDITOR.instances.Decription) {
+            //            // Switch to "source" view.
+            //            CKEDITOR.instances.Decription.setMode('source');
+            //            CKEDITOR.instances.OptionA.setMode('source');
+            //            CKEDITOR.instances.OptionB.setMode('source');
+            //            CKEDITOR.instances.OptionC.setMode('source');
+            //            CKEDITOR.instances.OptionD.setMode('source');
+            //            CKEDITOR.instances.OptionE.setMode('source');
+            //        }
+            //    }
+            //}
+            //else {
+            //    if (CKEDITOR) {
+            //        if (CKEDITOR.instances.Decription) {
+            //            // Switch to "wysiwyg" view and be notified on completion.
+            //            CKEDITOR.instances.Decription.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
+            //            CKEDITOR.instances.OptionA.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
+            //            CKEDITOR.instances.OptionB.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
+            //            CKEDITOR.instances.OptionC.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
+            //            CKEDITOR.instances.OptionD.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
+            //            CKEDITOR.instances.OptionE.setMode('wysiwyg', function () { alert('wysiwyg mode loaded!'); });
+            //        }
+            //    }
+            //}
 
         }
 
@@ -227,13 +239,18 @@
             <div class="col-md-2">
                 @Html.DropDownListFor(model => model.ClassName, Model.ClasseTypes, "Select Class", new { @class = "form-control" })
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 @Html.DropDownListFor(model => model.ExamName, Model.ExamTypes, "Select Exam Category", new { @class = "form-control" })
             </div>
             <div class="col-md-2">
                 @Html.DropDownListFor(model => model.Subject, Model.Subjects, "Select Subject", new { @class = "form-control" })
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <select name="TopicId" id="TopicId" class = "form-control">
+                    <option value="">Select Topic</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 @Html.DropDownListFor(model => model.QuestionFormat, Model.QuestionFormats, "Select Question Format", new { @class = "form-control" })
             </div>
             <div class="col-md-2 text-right">
@@ -248,13 +265,18 @@
             <div class="col-md-2">
                 @Html.DropDownListFor(model => model.Mark, new SelectList(ViewBag.Marks), "Select Mark", new { @class = "form-control" })
             </div>
-            <div class="col-md-2">
-                @Html.TextBoxFor(model => model.DurationInSecond, "Duration", new { @class = "form-control" })
+            <div class="col-md-3">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.DurationInSecond, new { @class = "control-label" })
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.DurationInSecond, "Duration", new { @class = "form-control", placeholder = "Duration In Second" })
+                </div>
             </div>
-            <div class="col-md-2">
-                @Html.CheckBoxFor(model => model.IsOnline, new { @class = "checkbox checkbox-inline" })@Html.LabelFor(model => model.IsOnline, new { @class = "control-label" })
+                <div class="col-md-2">
+                    @Html.CheckBoxFor(model => model.IsOnline, new { @class = "checkbox checkbox-inline" })@Html.LabelFor(model => model.IsOnline, new { @class = "control-label" })
+                </div>
             </div>
-        </div>
         <div class="row">
             <hr />
         </div>
@@ -419,4 +441,5 @@
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
 }

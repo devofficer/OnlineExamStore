@@ -40,7 +40,7 @@ namespace OnlineExam.Repositories
             return questionBankViewModel;
         }
 
-        public static IList<QuestionBankViewModel> GetAll(string className, string examName, string subject, string questionFormat, int? mark, bool? isOnline,
+        public static IList<QuestionBankViewModel> GetAll(string className, string examName, string subject, int? topicId, string questionFormat, int? mark, bool? isOnline,
            string userId, bool isApplicationUser)
         {
             List<QuestionBankViewModel> questionBankViewModel = new List<QuestionBankViewModel>();
@@ -48,12 +48,13 @@ namespace OnlineExam.Repositories
             {
                 var ExamName = new SqlParameter("@Examname", string.IsNullOrEmpty(examName) ? DBNull.Value.ToString() : examName);
                 var Subject = new SqlParameter("@Subject", string.IsNullOrEmpty(subject) ? DBNull.Value.ToString() : subject);
+                var Topic = new SqlParameter("@TopicId", topicId ?? SqlInt32.Null);
                 var QuestionFormat = new SqlParameter("@QuestionFormat", string.IsNullOrEmpty(questionFormat) ? DBNull.Value.ToString() : questionFormat);
                 var Marks = new SqlParameter("@Marks", mark ?? SqlInt32.Null);
                 var IsOnline = new SqlParameter("@IsOnline", isOnline ?? SqlBoolean.Null);
 
                 questionBankViewModel = dbContext.Database
-                    .SqlQuery<QuestionBankViewModel>("GetQuestionsByParameters_SP @ExamName,@Subject,@QuestionFormat,@Marks,@IsOnline", ExamName, Subject,QuestionFormat, Marks, IsOnline)
+                    .SqlQuery<QuestionBankViewModel>("GetQuestionsByParameters_SP @ExamName,@Subject,@TopicId,@QuestionFormat,@Marks,@IsOnline", ExamName, Subject, Topic, QuestionFormat, Marks, IsOnline)
                     .ToList();
             }
             return questionBankViewModel;
@@ -131,5 +132,19 @@ namespace OnlineExam.Repositories
             return qry;
 
         }
+
+        public static IList<QuestionBankViewModel> GetQuestionsByTopic(int TopicId)
+        {
+            List<QuestionBankViewModel> questionBankViewModel = new List<QuestionBankViewModel>();
+            using (var dbContext = new ApplicationDbContext())
+            {
+                questionBankViewModel = dbContext.Database
+                    .SqlQuery<QuestionBankViewModel>("GetQuestions_SP")
+                    .Where(x=>x.TopicId == TopicId)
+                    .ToList();
+            }
+            return questionBankViewModel;
+        }
+
     }
 }

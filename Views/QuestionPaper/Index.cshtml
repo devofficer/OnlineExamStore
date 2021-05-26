@@ -1,5 +1,19 @@
 ﻿@using OnlineExam.Helpers
 @model OnlineExam.Models.QuestionFilterViewModel
+@{
+    string strType = "";
+    string strRole = "";
+    if (User.IsInRole("Teacher"))
+    {
+        strType = Request.QueryString["type"];
+        if (string.IsNullOrEmpty(strType))
+        {
+            strType = Model.type;
+        }
+        strRole = "Teacher";
+    }
+}
+
 <style>
     hr {
         margin-top: 5px;
@@ -80,11 +94,10 @@
                 url: '@Url.Action("Index", "QuestionPaper")',
                 type: 'POST',
                 async: true,
-                data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, opType: opType }),
+                data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, type: "@strType", opType: opType }),
                 datatype: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
-                    //alert(id);
                     if (opType == "unAttempted-tab") {
                         // debugger;
                         $("#divQuestionPapars1").empty();
@@ -219,7 +232,7 @@
         <hr />
     </div>
 
-    @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+    @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher"))
     {
         <div id="divQuestionPapars">
             @Html.Partial("_QuestionPaperList", this.Model)
@@ -253,6 +266,13 @@
 {
         <script language="javascript" type="text/javascript">
             $(document).ready(function () {
+                var role = "@strRole";
+                var type = "@strType";
+
+                if (role == "Teacher" && type == "") {
+                    window.location.href = "/questionpaper?type=Teacher";
+                }
+
                 $(document).on("click", "#contentPager a", function () {
                     // debugger;
                     $.ajax({

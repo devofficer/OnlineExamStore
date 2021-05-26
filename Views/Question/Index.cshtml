@@ -108,7 +108,10 @@
                 }
             );
         });
+
+        
     });
+
 </script>
 <div class="page-head">
     <h3>Question List</h3>
@@ -125,11 +128,16 @@
             <div class="col-md-2">
                 @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.ClassName, Model.QuestionBankSearchViewModel.ClasseTypes, "Select Class", new { @class = "form-control" })
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.ExamName, Model.QuestionBankSearchViewModel.ExamTypes, "Select Category", new { @class = "form-control" })
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.Subject, Model.QuestionBankSearchViewModel.Subjects, "Select Subject", new { @class = "form-control" })
+            </div>
+            <div class="col-md-2">
+                <select name="TopicId" id="TopicId" class="form-control">
+                    <option value="">Select Topic</option>
+                </select>
             </div>
             <div class="col-md-3">
                 @Html.DropDownListFor(x => x.QuestionBankSearchViewModel.QuestionFormat, Model.QuestionBankSearchViewModel.QuestionFormats, "Select Format", new { @class = "form-control" })
@@ -263,4 +271,33 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).on('change', '[id*=Subject]', function () {
+            GetTopicList($('[id*=Subject]').val(),"");
+        });
+
+        function GetTopicList(Subject, SelectId) {
+            $.getJSON('/Question/GetTopicsBySubject/', { subject: Subject },
+                function (data) {
+                    var items = '<option value="">Select Topic</option>';
+                    $.each(data, function (i, state) {
+                        if (SelectId !="" && state.Value == SelectId) {
+                            items += "<option value='" + state.Value + "' selected='selected'>" + state.Text + "</option>";
+                        }
+                        else {
+                            items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                        }
+                    });
+                    $('#TopicId').html(items);
+                }
+            );
+        }
+
+        var strSubject = "@ViewBag.Subject";
+
+        if (strSubject != "") {
+            var strtopicId = "@ViewBag.TopicId";
+            GetTopicList(strSubject, strtopicId);
+        }
+</script>
 }

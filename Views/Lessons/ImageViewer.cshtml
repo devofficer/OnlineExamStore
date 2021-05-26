@@ -1,0 +1,49 @@
+﻿@using OnlineExam.Helpers;
+@{
+    Layout = null;
+    var directory = new DirectoryInfo(Server.MapPath(ViewBag.directory));
+}
+
+@foreach (var file in directory.GetFiles())
+{
+    if (file.Extension == ".png" || file.Extension == ".jpg" || file.Extension == ".jpeg" || file.Extension == ".gif")
+    {
+
+        <div class="thumbnail">
+            @if (directory.Name != "Upload")
+            {
+                <img src="/Lessons/GenerateThumb/?image=/Upload/@directory.Name/@file.Name" alt="thumb" title="/Upload/@directory.Name/@file.Name" />
+            }
+            else
+            {
+                <img src="/Lessons/GenerateThumb/?image=/Upload/@file.Name" alt="thumb" title="/Upload/@file.Name" />
+            }
+        </div>
+    }
+    else
+    {
+<div class="thumbnail">
+    @{
+        string fileThumb = "blank.png";
+    }
+    @if (file.Extension == ".mkv" || file.Extension == ".mpg" || file.Extension == ".avi" || file.Extension == ".mov" || file.Extension == ".flash" || file.Extension == ".swf" || file.Extension == ".mp4")
+    {
+        fileThumb = "/Content/static/video.png";
+    }
+    @if (file.Extension == ".doc" || file.Extension == ".docx" || file.Extension == ".wtf")
+    {
+        fileThumb = "/Content/static/doc.png";
+    }
+    @if (file.Extension == ".xls" || file.Extension == ".xlsx")
+    {
+        fileThumb = "/Content/static/excel.png";
+    }
+    @if (file.Extension == ".pdf")
+    {
+        fileThumb = "/Content/static/pdf.png";
+    }
+    <img src="@fileThumb" alt="thumb" title="/Upload/@file.Name" style="width:120px" />
+</div>
+    }
+}
+

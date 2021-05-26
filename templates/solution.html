@@ -132,6 +132,12 @@
                                                     <i class="tb-icon tb-star-1"></i> <span>Add To Revise</span>
                                                 </button>
                                             </div>
+                                            <div>
+                                                <button class="remove-btn btn-danger" type="button">
+                                                    <!--<a href="/SmartQuiz/RemoveQuestion/{{questionPaperId}}?questionId={{questionId}}&sectionId={{questionSectionId}}" class="btn-danger"> <i class="tb-icon tb-star-1"></i> <span>Remove Question</span></a>-->
+                                                    <a data-href="#" class="btn-danger btnQuestionRemove" data-id="{{questionId}}" data-paperid="{{questionPaperId}}" data-sectionid="{{questionSectionId}}">Remove Question</a>
+                                                </button>
+                                            </div>
                                             <div class="report-que dropdown" ng-class="{'que-reported': hasReported(), 'que-reporting': isReporting}">
                                                 <!-- conditional class "que-reported que-reporting" -->
                                                 <button class="report-que-btn dropdown-toggle test-btn-style" type="button" id="report-question" data-toggle="dropdown">
@@ -357,3 +363,20 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(".btnQuestionRemove").on("click", function () {
+        var paperId = $(this).attr('data-paperid');
+        var questionId = $(this).attr('data-id');
+        var sectionId = $(this).attr('data-sectionid');
+
+        if (parseInt(questionId) > 0 && parseInt(sectionId) > 0) {
+            if (confirm("Are you sure to delete this question?")) {
+                window.location.href = "/SmartQuiz/RemoveQuestion/" + paperId + "?questionId=" + questionId + "&sectionId=" + sectionId;
+            }
+        }
+        else {
+            alert("Please select requied question for delete");
+        }
+    });
+</script>

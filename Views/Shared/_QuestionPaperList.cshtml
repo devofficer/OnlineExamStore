@@ -270,13 +270,23 @@
             }
             else if (CustomClaimsPrincipal.Current.UserType == "Teacher")
             {
-                <td>
-                    @if (item.Data.CreatedBy == CustomClaimsPrincipal.Current.UserId)
-                    {
-                        <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
-                        <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id, type="Teacher"})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
-                    }
-                </td>
+        <td>
+            @if (item.Data.CreatedBy == CustomClaimsPrincipal.Current.UserId)
+            {
+                <a href="@Url.Action("Edit", "QuestionPaper", new {id = item.Data.Id})" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                <a href="@Url.Action("Delete", "QuestionPaper", new {id = item.Data.Id, type="Teacher"})" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
+                <a class="btn btn-success btn-xs" href="/SmartQuiz/IndexV3/#/solution/@item.Data.Id" title="Solution">Preview</a>
+                if (item.Data.IsActive == false)
+                {
+                    <a href="@Url.Action("Publish", "QuestionPaper", new {id = item.Data.Id, type="Teacher"})" class="label label-success" title="Publish"><span class="fa fa-adjust"></span> Publish</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("UnPublish", "QuestionPaper", new {id = item.Data.Id, type="Teacher"})" class="label label-warning" title="Unpublish"><span class="fa fa-adjust"></span> Unpublish</a>
+                }
+
+            }
+        </td>
             }
             else if (Model.IsAttempted)
             {
@@ -286,7 +296,7 @@
                     </a>&nbsp;
                     @if (CustomClaimsPrincipal.Current.MembershipPlan != MembershipPlanType.Trial.ToString())
                     {
-                        <a class="btn btn-info btn-xs" href="/SmartQuiz/IndexV2/#/solution/@item.Data.Id" title="Solution">Solution&nbsp;<span class="fa fa-bar-chart-o"></span></a>
+                        <a class="btn btn-info btn-xs" href="/SmartQuiz/Index/#/solution/@item.Data.Id" title="Solution">Solution&nbsp;<span class="fa fa-bar-chart-o"></span></a>
                     }
                 </td>
             }

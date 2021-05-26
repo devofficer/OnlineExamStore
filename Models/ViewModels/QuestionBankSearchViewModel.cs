@@ -60,6 +60,7 @@ namespace OnlineExam.Models
         public string ExamName { get; set; }
         public string Subject { get; set; }
         public string QuestionFormat { get; set; }
+        public int? TopicId { get; set; }
         public bool IsActive { get; set; }
 
         public IEnumerable<SelectListItem> PageSizeList { get; set; }

@@ -19,6 +19,7 @@ using OnlineExam.Utils;
 using PagedList;
 using WebGrease.Css.Extensions;
 using System.Threading;
+using Microsoft.AspNet.Identity;
 
 namespace OnlineExam.Controllers
 {
@@ -37,12 +38,18 @@ namespace OnlineExam.Controllers
         [HttpGet]
         public ActionResult Index(int? page, string type = "", string opType = "#unAttempted-tab")
         {
+            if (User.IsInRole("Teacher") && string.IsNullOrEmpty(type))
+            {
+                type = "Teacher";
+             }
+
             IList<QuestionPaperListViewModel> questionPapars = new List<QuestionPaperListViewModel>();
             var classes = CommonRepository.GetClasses(Enums.LookupType.ClassType.ToString());
             var selectListItems = classes as SelectListItem[] ?? classes.ToArray();
             if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
             {
-                questionPapars = QuestionPaperRepository.GetAll("", "", "", string.Empty, CustomClaimsPrincipal.Current.UserId, null);
+              //  questionPapars = QuestionPaperRepository.GetAll("", "", "", string.Empty, CustomClaimsPrincipal.Current.UserId, null);
+                questionPapars = QuestionPaperRepository.GetAll("", "", "", string.Empty, CustomClaimsPrincipal.Current.UserId, type);
                 SetCBTTypes(questionPapars);
             }
             else
@@ -50,9 +57,21 @@ namespace OnlineExam.Controllers
                 var firstOrDefault = selectListItems.FirstOrDefault();
                 if (firstOrDefault != null)
                 {
+                    if (User.IsInRole("Teacher"))
+                    {
+                        opType = "#unAttempted-tab";
+                    }
                     var userClassName = firstOrDefault.Value;
-                    questionPapars = QuestionPaperRepository.GetAll(userClassName, "", "", opType, CustomClaimsPrincipal.Current.UserId, type);
-                    SetCBTTypes(questionPapars);
+                    if (User.IsInRole("Teacher"))
+                    {
+                        questionPapars = QuestionPaperRepository.GetAll("", "", "", opType, CustomClaimsPrincipal.Current.UserId, type);
+                    }
+                    else
+                    {
+                        questionPapars = QuestionPaperRepository.GetAll(userClassName, "", "", opType, CustomClaimsPrincipal.Current.UserId, type);
+                    }
+                        
+                        SetCBTTypes(questionPapars);
                 }
             }
             return Request.IsAjaxRequest()
@@ -80,6 +99,16 @@ namespace OnlineExam.Controllers
         [HttpPost]
         public PartialViewResult Index(QuestionFilterViewModel questionFilterViewModel, int? page, string type="", string opType = "#unAttempted-tab")
         {
+            if (User.IsInRole("Teacher") && string.IsNullOrEmpty(type))
+            {
+                type = "Teacher";
+            }
+
+            if (string.IsNullOrEmpty(type))
+            {
+                type = questionFilterViewModel.type;
+            }
+
             questionFilterViewModel.PageIndex = page ?? 1;
             opType = "#" + opType;
             questionFilterViewModel.IsAttempted = opType != "#unAttempted-tab";
@@ -91,7 +120,9 @@ namespace OnlineExam.Controllers
 
             questionFilterViewModel.QuestionPapars = questionPapars.ToPagedList(questionFilterViewModel.PageIndex, questionFilterViewModel.PageSize);
             SetCBTTypes(questionPapars);
-            return PartialView("_QuestionPaperListV2", questionFilterViewModel);
+
+            return PartialView("_QuestionPaperList", questionFilterViewModel);
+           // return PartialView("_QuestionPaperListV2", questionFilterViewModel);
         }
 
         [HttpGet]
@@ -141,7 +172,7 @@ namespace OnlineExam.Controllers
             //            questions = QuestionBankRepository.GetQuestions(userClassName, "", "", "", null, true, CustomClaimsPrincipal.Current.UserId, false);
             //    }
             //}
-            return View(new QuestionFilterViewModel { Classes = selectListItems, Formats = questionFormats, Questions = new List<QuestionListViewModel>() });
+            return View(new QuestionFilterViewModel { Classes = selectListItems, Formats = questionFormats, Questions = new List<QuestionListViewModel>()});
         }
 
 
@@ -154,9 +185,10 @@ namespace OnlineExam.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(QuestionFilterViewModel questionFilterViewModel, List<QuestionListViewModel> questionListViewModel, int? page, string command)
+        public ActionResult Create(QuestionFilterViewModel questionFilterViewModel, List<QuestionListViewModel> questionListViewModel, int? page, string command, string type)
         {
             IList<QuestionListViewModel> questions = null;
+            string CurrentuserId = User.Identity.GetUserId();
             try
             {
                 var topics = string.Empty;
@@ -166,6 +198,12 @@ namespace OnlineExam.Controllers
                 }
 
                 questionFilterViewModel.PageIndex = page ?? 1;
+                
+                if(User.IsInRole("Teacher") && type == "Custom")
+                {
+                    questionFilterViewModel.type = "Custom";
+                }
+
                 if (questionFilterViewModel.SelectedClass == "Select Class")
                 {
                     questionFilterViewModel.SelectedClass = "";
@@ -224,6 +262,13 @@ namespace OnlineExam.Controllers
                                     (current, item) => current + item.DurationInSecond);
                             }
                         }
+
+                        bool activeFlag = questionFilterViewModel.IsOnline;
+                        if (User.IsInRole("Teacher"))
+                        {
+                            activeFlag = false;
+                        }
+
                         var questionPaper = new QuestionPaper
                         {
                             Name = questionFilterViewModel.Name,
@@ -233,7 +278,7 @@ namespace OnlineExam.Controllers
                             IsTrial = questionFilterViewModel.IsTrial,
                             IsOnline = questionFilterViewModel.IsOnline,
                             Minute = questionPaperDuration,
-                            IsActive = true,
+                            IsActive = activeFlag, // true,
                             CreatedBy = CustomClaimsPrincipal.Current.UserId,
                             CreatedOn = DateTime.Now
                         };
@@ -269,7 +314,7 @@ namespace OnlineExam.Controllers
                         }
                         else
                         {
-                            if(CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
+                            if(CustomClaimsPrincipal.Current.CurrentRole == "Teacher" && type=="Teacher")
                             {
                                 questionPaper.Type = CBTType.Teacher.ToString();
                             }
@@ -280,7 +325,8 @@ namespace OnlineExam.Controllers
                             // NON- ADMIN USER
                             #region NON ADMIN USER
                             int customCBTCounter = 0;
-                            questionPaper.IsOnline = questionFilterViewModel.IsOnline = true;
+                            
+                            questionPaper.IsOnline =  questionFilterViewModel.IsOnline = true;
                             if (questionFilterViewModel.SelectedNoOfQuestions == null)
                             {
                                 customCBTCounter = CommonRepository.GetCustomCBTCounter();
@@ -297,6 +343,12 @@ namespace OnlineExam.Controllers
                                                     questionFilterViewModel.SelectedFormat,
                                                     questionFilterViewModel.SelectedMark,
                                                     questionFilterViewModel.IsOnline, customCBTCounter); //db.QuestionBank.OrderBy(q => Guid.NewGuid()).Take(customCBTCounter).Select(x => new { QuestionId = x.Id, Duration = x.DurationInSecond }).ToList();
+                            
+                            if(User.IsInRole("Teacher") && type== "Teacher")
+                            {
+                                randomQuestions = randomQuestions.Where(x => x.CreatedBy == CurrentuserId).ToList();
+                            }
+                            
                             if (randomQuestions == null || randomQuestions.Count == 0)
                             {
                                 return Json(new { success = false, errors = "Questions doesn't exists." });
@@ -352,6 +404,11 @@ namespace OnlineExam.Controllers
                             questionFilterViewModel.SelectedFormat,
                             questionFilterViewModel.SelectedMark,
                             questionFilterViewModel.IsOnline, CustomClaimsPrincipal.Current.UserId, false);
+
+                        if (User.IsInRole("Teacher") && type== "Teacher")
+                        {
+                            questions = questions.Where(x => x.CreatedBy == CurrentuserId).ToList();
+                        }
                     }
                     //return Json(new { success = true, errors = "", output = questions }, JsonRequestBehavior.AllowGet);
                     return new JsonResult()
@@ -363,7 +420,7 @@ namespace OnlineExam.Controllers
 
                     #endregion
                 }
-                return Json(new { success = true, errors = "" });
+                 return Json(new { success = true, errors = "" });
             }
             catch (Exception ex)
             {
@@ -516,6 +573,42 @@ namespace OnlineExam.Controllers
             {
                 return RedirectToAction("Index");
             }
+        }
+
+        public async Task<ActionResult> Publish(int? id, string type)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            QuestionPaper questionPaperObj = await db.QuestionPapers.FindAsync(id);
+            if (questionPaperObj == null)
+            {
+                return HttpNotFound();
+            }
+            questionPaperObj.IsActive = true;
+            questionPaperObj.ModifiedBy = CustomClaimsPrincipal.Current.UserId;
+            questionPaperObj.ModifiedOn = DateTime.Now;
+            db.SaveChanges();
+            return Redirect("/questionpaper?type=" + type);
+        }
+
+        public async Task<ActionResult> UnPublish(int? id, string type)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            QuestionPaper questionPaperObj = await db.QuestionPapers.FindAsync(id);
+            if (questionPaperObj == null)
+            {
+                return HttpNotFound();
+            }
+            questionPaperObj.IsActive = false;
+            questionPaperObj.ModifiedBy = CustomClaimsPrincipal.Current.UserId;
+            questionPaperObj.ModifiedOn = DateTime.Now;
+            db.SaveChanges();
+            return Redirect("/questionpaper?type=" + type);
         }
 
         protected override void Dispose(bool disposing)

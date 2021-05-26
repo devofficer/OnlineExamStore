@@ -61,6 +61,7 @@ namespace OnlineExam.Models
                     new SelectListItem { Text = "40", Value = "40" },
                     new SelectListItem { Text = "50", Value = "50" }
                 };
+            type = "";
             // QuestionPapars = new List<QuestionPapar>();
             //Questions = new List<Question>();
         }
@@ -113,6 +114,7 @@ namespace OnlineExam.Models
         public string Name { get; set; }
         [Display(Name = "Duration <br /> (Mins)")]
         public string Duration { get; set; }
+        public string type { get; set; }
     }
 
     public class QuestionListViewModel
@@ -136,6 +138,7 @@ namespace OnlineExam.Models
         public int Mark { get; set; }
         public string Subject { get; set; }
         public string ImagePath { get; set; }
+        public string CreatedBy { get; set; }
     }
 
     public class QuestionPaperDefaultViewModel

@@ -1,0 +1,80 @@
+﻿@using OnlineExam.Helpers;
+@{
+    Layout = null;
+    var media = new DirectoryInfo(Server.MapPath(ViewBag.Path));
+}
+<html>
+<head>
+    <title>File Browser</title>
+    <script src="~/Scripts/jquery-2.1.1.js"></script>
+    <script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
+    <script type="text/javascript">
+        var funcNum = 1;
+        $(function () {
+            $('#fileExplorer').load('/Lessons/ImageViewer?directory=Upload');
+            $('li').click(function () {
+                $('#fileExplorer').load('/Lessons/ImageViewer?directory=' + encodeURIComponent($(this).text()));
+            }).hover(function () {
+                $(this).css('cursor', 'pointer');
+            });
+            $('#fileExplorer').on('click', 'img', function () {
+                var fileUrl = $(this).attr('title');
+                window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+                window.close();
+            }).hover(function () {
+                $(this).css('cursor', 'pointer');
+            });
+        });
+    </script>
+</head>
+<style>
+    body {
+        font-family: 'Segoe UI', Verdana, Helvetica, sans-serif;
+        font-size: 80%;
+    }
+
+    #form {
+        width: 600px;
+    }
+
+    #folderExplorer {
+        float: left;
+        width: 100px;
+    }
+
+    #fileExplorer {
+        float: left;
+        width: 680px;
+        border-left: 1px solid #dff0ff;
+    }
+
+    .thumbnail {
+        float: left;
+        margin: 3px;
+        padding: 3px;
+        border: 1px solid #dff0ff;
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        padding: 0;
+    }
+</style>
+<body>
+    <div id="folderExplorer">
+        <ul>
+            <li>Upload</li>
+            @foreach (var dir in media.EnumerateDirectories())
+            {
+                <li>@dir.Name</li>
+            }
+        </ul>
+    </div>
+    <div id="fileExplorer"></div>
+</body>
+</html>

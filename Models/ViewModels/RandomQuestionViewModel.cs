@@ -9,5 +9,6 @@ namespace OnlineExam.Models
     {
         public int QuestionId { get; set; }
         public int DurationInSecond { get; set; }
+        public string CreatedBy { get; set; }
     }
 }

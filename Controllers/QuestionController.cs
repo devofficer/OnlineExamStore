@@ -27,8 +27,10 @@ namespace OnlineExam.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: /Question/
-        public ActionResult Index(QuestionBankSearchViewModel questionBankSearchViewModel, int? page)
+        public ActionResult Index(QuestionBankSearchViewModel questionBankSearchViewModel, int? TopicId, int? page)
         {
+            ViewBag.Subject = "";
+            ViewBag.TopicId = "";
             if (!string.IsNullOrWhiteSpace(questionBankSearchViewModel.ClassName))
             {
                 questionBankSearchViewModel.PageIndex = 1;
@@ -56,10 +58,11 @@ namespace OnlineExam.Controllers
             }
             else
             {
-                questions = QuestionBankRepository
-                              .GetAll(questionBankSearchViewModel.ClassName, questionBankSearchViewModel.ExamName, questionBankSearchViewModel.Subject,
-                              questionBankSearchViewModel.QuestionFormat, questionBankSearchViewModel.Mark, questionBankSearchViewModel.IsOnline, CustomClaimsPrincipal.Current.UserId, CustomClaimsPrincipal.Current.IsACDAStoreUser);
-
+                    questions = QuestionBankRepository
+                                  .GetAll(questionBankSearchViewModel.ClassName, questionBankSearchViewModel.ExamName, questionBankSearchViewModel.Subject, TopicId,
+                                  questionBankSearchViewModel.QuestionFormat, questionBankSearchViewModel.Mark, questionBankSearchViewModel.IsOnline, CustomClaimsPrincipal.Current.UserId, CustomClaimsPrincipal.Current.IsACDAStoreUser);
+                ViewBag.Subject = questionBankSearchViewModel.Subject;
+                ViewBag.TopicId = TopicId;
             }
             IPagedList<QuestionBankViewModel> questionsToReturn = questions.OrderBy(b => b.ClassName).ToPagedList(questionBankSearchViewModel.PageIndex, questionBankSearchViewModel.PageSize);
 
@@ -72,6 +75,7 @@ namespace OnlineExam.Controllers
                 questionBankSearchViewModel.Subjects = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString(), questionBankSearchViewModel.ExamName);
             }
 
+            
             var v = new QuestionBankIndexViewModel
             {
                 QuestionBankList = questionsToReturn,

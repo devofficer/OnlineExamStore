@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Discucussion";
 }
-<script src="~/Scripts/ckeditor/ckeditor.js"></script>
 <div class="page-head">
     <h3>Lessons</h3>
     <ol class="breadcrumb">
@@ -36,7 +35,7 @@
                     <div class="col-md-1 text-center">
                         @if (item.UserAvater == null || !File.Exists(item.UserAvater))
                         {
-                        <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                            <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
                         }
                         else
                         {
@@ -62,33 +61,48 @@
         <div class="panel panel-info">
             @using (Html.BeginForm("CreatePost/", "Lessons", new { id = @ViewBag.LessonGuid }, FormMethod.Post, new { id = "frmCreatePost", enctype = "multipart/form-data" }))
             {
-            <div class="form-horizontal  block-flat">
-                <div class="row">
-                    <div class="col-md-12">
-                        @Html.ValidationSummary(true)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-10">
-                    </div>
-
-                    <div class="col-md-2 text-right">
-                        <button type="submit" name="command" value="Add Post" class="btn btn-success">
-                            <span class="fa fa-floppy-o"></span>
-                        </button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        @Html.Label("Post", new { @class = "col-md-12" })
+                <div class="form-horizontal  block-flat">
+                    <div class="row">
                         <div class="col-md-12">
-                            @Html.TextArea("txtPost", new { @class = "form-control ckeditor" })
+                            @Html.ValidationSummary(true)
                         </div>
                     </div>
-                </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                        </div>
 
-            </div>
-              }
+                        <div class="col-md-2 text-right">
+                            <button type="submit" name="command" value="Add Post" class="btn btn-success">
+                                <span class="fa fa-floppy-o"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.Label("Post", new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextArea("txtPost", new { @class = "form-control ckeditor" })
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
+            }
+        </div>
+    </div>
 </div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            CKEDITOR.replace('txtPost', {
+                height: 300,
+                filebrowserUploadUrl: '/Lessons/CKEditorFileUpload',
+                filebrowserBrowseUrl: '/Lessons/CKEditorFileBrowser'
+            });
+
+        });
+
+    </script>
+}

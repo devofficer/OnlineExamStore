@@ -18,7 +18,7 @@
             color: #fff;
         }
 </style>
-<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+
 <div class="page-head">
     <h3>Create Lesson Item</h3>
     <ol class="breadcrumb">
@@ -64,7 +64,7 @@
             <div class="col-md-12">
                 @Html.LabelFor(model => model.ItemDescription, new { @class = "col-md-12" })
                 <div class="col-md-12">
-                    @Html.TextAreaFor(model => model.ItemDescription, new { @class = "form-control ckeditor" })
+                    @Html.TextAreaFor(model => model.ItemDescription, new { @class = "form-control" })
                 </div>
             </div>
         </div>
@@ -130,6 +130,7 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
     <script type="text/javascript">
 
         $(function () {
@@ -140,5 +141,13 @@
 
         });
 
+        $(document).ready(function () {
+            CKEDITOR.replace('ItemDescription', {
+                height: 300,
+                filebrowserUploadUrl: '/Lessons/CKEditorFileUpload',
+                filebrowserBrowseUrl: '/Lessons/CKEditorFileBrowser'
+            });
+
+        });
     </script>
 }

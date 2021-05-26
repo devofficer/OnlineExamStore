@@ -17,6 +17,8 @@
     $scope.selectedOptions = [];
     $scope.currentQuestion = {};
     $scope.questionImageUrl = "";
+    $scope.questionId = 0;
+    $scope.questionSectionId = 0;
     $scope.questionTitle = "";
     $scope.questionPaperId = $routeParams.id;
     init();
@@ -147,6 +149,8 @@
         }
         if ($scope.currentQuestion != null) {
             $scope.questionTitle = $sce.trustAsHtml($scope.currentQuestion.title);
+            $scope.questionId = $scope.currentQuestion.id;
+            $scope.questionSectionId = $scope.currentQuestion.sectionId;
             //alert($scope.questionTitle);
         }
     }
@@ -314,11 +318,11 @@
         // NEXT     : True
         // PREVIOUS : False
         if (isMoveNext) {
-            if ($scope.selectedParentIndex < $scope.sectionCount) {
+            if ($scope.selectedIndex < $scope.questionCount) {
                 if ($scope.selectedIndex < $scope.questionCount) {
                     $scope.selectedIndex = $scope.selectedIndex + 1;
                 }
-                else if ($scope.selectedIndex = $scope.questionCount) {
+                else if ($scope.selectedIndex == $scope.questionCount) {
                     $scope.selectedIndex = 1;
                     $scope.selectedParentIndex = $scope.selectedParentIndex + 1;
                 }
@@ -332,12 +336,12 @@
                 if ($scope.selectedIndex > 1 && $scope.selectedIndex <= $scope.questionCount) {
                     $scope.selectedIndex = $scope.selectedIndex - 1;
                 }
-                else if ($scope.selectedIndex = 1) {
+                else if ($scope.selectedIndex == 1) {
                     $scope.selectedParentIndex = $scope.selectedParentIndex - 1;
                     $scope.selectedIndex = $scope.questionCount;
                 }
             }
-            else if ($scope.selectedParentIndex = 1) {
+            else if ($scope.selectedParentIndex == 1) {
                 $scope.selectedIndex = $scope.selectedIndex - 1;
             }
         }
@@ -356,28 +360,31 @@
 
     //Retrive data from database************
     function loadQuiz() {
-        //debugger;
+       // debugger;
         //var def = $q.defer();
-        $http.get("/api/SmartQuizApi/GetQuizSolutionById", {
+        $http.get("/api/SmartQuizApi/GetQuizById", {
             params:
-                {
-                    questionPaperId: $scope.questionPaperId
-                }
+            {
+                questionPaperId: $scope.questionPaperId
+            }
         }).success(function (data, status, headers, config) {
-            // 
+            debugger;
             // deferred.resolve(data);
             $scope.test = data;
+            $scope.questionCount = data.questionCount;
             if ($scope.test != "") {
                 //debugger;
+                $scope.duration = $scope.test.duration;
                 setCurrentQuestion($scope.selectedParentIndex - 1, $scope.selectedIndex - 1);
+               // setCurrentOptions($scope.selectedParentIndex - 1, $scope.selectedIndex - 1, null);
+
                 $scope.sectionCount = $scope.test.sections.length;
-                if ($scope.sectionCount > 0) {
-                    if ($scope.selectedParentIndex > 0)
-                        $scope.questionCount = $scope.test.sections[$scope.selectedParentIndex - 1].questions.length;
-                    else {
-                        $scope.questionCount = $scope.test.sections[0].questions.length;
-                    }
-                }
+                //if ($scope.selectedParentIndex > 0)
+                //    $scope.questionCount = $scope.test.sections[$scope.selectedParentIndex - 1].questions.length;
+                //else {
+                //    $scope.questionCount = $scope.test.sections[0].questions.length;
+                //}
+                $scope.questionCount = data.questionCount;
             }
         }).error(function (data, status, headers, config) {
             //debugger;
@@ -406,6 +413,6 @@
              label: "Click ME!",
              className: "btn-primary"
          }
-     };
- 
+    };
+
 });

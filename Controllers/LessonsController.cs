@@ -1,5 +1,6 @@
 ﻿using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using OnlineExam.Helpers;
 using OnlineExam.Infrastructure;
 using OnlineExam.Infrastructure.Alerts;
@@ -10,6 +11,7 @@ using OnlineExam.Utils;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -163,6 +165,7 @@ namespace OnlineExam.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult CreateLesson(Lessons model)
         {
             if (!string.IsNullOrEmpty(model.ClassType) && !string.IsNullOrEmpty(model.SubjectCategory))
@@ -320,6 +323,7 @@ namespace OnlineExam.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult CreateLessonItem(int id, LessonItems model, HttpPostedFileBase[] files)
         {
             var dbContext = new ApplicationDbContext();
@@ -489,6 +493,70 @@ namespace OnlineExam.Controllers
 
             return RedirectToAction("LessonDiscussion",new {id=id });
         }
-        
+
+
+        [HttpPost]
+        public JsonResult CKEditorFileUpload(HttpPostedFileWrapper upload, string CKEditor, string CKEditorFuncNum, string langCode)
+        {
+            string fileName = "";
+            if (upload.ContentLength > 0)
+            {
+                fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + upload.FileName;
+                string path = Path.Combine(Server.MapPath(ConfigurationManager.AppSettings["FileUploadPath"]), fileName);
+
+                // var stream = new FileStream(path, FileMode.Create);
+                upload.SaveAs(path);
+            }
+
+            return Json(new { Path= "/Upload/" + fileName }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult CKEditorFileBrowser()
+        {
+            string path = ConfigurationManager.AppSettings["FileUploadPath"];
+            ViewBag.Path = path;
+
+            return View();
+        }
+
+        public ActionResult ImageViewer(string directory)
+        {
+            string path = ConfigurationManager.AppSettings["FileUploadPath"];
+            ViewBag.directory = path;
+            if (directory != "Upload" && !string.IsNullOrEmpty(directory))
+            {
+                ViewBag.directory = path + "/" + directory;
+            }
+
+
+            return View();
+        }
+
+        public FileResult GenerateThumb(string image)
+        {
+            if (string.IsNullOrEmpty(image))
+            {
+                return null;
+            }
+            string image1 = AppContext.BaseDirectory + image;
+            var thumbWidth = 128D;
+            byte[] buffer = GlobalUtilities.GenerateTumbnail(image1, thumbWidth);
+
+
+            return File(buffer, "image/jpeg");
+        }
+
+        public string DisplayLink(string file)
+        {
+            if (string.IsNullOrEmpty(file))
+            {
+                return null;
+            }
+            string link = AppContext.BaseDirectory + file;
+
+            return link;
+        }
+
+
     }
 }

@@ -102,7 +102,7 @@
                             @Html.Raw(@Html.DisplayFor(modelItem => item.QuestionBank.QuestionId))
                         </td>
                         <td>
-                            @Html.Raw(@Html.DisplayFor(modelItem => item.QuestionBank.Decription))
+                            @Html.Raw(item.QuestionBank.Decription)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.QuestionBank.QuestionFormat)
@@ -110,7 +110,7 @@
                         <td>
                             @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || (item.QuestionBank.CreatedBy == CustomClaimsPrincipal.Current.UserId))
                             {
-                                <a href="@Url.Action("Edit", "Question", new { id = item.QuestionBank.Id })" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
+                                <a href="@Url.Action("Edit", "Question", new { id = item.QuestionBank.QuestionId })" class="label label-success" title="Edit"><span class="fa fa-pencil-square-o"></span></a>
                                 <a href="@Url.Action("DeleteMapping", "QuestionPaper", new { id = item.QuestionBank.Id, paperId = item.QuestionPaperId, type=CustomClaimsPrincipal.Current.UserType  })" class="label label-danger" title="Delete"><span class="fa fa-times"></span></a>
                             }
                             @if (item.QuestionBank.CreatedBy != CustomClaimsPrincipal.Current.UserId && item.QuestionPaper.CreatedBy == CustomClaimsPrincipal.Current.UserId)

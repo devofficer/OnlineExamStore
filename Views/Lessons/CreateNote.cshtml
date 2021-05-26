@@ -4,7 +4,7 @@
     ViewBag.Title = "Create Note";
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML-full"></script>
-<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+
 <div class="page-head">
     <h3>Create Lesson Note</h3>
     <ol class="breadcrumb">
@@ -19,118 +19,128 @@
 @using (Html.BeginForm("CreateNote", "Lessons", FormMethod.Post, new { id = "frmCreateNote", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-<div class="form-horizontal  block-flat">
-    <div class="row">
-        <div class="col-md-12">
-            @Html.ValidationSummary(true)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "Select Class Type", new { @class = "form-control" })
-        </div>
-        <div class="col-md-2">
-            @Html.DropDownList("Subject", ViewBag.subjectCategory as SelectList, "Select Subject", new { @class = "form-control" })
-        </div>
-        <div class="col-md-2">
-            <select id="Topic" name="Topic" class="form-control">
-                <option value="">Select Topic</option>
-            </select>
-        </div>
-        <div class="col-md-2 text-right">
-            <button type="submit" name="command" value="Create" class="btn btn-success">
-                <span class="fa fa-floppy-o"></span>
-            </button>
-            <a href="@Url.Action("Index", "Lessons")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            @Html.LabelFor(model => model.Title, new { @class = "col-md-12" })
+    <div class="form-horizontal  block-flat">
+        <div class="row">
             <div class="col-md-12">
-                @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                @Html.ValidationSummary(true)
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            @Html.LabelFor(model => model.Note, new { @class = "col-md-12" })
-            <div class="col-md-12">
-                @Html.TextAreaFor(model => model.Note, new { @class = "form-control ckeditor" })
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DropDownList("ClassType", ViewBag.classCategory as SelectList, "Select Class Type", new { @class = "form-control" })
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            @Html.LabelFor(model => model.PaymentType, new { @class = "col-md-12" })
-            <div class="col-md-4">
-                <select id="PaymentType" name="PaymentType" class="form-control">
-                    <option value="Free">Free</option>
-                    <option value="Paid">Paid</option>
+            <div class="col-md-2">
+                @Html.DropDownList("Subject", ViewBag.subjectCategory as SelectList, "Select Subject", new { @class = "form-control" })
+            </div>
+            <div class="col-md-2">
+                <select id="Topic" name="Topic" class="form-control">
+                    <option value="">Select Topic</option>
                 </select>
             </div>
-        </div>
-        <div class="col-md-4">
-            @Html.LabelFor(model => model.Amount, new { @class = "col-md-12" })
-            <div class="col-md-4">
-                @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+            <div class="col-md-2 text-right">
+                <button type="submit" name="command" value="Create" class="btn btn-success">
+                    <span class="fa fa-floppy-o"></span>
+                </button>
+                <a href="@Url.Action("Index", "Lessons")" class="btn btn-primary" title="Back to List"><span class="fa fa-long-arrow-left"></span></a>
             </div>
         </div>
-        <div class="col-md-4">
-            @Html.LabelFor(model => model.IsActive, new { @class = "col-md-12" })
-            <div class="col-md-4">
-                @Html.EditorFor(model => model.IsActive)
+
+        <div class="row">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Title, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Note, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.Note, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.PaymentType, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    <select id="PaymentType" name="PaymentType" class="form-control">
+                        <option value="Free">Free</option>
+                        <option value="Paid">Paid</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.Amount, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.IsActive, new { @class = "col-md-12" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.IsActive)
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
-
-
-
-</div>
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script type="text/javascript">
-    //$("#ClassType").change(function () {
-    //    $.getJSON('/Lessons/GetClassCategoryByClassType/', { classtype: $(this).val() },
-    //        function (data) {
-    //            var items = '<option value="">Select Class Category</option>';
-    //            $.each(data, function (i, state) {
-    //                items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
-    //            });
-    //            $('#ClassCategory').html(items);
-    //            $('#Subject').html('<option value="">Select Subject</option>');
-    //            $('#Topic').html('<option value="">Select Topic</option>');
-    //        }
-    //    );
-    //});
+    <script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
+    <script type="text/javascript">
+        //$("#ClassType").change(function () {
+        //    $.getJSON('/Lessons/GetClassCategoryByClassType/', { classtype: $(this).val() },
+        //        function (data) {
+        //            var items = '<option value="">Select Class Category</option>';
+        //            $.each(data, function (i, state) {
+        //                items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+        //            });
+        //            $('#ClassCategory').html(items);
+        //            $('#Subject').html('<option value="">Select Subject</option>');
+        //            $('#Topic').html('<option value="">Select Topic</option>');
+        //        }
+        //    );
+        //});
 
-    //$("#ClassCategory").change(function () {
-    //    $.getJSON('/Lessons/GetSubjectCategoryByClass/', { classcategory: $(this).val() },
-    //        function (data) {
-    //            var items = '<option value="">Select Subject</option>';
-    //            $.each(data, function (i, state) {
-    //                items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
-    //            });
-    //            $('#Subject').html(items);
-    //            $('#Topic').html('<option value="">Select Topic</option>');
-    //        }
-    //    );
-    //});
+        //$("#ClassCategory").change(function () {
+        //    $.getJSON('/Lessons/GetSubjectCategoryByClass/', { classcategory: $(this).val() },
+        //        function (data) {
+        //            var items = '<option value="">Select Subject</option>';
+        //            $.each(data, function (i, state) {
+        //                items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+        //            });
+        //            $('#Subject').html(items);
+        //            $('#Topic').html('<option value="">Select Topic</option>');
+        //        }
+        //    );
+        //});
 
-    $("#Subject").change(function () {
-        $.getJSON('/Lessons/GetTopicBySubjectCategory/', { subjectcategory: $(this).val() },
-            function (data) {
-                var items = '<option value="">Select Topic</option>';
-                $.each(data, function (i, state) {
-                    items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
-                });
-                $('#Topic').html(items);
-            }
-        );
-    });
-</script>
+        $("#Subject").change(function () {
+            $.getJSON('/Lessons/GetTopicBySubjectCategory/', { subjectcategory: $(this).val() },
+                function (data) {
+                    var items = '<option value="">Select Topic</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('#Topic').html(items);
+                }
+            );
+        });
+
+        $(document).ready(function () {
+            CKEDITOR.replace('Note', {
+                height: 300,
+                filebrowserUploadUrl: '/Lessons/CKEditorFileUpload',
+                filebrowserBrowseUrl: '/Lessons/CKEditorFileBrowser'
+            });
+
+        });
+    </script>
 }

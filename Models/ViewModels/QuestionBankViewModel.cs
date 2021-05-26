@@ -78,6 +78,9 @@ namespace OnlineExam.Models
         [Required]
         public string QuestionFormat { get; set; }
 
+        [Display(Name = "Topic")]
+        public int? TopicId { get; set; }
+
         [Display(Name = "Status")]
         public bool IsActive { get; set; }
         public DateTime? CreatedOn { get; set; }

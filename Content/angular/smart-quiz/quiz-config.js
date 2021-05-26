@@ -28,9 +28,9 @@ quizApp.run(function ($rootScope, $window, $q,$location, Auth) {
                 console.log('DENY');
                 event.preventDefault();
                 $window.location.href = '/account/login';
-            } else if (data.membershipPlan == "Trial") {
+            } else if (data.membershipPlan == "Trial" || data.userType=="Teacher") {
                 debugger;
-                if ($location.path().indexOf('test') > -1) {
+                if (($location.path().indexOf('test') > -1) || ($location.path().indexOf('solution') > -1)) {
                     // PASS
                 } else {
                     console.log('DENY');

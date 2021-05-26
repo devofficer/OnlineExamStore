@@ -67,7 +67,7 @@
     });
 </script>
 
-<script type="text/x-mathjax-config">
+@*<script type="text/x-mathjax-config">
     MathJax.Hub.Config({
     "HTML-CSS": {
     availableFonts: [],
@@ -81,7 +81,7 @@
 </script>
 <script type="text/javascript"
         src="~/Scripts/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+</script>*@
 <style>
     thead {
         background-color: #eff2f5;
@@ -144,7 +144,7 @@
             minimumCountColumns: 3,
             clickToSelect: false
         });
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, name]);
+       // MathJax.Hub.Queue(["Typeset", MathJax.Hub, name]);
     }
     function detailFormatter(index, row) {
         var html = [];
@@ -213,7 +213,7 @@
         // LoadQuestion('QuestionTable');
         FillTable('QuestionTablePaper', quesndata);
 
-        
+
 
         //    $('#QuestionTable').bootstrapTable().on('check.bs.table', function (e, row) {
         //        debugger;
@@ -330,7 +330,7 @@
                 buttonWidth: '100%'
             });
         }
-        
+
         $(document).on('change', '#SelectedSubject', function () {
             $.getJSON('/Question/GetTopicsBySubject/', { subject: $('#SelectedSubject').val() },
                 function (data) {
@@ -344,8 +344,8 @@
                 }
             );
         });
-        
-        
+
+
         $('#btnRefresh').click(function () {
             //debugger;
             $('[id*=SelectedClass]').find('option:first').attr('selected', 'selected');
@@ -363,7 +363,7 @@
             }
             $('#QuestionTablePaper').bootstrapTable('destroy');
             $('#QuestionTable').bootstrapTable('destroy');
-            
+
             $('#SelectedTopic').find('option').remove();
             $("#SelectedTopic").multiselect('rebuild');
             $("#SelectedTopic").multiselect();
@@ -497,18 +497,18 @@
                     url: '@Url.Action("Create", "QuestionPaper")',
                     type: 'POST',
                     async: true,
-                    data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, questionListViewModel: quesndata, command: command }),
+                    data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, questionListViewModel: quesndata, command: command, type:'@Convert.ToString(Request.QueryString["type"])' }),
                     datatype: "json",
                     contentType: "application/json; charset=utf-8",
                     success: function (data) {
                         //debugger;
                         //alert(data.success);
-                        //alert(data.output);
+                       // alert(data.output);
                         if (data.success) {
                             debugger;
                             switch (e.currentTarget.id) {
                                 case "btnSearch":
-                                    if ($('#hdnIsACDAStoreUser').val() == "True" || '@CustomClaimsPrincipal.Current.CurrentRole' =="Teacher") {
+                                    if ($('#hdnIsACDAStoreUser').val() == "True") {
                                         if (data.output.length > 0) {
                                             FillTable('QuestionTable', data.output);
                                         } else {
@@ -551,7 +551,16 @@
         </li>*@
         @if (!CustomClaimsPrincipal.Current.IsACDAStoreUser)
         {
-            <li class="active">Custom CBT</li>}
+            if (Request.QueryString["type"] == "Teacher")
+            {
+                <li class="active">Teacher CBT</li>
+            }
+            else
+            {
+                <li class="active">Custom CBT</li>
+            }
+
+        }
         else
         {
             <li class="active">Admin CBT</li>
@@ -578,7 +587,7 @@
             @Html.DropDownListFor(m => m.SelectedFormat, Model.Formats, "Select Format", new { @class = "form-control" })
         </div>
 
-        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher"))
         {
             <div class="col-md-1">
                 @Html.DropDownListFor(m => m.SelectedMark, Model.Marks, "Select Mark", new { @class = "form-control" })
@@ -605,14 +614,17 @@
             @Html.ValidationMessageFor(model => model.Name)
         </div>
 
-        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher"))
         {
-            <div class="col-md-2" id="divDuration">
+            <div class="col-md-1" id="divDuration">
                 @Html.DropDownListFor(model => model.SelectedMinute, Model.Minutes, "Duration", new { @class = "form-control", @style = "width:auto" })
                 @Html.ValidationMessageFor(model => model.SelectedMinute)
             </div>
+            <div class="col-md-2">
+                @Html.DropDownListFor(m => m.SelectedNoOfQuestions, Model.NoOfQuestions, "Select No. Of Questions", new { @class = "form-control" })
+            </div>
             <div class="col-md-1">
-                <div class=" checkbox-inline">
+                <div class="checkbox-inline">
                     @Html.CheckBoxFor(m => m.IsTrial, Model.IsTrial) @Html.LabelFor(model => model.IsTrial)
                 </div>
             </div>
@@ -632,7 +644,7 @@
     <div class="row">
         <hr />
     </div>
-@if (CustomClaimsPrincipal.Current.IsACDAStoreUser || CustomClaimsPrincipal.Current.CurrentRole == "Teacher") { 
+@if (CustomClaimsPrincipal.Current.IsACDAStoreUser) { 
     <div class="row">
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -663,7 +675,7 @@
     }
     <div class="row">
         @Html.Hidden("hdnIsACDAStoreUser", CustomClaimsPrincipal.Current.IsACDAStoreUser)
-        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || CustomClaimsPrincipal.Current.CurrentRole =="Teacher")
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
         {
             <div class="panel panel-info">
                 <div class="panel-heading">

@@ -10,6 +10,7 @@ using System.Net;
 using System.Data.SqlTypes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using System.Drawing.Drawing2D;
 
 namespace OnlineExam.Helpers
 {
@@ -80,6 +81,42 @@ namespace OnlineExam.Helpers
 
             string RandomNumber = TenDigitNo.ToString();
             return RandomNumber;
+        }
+
+
+        //--Added By Kapila
+        public static byte[] GenerateTumbnail(string image, double thumbWidth)
+        {
+            try
+            {
+                using (var originalImage = Image.FromFile(image))
+                {
+                    var oWidth = originalImage.Width;
+                    var oHeight = originalImage.Height;
+                    var thumbHeight = oWidth > thumbWidth ? (thumbWidth / oWidth) * oHeight : oHeight;
+                    thumbWidth = oWidth > thumbWidth ? thumbWidth : oWidth;
+                    using (var bmp = new Bitmap((int)thumbWidth, (int)thumbHeight))
+                    {
+                        bmp.SetResolution(originalImage.HorizontalResolution, originalImage.VerticalResolution);
+                        using (var graphic = Graphics.FromImage(bmp))
+                        {
+                            graphic.SmoothingMode = SmoothingMode.AntiAlias;
+                            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                            var rectangle = new Rectangle(0, 0, (int)thumbWidth, (int)thumbHeight);
+                            graphic.DrawImage(originalImage, rectangle, 0, 0, oWidth, oHeight, GraphicsUnit.Pixel);
+                            var ms = new MemoryStream();
+                            bmp.Save(ms, originalImage.RawFormat);
+                            return ms.GetBuffer();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
         }
     }
 }
