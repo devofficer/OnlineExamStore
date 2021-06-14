@@ -1,0 +1,1 @@
+{"result":{"text":"25 cubed space x space cube root of 144"},"status":"ok"}

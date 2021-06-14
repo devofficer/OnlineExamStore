@@ -1,0 +1,1 @@
+{"result":{"text":"10 square root of 100 space ?"},"status":"ok"}

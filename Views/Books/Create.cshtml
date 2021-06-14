@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Add New Book";
 }
-<script src="~/Scripts/ckeditor/ckeditor.js"></script>
 <div class="page-head">
     <h3>Add New Book</h3>
     <ol class="breadcrumb">
@@ -60,7 +59,7 @@
         <div class="col-md-6">
             @Html.LabelFor(model => model.Description, new { @class = "col-md-12" })
             <div class="col-md-12">
-                @Html.TextAreaFor(model => model.Description, new { @class = "form-control ckeditor" })
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
             </div>
         </div>
     </div>
@@ -68,6 +67,7 @@
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
     <script type="text/javascript">
 
         $(function () {
@@ -77,6 +77,14 @@
 
             $("#StartDate").val('');
             $("#EndDate").val('');
+
+            var roxyFileman = '/fileman/index.html';
+            CKEDITOR.replace('Description', {
+                height: 300,
+                filebrowserBrowseUrl: roxyFileman,
+                filebrowserImageBrowseUrl: roxyFileman + '?integration=ckeditor',
+                removeDialogTabs: 'link:upload;image:upload'
+            });
 
         });
 

@@ -96,6 +96,7 @@ namespace OnlineExam.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult CreateNote(LessonNotes model)
         {
             if (!string.IsNullOrEmpty(model.ClassType) && !string.IsNullOrEmpty(model.Subject))
@@ -508,7 +509,8 @@ namespace OnlineExam.Controllers
                 upload.SaveAs(path);
             }
 
-            return Json(new { Path= "/Upload/" + fileName }, JsonRequestBehavior.AllowGet);
+            return Json(new { Path = "/Upload/" + fileName }, JsonRequestBehavior.AllowGet);
+           // return Json("test", JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult CKEditorFileBrowser()

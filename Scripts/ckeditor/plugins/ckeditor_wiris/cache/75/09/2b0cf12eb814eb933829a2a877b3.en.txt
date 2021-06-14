@@ -1,0 +1,1 @@
+{"result":{"text":"45 square root of 585"},"status":"ok"}

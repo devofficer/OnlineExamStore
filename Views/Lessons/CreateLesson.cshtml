@@ -3,6 +3,14 @@
 @{
     ViewBag.Title = "Create Lesson";
 }
+<script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 <div class="page-head">
     <h3>Create Lesson Note</h3>
     <ol class="breadcrumb">
@@ -106,13 +114,15 @@
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
+    <script src="~/Scripts/ckeditor/ckeditor.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var roxyFileman = '/fileman/index.html';
             CKEDITOR.replace('Description', {
                 height: 300,
-                filebrowserUploadUrl: '/Lessons/CKEditorFileUpload',
-                filebrowserBrowseUrl: '/Lessons/CKEditorFileBrowser'
+                filebrowserBrowseUrl: roxyFileman,
+                filebrowserImageBrowseUrl: roxyFileman + '?integration=ckeditor',
+                removeDialogTabs: 'link:upload;image:upload'
             });
 
             $.validator.methods.date = function (value, element) {

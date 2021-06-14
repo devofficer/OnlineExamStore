@@ -17,6 +17,7 @@ using OnlineExam.Models;
 using OnlineExam.Repositories;
 using OnlineExam.Utils;
 using PagedList;
+using System.Configuration;
 
 namespace OnlineExam.Controllers
 {
@@ -257,7 +258,15 @@ namespace OnlineExam.Controllers
                     return View(questionBank).WithError(AppConstants.ErrorMessageText);
                 }
 
-                return RedirectToAction("Index").WithSuccess(AppConstants.SuccessMessageText);
+                if (User.IsInRole("Teacher"))
+                {
+                    return RedirectToAction("Index", "QuestionPaper",new {type="Teacher" }).WithSuccess(AppConstants.SuccessMessageText);
+                }
+                else
+                {
+                    return RedirectToAction("Index").WithSuccess(AppConstants.SuccessMessageText);
+                }
+                
             }
             questionBank.ClasseTypes = CommonRepository.GetLookups(Enums.LookupType.ClassType.ToString());
             questionBank.ExamTypes = CommonRepository.GetLookups(Enums.LookupType.ClassCategory.ToString(), questionBank.ClassName);// CommonRepository.GetLookups(Enums.LookupType.ExamType.ToString(), questionBank.ClassName);
@@ -297,8 +306,7 @@ namespace OnlineExam.Controllers
             return RedirectToAction("Index");
         }
 
-
-
+       
         protected override void Dispose(bool disposing)
         {
             if (disposing)

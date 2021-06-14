@@ -3,6 +3,14 @@
 @{
     ViewBag.Title = "Messages";
 }
+<script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 <script src="~/Scripts/ckeditor/ckeditor.js"></script>
 <style>
     #tblCustom thead {
@@ -45,37 +53,37 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                <tr>
-                    <td class="text-center col-md-1">
-                        @if (item.UserAvater == null || !File.Exists(item.UserAvater))
-                        {
-                            <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
-                        }
-                        else
-                        {
-                            <img src="@item.UserAvater" alt="Image" class="img-thumbnail" />
-                        }
-                        <span style="display:block">@item.UserName</span>
-                        <span style="display:block">@item.CreatedDate</span>
+                    <tr>
+                        <td class="text-center col-md-1">
+                            @if (item.UserAvater == null || !File.Exists(item.UserAvater))
+                            {
+                                <img src="~/Content/Images/avatar-logo.jpg" alt="Image" class="img-thumbnail" />
+                            }
+                            else
+                            {
+                                <img src="@item.UserAvater" alt="Image" class="img-thumbnail" />
+                            }
+                            <span style="display:block">@item.UserName</span>
+                            <span style="display:block">@item.CreatedDate</span>
 
-                    </td>
-                    <td class="col-md-9">@item.MessageText</td>
-                    <td class="text-right">@item.ReplyCount</td>
-                    <td>
-                        @if (item.ReplyAllowed == true)
-                        {
-                            <a href="/Messages/Reply/@item.MessageGuId" class="btn btn-success btn-xs">Reply</a>
-                        }
-                        @if (item.CreatedBy == ViewBag.CurrentUserProfileId)
-                        {
-                            <a href="/Messages/Delete/@item.MessageGuId" class="btn btn-danger btn-xs">Delete</a>
-                        }
-                        @if (item.ReplyCount > 0)
-                        {
-                            <a href="/Messages/ViewReply/@item.MessageGuId" class="btn btn-success btn-xs">View Reply</a>
-                        }
-                    </td>
-                </tr>
+                        </td>
+                        <td class="col-md-9">@item.MessageText</td>
+                        <td class="text-right">@item.ReplyCount</td>
+                        <td>
+                            @if (item.ReplyAllowed == true)
+                            {
+                                <a href="/Messages/Reply/@item.MessageGuId" class="btn btn-success btn-xs">Reply</a>
+                            }
+                            @if (item.CreatedBy == ViewBag.CurrentUserProfileId)
+                            {
+                                <a href="/Messages/Delete/@item.MessageGuId" class="btn btn-danger btn-xs">Delete</a>
+                            }
+                            @if (item.ReplyCount > 0)
+                            {
+                                <a href="/Messages/ViewReply/@item.MessageGuId" class="btn btn-success btn-xs">View Reply</a>
+                            }
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>

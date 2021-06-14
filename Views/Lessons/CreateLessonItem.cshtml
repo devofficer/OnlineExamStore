@@ -3,6 +3,14 @@
 @{
     ViewBag.Title = "Create Lesson Item";
 }
+<script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 <style>
     #tblCustom thead {
         background-color: #2494F2 !important;
@@ -123,14 +131,15 @@
         <div id="contentPager">
             Page @(ViewBag.ItemsList.PageCount < ViewBag.ItemsList.PageNumber ? 0 : ViewBag.ItemsList.PageNumber) of @ViewBag.ItemsList.PageCount
             @*@Html.PagedListPager(ViewBag.ItemsList, page => Url.Action("CreateLessonItem", "Lessons",
-        new { page, sortOrder = ViewBag.CurrentSort }))*@
+                new { page, sortOrder = ViewBag.CurrentSort }))*@
         </div>
     </div>
 
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script src="~/Scripts/ckeditor_452/ckeditor.js"></script>
+
+    <script src="~/Scripts/ckeditor/ckeditor.js"></script>
     <script type="text/javascript">
 
         $(function () {
@@ -142,12 +151,16 @@
         });
 
         $(document).ready(function () {
+            var roxyFileman = '/fileman/index.html';
             CKEDITOR.replace('ItemDescription', {
                 height: 300,
-                filebrowserUploadUrl: '/Lessons/CKEditorFileUpload',
-                filebrowserBrowseUrl: '/Lessons/CKEditorFileBrowser'
+                filebrowserBrowseUrl: roxyFileman,
+                filebrowserImageBrowseUrl: roxyFileman + '?integration=ckeditor',
+                removeDialogTabs: 'link:upload;image:upload'
             });
 
         });
+
+
     </script>
 }

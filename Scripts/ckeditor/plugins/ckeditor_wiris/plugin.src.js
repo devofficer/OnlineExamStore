@@ -326,7 +326,7 @@ export class CKEditor4Integration extends IntegrationModel {
 
                 'async': false,
                 'canUndo': true,
-                'editorFocus': true,
+                'editorFocus': false,
                 'allowedContent': allowedContent,
                 'requiredContent': allowedContent,
 
