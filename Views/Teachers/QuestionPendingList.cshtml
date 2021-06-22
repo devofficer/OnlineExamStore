@@ -1,0 +1,53 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.PendinQuestionViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "System Question Bank Pending Requiest";
+}
+
+<div class="page-head">
+    <h3>System Question Bank Pending Requiest</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">System Question Bank Pending Requiest</li>
+    </ol>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 packs-container">
+            <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th class="th-inner">Description</th>
+                        <th class="th-inner">Category</th>
+                        <th class="th-inner">Subject</th>
+                        <th class="th-inner">Request Date</th>
+                        <th class="th-inner"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.Raw(item.Description)</td>
+                            <td>@item.CategoryType</td>
+                            <td>@item.SubjectType</td>
+                            <td>@item.CreatedDate.ToString("yyyy-MM-dd H:mm:ss")</td>
+                            <td>
+                                <a href="@Url.Action("SystemQuestionRequiestApprove", "Teachers", new { id = item.Id })" class="label label-success" title="Approve"><span class="fa fa-pencil-square-o"></span> Approve</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div id="contentPager">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("QuestionPendingList", "Teachers",
+            new { page, sortOrder = ViewBag.CurrentSort }))
+            </div>
+        </div>
+
+    </div>
+</div>
+

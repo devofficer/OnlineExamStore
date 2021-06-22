@@ -18,6 +18,7 @@
     $scope.currentQuestion = {};
     $scope.questionPaperId = 0;
     $scope.duration = 0;
+    $scope.questionCreatedBy = "";
 
     $scope.questionPaperId = $routeParams.id;
 
@@ -131,7 +132,8 @@
         if ($scope.currentQuestion != null)
         {
             $scope.questionTitle = "";
-            $scope.questionTitle = $sce.trustAsHtml($scope.currentQuestion.title); 
+            $scope.questionTitle = $sce.trustAsHtml($scope.currentQuestion.title);
+            $scope.questionCreatedBy = $scope.currentQuestion.createdBy;
         }
             
         //alert($sce.trustAsHtml($scope.currentQuestion.title));

@@ -103,5 +103,7 @@ namespace OnlineExam.Models
         public int? TopicId { get; set; }
         public virtual Topic Topic { get; set; }
 
+        public bool IsSystem { get; set; }
+
     }
 }

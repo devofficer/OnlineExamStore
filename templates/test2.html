@@ -107,6 +107,7 @@
                     <div ng-show="isMathJaxAlertVisible()" class="alert alert-danger network-unavailable font-sm ng-binding ng-hide" ng-bind-html="mathJaxErrorMsgHTML"></div>
                     <div class="question-box">
                         <div class="row">
+                            <div style="width: 100%; border-bottom: 1px solid #e1e8ed; padding: 5px; text-align: center;">Question Created By: {{questionCreatedBy}}</div>
                             <div class="col-xs-12 qb-header">
                                 <div class="left-box">
                                     <div class="que-label ql-small js-que-incorrect" ng-class="{
@@ -120,7 +121,7 @@
                                     <div class="que-time ng-binding">00:15</div>
                                     <div class="que-marking-scheme">
                                         <!--<span ng-class="{'pos':isCorrect(selectedParentIndex, selectedIndex)}" class="ng-binding">+1</span>
-                                        <span ng-class="{'neg':isIncorrect(selectedParentIndex, selectedIndex)}" class="ng-binding neg">-0.25</span>-->
+                <span ng-class="{'neg':isIncorrect(selectedParentIndex, selectedIndex)}" class="ng-binding neg">-0.25</span>-->
                                     </div>
                                 </div>
                                 <div class="right-box">

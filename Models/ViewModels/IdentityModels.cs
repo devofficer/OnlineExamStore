@@ -168,6 +168,7 @@ namespace OnlineExam.Models
         public DbSet<UserPayments> UserPayments { get; set; }
         public DbSet<UserInvoices> UserInvoices { get; set; }
         public DbSet<UserAccountBalance> UserAccountBalance { get; set; }
+        public DbSet<SystemQuestionRequiest> SystemQuestionRequiest { get; set; }
 
         public override int SaveChanges()
         {

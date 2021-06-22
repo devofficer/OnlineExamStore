@@ -23,7 +23,7 @@ taskApp.controller('QuizCtrl', function ($scope, $compile, $http, $q, $timeout, 
     $scope.timerRunning = true;
     $scope.timerConsole = '';
     $scope.message = 'NO RECORD FOUND';
-
+    $scope.questionCreatedBy = "";
     /*  TIMER CODE START HERE */
     $scope.startTimer = function () {
         $scope.$broadcast('timer-start');

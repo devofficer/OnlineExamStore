@@ -417,6 +417,7 @@
     <Compile Include="Models\ReferralPragram.cs" />
     <Compile Include="Models\School.cs" />
     <Compile Include="Models\Subject.cs" />
+    <Compile Include="Models\SystemQuestionRequiest.cs" />
     <Compile Include="Models\TeachersProfileExtended.cs" />
     <Compile Include="Models\Topic.cs" />
     <Compile Include="Models\UserAccountBalance.cs" />
@@ -4187,6 +4188,10 @@
     <Content Include="Views\Lessons\CKEditorFileBrowser.cshtml" />
     <Content Include="Views\Lessons\ImageViewer.cshtml" />
     <Content Include="Views\SmartQuiz\IndexV3.cshtml" />
+    <Content Include="Views\Teachers\TeachersList.cshtml" />
+    <Content Include="Views\Teachers\EnrollQuestionPaperList.cshtml" />
+    <Content Include="Views\Teachers\QuestionPaperSuggestions.cshtml" />
+    <Content Include="Views\Teachers\QuestionPendingList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ErrorLog\" />

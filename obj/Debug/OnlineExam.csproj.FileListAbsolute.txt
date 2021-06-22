@@ -66,4 +66,3 @@ E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Htt
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Http.Extensions.xml
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\bin\System.Net.Http.Primitives.xml
 E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.App.config
-E:\Project_2021\OnlineExamStore\nikolaytoplev\OnlineExamStore\obj\Debug\OnlineExam.csproj.AssemblyReference.cache

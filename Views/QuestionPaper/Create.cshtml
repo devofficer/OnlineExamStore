@@ -644,7 +644,7 @@
     <div class="row">
         <hr />
     </div>
-@if (CustomClaimsPrincipal.Current.IsACDAStoreUser) { 
+@if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher")) { 
     <div class="row">
         <div class="panel panel-info">
             <div class="panel-heading">

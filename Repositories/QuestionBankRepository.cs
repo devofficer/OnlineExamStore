@@ -10,6 +10,7 @@ using OnlineExam.Infrastructure;
 using OnlineExam.Models;
 using System.Data.SqlClient;
 using System.Data;
+using OnlineExam.Helpers;
 
 namespace OnlineExam.Repositories
 {
@@ -41,8 +42,9 @@ namespace OnlineExam.Repositories
         }
 
         public static IList<QuestionBankViewModel> GetAll(string className, string examName, string subject, int? topicId, string questionFormat, int? mark, bool? isOnline,
-           string userId, bool isApplicationUser)
+           string userId, bool isApplicationUser, string type)
         {
+            string currentUserId = CustomClaimsPrincipal.Current.UserId;
             List<QuestionBankViewModel> questionBankViewModel = new List<QuestionBankViewModel>();
             using (var dbContext = new ApplicationDbContext())
             {
@@ -52,9 +54,11 @@ namespace OnlineExam.Repositories
                 var QuestionFormat = new SqlParameter("@QuestionFormat", string.IsNullOrEmpty(questionFormat) ? DBNull.Value.ToString() : questionFormat);
                 var Marks = new SqlParameter("@Marks", mark ?? SqlInt32.Null);
                 var IsOnline = new SqlParameter("@IsOnline", isOnline ?? SqlBoolean.Null);
+                var UserId = new SqlParameter("@UserId", string.IsNullOrEmpty(currentUserId) ? DBNull.Value.ToString() : currentUserId);
+                var UserType = new SqlParameter("@UserType", type ?? null);
 
                 questionBankViewModel = dbContext.Database
-                    .SqlQuery<QuestionBankViewModel>("GetQuestionsByParameters_SP @ExamName,@Subject,@TopicId,@QuestionFormat,@Marks,@IsOnline", ExamName, Subject, Topic, QuestionFormat, Marks, IsOnline)
+                    .SqlQuery<QuestionBankViewModel>("GetQuestionsByParameters_SP @ExamName,@Subject,@TopicId,@QuestionFormat,@Marks,@IsOnline,@UserId,@UserType", ExamName, Subject, Topic, QuestionFormat, Marks, IsOnline, UserId, UserType)
                     .ToList();
             }
             return questionBankViewModel;

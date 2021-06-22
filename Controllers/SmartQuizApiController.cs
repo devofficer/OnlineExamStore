@@ -347,7 +347,8 @@ namespace OnlineExam.Controllers
                                     OptionD = c.OptionD,
                                     OptionE = c.OptionE,
                                     FormatType = c.FormatType,
-                                    ImagePath = c.ImagePath
+                                    ImagePath = c.ImagePath,
+                                    CreatedBy = getQustionCreatedUserName(c.CreatedBy),
                                 }).ToList();
                                 item.ChildQuestions.AddRange(l);
                             }
@@ -650,7 +651,8 @@ namespace OnlineExam.Controllers
                 Duration = question.Duration,
                 Subject = question.Subject,
                 ImagePath = question.ImagePath,
-                Solution = question.Solution
+                Solution = question.Solution,
+                CreatedBy = getQustionCreatedUserName(question.CreatedBy),
             };
             if (!string.IsNullOrWhiteSpace(question.OptionA))
             {
@@ -678,6 +680,15 @@ namespace OnlineExam.Controllers
                 questionObj.Options.Add(optionE);
             }
             return questionObj;
+        }
+
+        private static string getQustionCreatedUserName(string userId)
+        {
+            string strName = "";
+            var dbContext = new ApplicationDbContext();
+            var userInfo = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == userId);
+            strName = userInfo.FirstName + " " + userInfo.LastName;
+            return strName;
         }
 
         /// <summary>
@@ -738,7 +749,8 @@ namespace OnlineExam.Controllers
                             Subject = question.Subject,
                             Solution = question.Solution,
                             ImagePath = question.ImagePath,
-                            UserOption = userOption
+                            UserOption = userOption,
+                            CreatedBy = getQustionCreatedUserName(question.CreatedBy)
                         };
                         if (!string.IsNullOrWhiteSpace(question.OptionA))
                         {

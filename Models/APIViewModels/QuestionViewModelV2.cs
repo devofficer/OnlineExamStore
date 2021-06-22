@@ -31,7 +31,7 @@ namespace OnlineExam.Models.APIViewModels
         public string Subject { get; set; }
         public string FormatType { get; set; }
         public string ImagePath { get; set; }
-
+        public string CreatedBy { get; set; }
         public List<QuestionViewModelV2> ChildQuestions { get; set; }
     }
     public class ChildQuestionViewModel
@@ -53,6 +53,7 @@ namespace OnlineExam.Models.APIViewModels
         public string ImagePath { get; set; }
         public int Mark { get; set; }
         public int Duration { get; set; }
+        public string CreatedBy { get; set; }
         //public string Subject { get; set; }
     }
 }

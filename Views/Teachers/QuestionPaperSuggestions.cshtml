@@ -1,0 +1,64 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.QuestionPaperSuggestionViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Test Suggestions";
+}
+
+<div class="page-head">
+    <h3>Test Suggestions</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Test Suggestions</li>
+    </ol>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 packs-container">
+            <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th class="th-inner">Question Paper Title</th>
+                        <th class="th-inner">Teacher Name</th>
+                        <th class="th-inner">Category</th>
+                        <th class="th-inner">Subject</th>
+                        <th class="th-inner">Questions</th>
+                        <th class="th-inner">Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.QuestionPaperTitle</td>
+                            <td>@item.TeacherName</td>
+                            <td>@item.CategoryType</td>
+                            <td>@item.SubjectType</td>
+                            <td>@item.TotalQuestions</td>
+                            <td>@item.CreatedDate.Value.ToString("yyyy-MM-dd H:mm:ss")</td>
+                            <td>
+                                <input type="button" id="btnPreview" value="Take Test" class="btn btn-success btn-xs" onclick="startTest(@item.QuestionPaperId)" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div id="contentPager">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("QuestionPaperSuggestions", "Teachers",
+            new { page, sortOrder = ViewBag.CurrentSort }))
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    function startTest(id) {
+        if (confirm("Are you sure to take this test now?")) {
+            window.location.href = "/SmartQuiz/IndexV2/#/test/" + id;
+        }
+    }
+</script>

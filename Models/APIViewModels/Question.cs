@@ -34,7 +34,7 @@ namespace OnlineExam.Models.APIViewModels
         public bool IsSkipped { get; set; }
         public OptionType OptionType { get; set; }
         public List<Option> Options { get; set; }
-
+        public string CreatedBy { get; set; }
         //Added on 09th March 2017
         public List<Question> ChildQuestions { get; set; }
     }

@@ -1,0 +1,59 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.TeachersViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Teachers";
+}
+
+<div class="page-head">
+    <h3>Teachers</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Teachers</li>
+    </ol>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 packs-container">
+            <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th class="th-inner">Teacher Name</th>
+                        <th class="th-inner">Class</th>
+                        <th class="th-inner">Subject</th>
+                        <th class="th-inner">Follow</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>@item.TeacherName</td>
+                        <td>@item.ClassType</td>
+                        <td>@item.SubjectType</td>
+                        <td>
+                            @if (item.IsFollowed == "No")
+                            {
+                                <a href="/Teachers/Follow/@item.TeacherId" class="btn btn-success btn-xs">Follow</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="btn btn-success btn-xs">Following</a>
+                            }
+
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div id="contentPager">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("TeachersList", "Teachers",
+            new { page, sortOrder = ViewBag.CurrentSort }))
+            </div>
+        </div>
+
+    </div>
+</div>
+

@@ -1,4 +1,5 @@
-﻿using OnlineExam.Infrastructure.Alerts;
+﻿using Microsoft.AspNet.Identity;
+using OnlineExam.Infrastructure.Alerts;
 using OnlineExam.Models;
 using OnlineExam.Models.ViewModels;
 using OnlineExam.Repositories;
@@ -117,6 +118,181 @@ namespace OnlineExam.Controllers
                 return View().WithError("Record not saved!");
             }
             
+        }
+
+        public ActionResult TeachersList(int? page)
+        {
+            var dbContext = new ApplicationDbContext();
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+
+            string classType = dbContext.UserProfiles.Find(profileId).ClassTypes;
+
+            var info = from t in dbContext.UserProfiles
+                       where t.ClassTypes.Contains(classType) && t.ApplicationUser.UserType == "Teacher"
+                       select new TeachersViewModel
+                       {
+                            TeacherId = t.UserProfileId,
+                            TeacherName = t.FirstName + " " + t.LastName,
+                            ClassType = t.ClassTypes,
+                            SubjectType = t.SubjectCategory,
+                            IsFollowed = dbContext.Followers.Where(x=>x.UserProfileId == t.UserProfileId && x.FollowersUserProfileId == profileId).Count() > 0?"Yes":"No"
+                       };
+
+            info = info.OrderBy(x=>x.TeacherId);
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
+        }
+
+        public ActionResult Follow(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+
+            if(dbContext.Followers.Where(x => x.UserProfileId == id && x.FollowersUserProfileId == profileId).Count() == 0)
+            {
+                var follow = new Followers();
+                follow.UserProfileId = id;
+                follow.FollowersUserProfileId = profileId;
+                follow.StartDate = DateTime.Now;
+
+                dbContext.Followers.Add(follow);
+                dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("TeachersList");
+        }
+
+
+        public ActionResult EnrollQuestionPaperList(int? page)
+        {
+            var dbContext = new ApplicationDbContext();
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+            string currentUserId = User.Identity.GetUserId();
+
+            string classType = dbContext.UserProfiles.Find(profileId).ClassTypes;
+
+            var info = from t in dbContext.QuestionPapers
+                       where t.CreatedBy == currentUserId && t.IsActive==true && t.IsOnline == true
+                       from a in dbContext.AttemptedQuestionPapars
+                       where a.QuestionPaparId == t.Id
+                       select new EnrollQuestionPaperViewModel
+                       {
+                           AttenId = a.Id,
+                           QuestionPaperId = t.Id,
+                           AttendUserId = a.UserId,
+                           StudentProfileId = dbContext.UserProfiles.FirstOrDefault(x=>x.ApplicationUser.Id == a.UserId).UserProfileId,
+                           AttendStudentName = dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == a.UserId).FirstName + " " + dbContext.UserProfiles.FirstOrDefault(x => x.ApplicationUser.Id == a.UserId).LastName,
+                           ClassType = t.ClassName,
+                           CategoryType = t.ExamName,
+                           SubjectType = t.Subject,
+                           QuestionPaperTitle=t.Name,
+                           TimeTaken=a.TimeTakenInMinutes,
+                           TotalQuestions=a.TotalQuestions,
+                           TotalMarks=a.TotalMarks,
+                           TotalObtainedMarks=a.TotalObtainedMarks,
+                           TotalCorrectedAnswered=a.TotalCorrectedAnswered,
+                           TotalInCorrectedAnswered=a.TotalInCorrectedAnswered,
+                           IsCompleted=a.IsCompletelyAttempted==true?"Yes":"No",
+                           Status=a.Status,
+                           StartDate=a.CreatedOn,
+                           ModifyDate = a.ModifiedOn
+                       };
+
+            info = info.OrderByDescending(x => x.StartDate);
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
+        }
+
+        public ActionResult QuestionPaperSuggestions(int? page)
+        {
+            var dbContext = new ApplicationDbContext();
+            int profileId = CommonRepository.GetCurrentUserProfileId();
+            string currentUserId = User.Identity.GetUserId();
+
+            string classType = dbContext.UserProfiles.Find(profileId).ClassTypes;
+
+            var info = from t in dbContext.QuestionPapers
+                       where t.ClassName == classType && t.IsActive == true && t.IsOnline == true
+                       from u in dbContext.UserProfiles
+                       where t.CreatedBy == u.ApplicationUser.Id
+                       from f in dbContext.Followers
+                       where f.UserProfileId == u.UserProfileId && f.FollowersUserProfileId == profileId
+                       select new QuestionPaperSuggestionViewModel
+                       {
+                           QuestionPaperId = t.Id,
+                           TotalQuestions= dbContext.QuestionPaperMappings.Where(x=>x.QuestionPaperId == t.Id).Count(),
+                           TotalTime = t.Minute,
+                           TeacherProfileId = u.UserProfileId,
+                           TeacherName = u.FirstName + " " + u.LastName,
+                           ClassType = t.ClassName,
+                           CategoryType = t.ExamName,
+                           SubjectType = t.Subject,
+                           QuestionPaperTitle = t.Name,
+                           CreatedDate = t.CreatedOn,
+                           TotalAttend = dbContext.AttemptedQuestionPapars.Where(x=>x.QuestionPaparId == t.Id && x.UserId == currentUserId).Count()
+                       };
+
+            info = info.Where(a=>a.TotalAttend == 0).OrderByDescending(x => x.CreatedDate);
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
+        }
+
+        [Authorize(Roles = "StaffAdmin,SchoolAdmin")]
+        public ActionResult QuestionPendingList(int? page)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var info = from t in dbContext.SystemQuestionRequiest
+                       where t.IsApproved == false
+                       from q in dbContext.QuestionBank
+                       where q.QuestionId == t.QuestionId
+                       from u in dbContext.UserProfiles where u.UserProfileId == t.TeacherProfileId
+                       select new PendinQuestionViewModel
+                       {
+                           Id = t.Id,
+                           TeacherId = t.TeacherProfileId,
+                           QuestionId = t.QuestionId,
+                           TeacherName = u.FirstName + " " + u.LastName,
+                           Description = q.Decription,
+                           CategoryType = q.ExamName,
+                           SubjectType = q.Subject,
+                           CreatedDate = t.CreatedDate
+                       };
+
+            info = info.OrderByDescending(x => x.CreatedDate);
+            int pageSize = 20;
+
+            int pageNumber = (page ?? 1);
+
+            return View(info.ToPagedList(pageNumber, pageSize));
+        }
+
+        [Authorize(Roles = "StaffAdmin,SchoolAdmin")]
+        public ActionResult SystemQuestionRequiestApprove(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            var info = dbContext.SystemQuestionRequiest.Find(id);
+            info.IsApproved = true;
+            info.ModifiedDate = DateTime.Now;
+            dbContext.SaveChanges();
+
+            int questionId = info.QuestionId;
+
+            var q = dbContext.QuestionBank.FirstOrDefault(x => x.QuestionId == questionId);
+            q.IsSystem = true;
+            dbContext.SaveChanges();
+
+
+            return RedirectToAction("QuestionPendingList");
         }
     }
 }

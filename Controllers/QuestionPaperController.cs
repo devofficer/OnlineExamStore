@@ -36,12 +36,19 @@ namespace OnlineExam.Controllers
         }
         // GET: /QuestionPaper/
         [HttpGet]
-        public ActionResult Index(int? page, string type = "", string opType = "#unAttempted-tab")
+        public ActionResult Index(int? page, string classType, string categoryType, string subjectType, string createdBy, string type = "", string opType = "#unAttempted-tab")
         {
+            string userType = "Admin";
             if (User.IsInRole("Teacher") && string.IsNullOrEmpty(type))
             {
                 type = "Teacher";
-             }
+                userType = "Teacher";
+            }
+
+            if (User.IsInRole("Student"))
+            {
+                userType = "Student";
+            }
 
             IList<QuestionPaperListViewModel> questionPapars = new List<QuestionPaperListViewModel>();
             var classes = CommonRepository.GetClasses(Enums.LookupType.ClassType.ToString());
@@ -49,7 +56,7 @@ namespace OnlineExam.Controllers
             if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
             {
               //  questionPapars = QuestionPaperRepository.GetAll("", "", "", string.Empty, CustomClaimsPrincipal.Current.UserId, null);
-                questionPapars = QuestionPaperRepository.GetAll("", "", "", string.Empty, CustomClaimsPrincipal.Current.UserId, type);
+                questionPapars = QuestionPaperRepository.GetAll("", "", "", string.Empty, CustomClaimsPrincipal.Current.UserId, type, userType);
                 SetCBTTypes(questionPapars);
             }
             else
@@ -64,11 +71,11 @@ namespace OnlineExam.Controllers
                     var userClassName = firstOrDefault.Value;
                     if (User.IsInRole("Teacher"))
                     {
-                        questionPapars = QuestionPaperRepository.GetAll("", "", "", opType, CustomClaimsPrincipal.Current.UserId, type);
+                        questionPapars = QuestionPaperRepository.GetAll("", "", "", opType, CustomClaimsPrincipal.Current.UserId, type, userType);
                     }
                     else
                     {
-                        questionPapars = QuestionPaperRepository.GetAll(userClassName, "", "", opType, CustomClaimsPrincipal.Current.UserId, type);
+                        questionPapars = QuestionPaperRepository.GetAll(classType, categoryType, subjectType, opType, createdBy, type, userType);
                     }
                         
                         SetCBTTypes(questionPapars);
@@ -97,16 +104,29 @@ namespace OnlineExam.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult Index(QuestionFilterViewModel questionFilterViewModel, int? page, string type="", string opType = "#unAttempted-tab")
+        public PartialViewResult Index(QuestionFilterViewModel questionFilterViewModel, string createdBy, int? page, string type="", string opType = "#unAttempted-tab")
         {
+            string userType = "Admin";
             if (User.IsInRole("Teacher") && string.IsNullOrEmpty(type))
             {
                 type = "Teacher";
+                userType = "Teacher";
+            }
+
+            if (User.IsInRole("Student"))
+            {
+                userType = "Student";
             }
 
             if (string.IsNullOrEmpty(type))
             {
                 type = questionFilterViewModel.type;
+            }
+
+            string curUserId = CustomClaimsPrincipal.Current.UserId;
+            if (User.IsInRole("Student"))
+            {
+                curUserId = createdBy;
             }
 
             questionFilterViewModel.PageIndex = page ?? 1;
@@ -116,7 +136,7 @@ namespace OnlineExam.Controllers
                 questionFilterViewModel.SelectedClass,
                 questionFilterViewModel.SelectedCategory == "Select Category" ? string.Empty : questionFilterViewModel.SelectedCategory,
                 questionFilterViewModel.SelectedSubject == "Select Subject" ? string.Empty : questionFilterViewModel.SelectedSubject,
-                opType, CustomClaimsPrincipal.Current.UserId, type);
+                opType, curUserId, type, userType);
 
             questionFilterViewModel.QuestionPapars = questionPapars.ToPagedList(questionFilterViewModel.PageIndex, questionFilterViewModel.PageSize);
             SetCBTTypes(questionPapars);
@@ -143,6 +163,29 @@ namespace OnlineExam.Controllers
 
             var subjectList = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString(), categoryType);
             return Json(subjectList, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public JsonResult GetTeachers(string classType, string categoryType, string subjectType)
+        {
+            if (string.IsNullOrWhiteSpace(classType) || string.IsNullOrWhiteSpace(categoryType) || string.IsNullOrWhiteSpace(subjectType))
+                return Json(HttpNotFound());
+
+            var dbContext = new ApplicationDbContext();
+            var info = from q in dbContext.QuestionPapers
+                       where q.Type == "Teacher" && q.ClassName == classType && q.ExamName == categoryType && q.Subject == subjectType
+                       from u in dbContext.UserProfiles
+                       where q.CreatedBy == u.ApplicationUser.Id
+                       select new SelectListItem
+                       {
+                           Value = q.CreatedBy,
+                           Text = u.FirstName + " " + u.LastName
+                       };
+
+
+            var teacherList = info.ToList();
+            return Json(teacherList, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

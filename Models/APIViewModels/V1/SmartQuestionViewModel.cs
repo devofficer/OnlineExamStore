@@ -27,6 +27,7 @@ namespace OnlineExam.Models.APIViewModels
         public string OptionE { get; set; }
         public string FormatType { get; set; }
         public string ImagePath { get; set; }
+        public string CreatedBy { get; set; }
 
         public List<SmartQuestionViewModel> ChildQuestions { get; set; }
     }

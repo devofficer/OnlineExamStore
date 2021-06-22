@@ -78,7 +78,7 @@
     }
 
     .tile.tile-medium {
-        min-height: 210px;
+        min-height: 250px;
         /*width: 310px;*/
     }
 
@@ -383,6 +383,7 @@
                             @if (CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
                             {
                                 <li><a href="@Url.Action("Create", "Question")">Create Question</a></li>
+                                <li><a href="@Url.Action("Index", "Question")">My Questions</a></li>
                                 <li><a href="@Url.Action("Create", "QuestionPaper", new { type = CBTType.Teacher.ToString() })">Create Teacher CBT</a></li>
                                 <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Teacher.ToString() })">Teacher CBT</a></li>
                                 <li><a href="@Url.Action("Create", "QuestionPaper", new { type = CBTType.Custom.ToString() })">Create Custom CBT</a></li>
@@ -390,6 +391,7 @@
                                 <li><a href="@Url.Action("CreateNote", "Lessons")">Create Lesson Note</a></li>
                                 <li><a href="@Url.Action("CreateLesson", "Lessons")">Create Lesson</a></li>
                                 <li><a href="@Url.Action("LessonList", "Lessons")">My Lessons</a></li>
+                                <li><a href="@Url.Action("EnrollQuestionPaperList", "Teachers")">Question Paper Enrollment</a></li>
                                 <li><a href="@Url.Action("Followers", "Teachers")">Followers</a></li>
                             }
                             else
@@ -400,7 +402,15 @@
                                 <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Teacher.ToString() })">Teacher CBT</a></li>
                                 <li><a href="@Url.Action("Index", "QuestionPaper", new { type = CBTType.Custom.ToString() })">Custom CBT</a></li>
                                 <li><a href="@Url.Action("Index", "QuestionPaper")">All CBT</a></li>
+                                if (CustomClaimsPrincipal.Current.IsACDAStoreUser) { 
+                                    <li><a href="@Url.Action("QuestionPendingList", "Teachers")">Pending System Question Requiest</a></li>
+                                }
                                 <li><a href="@Url.Action("Index", "Lessons")">Lessons</a></li>
+                                if (User.IsInRole("Student"))
+                                {
+                                    <li><a href="@Url.Action("TeachersList", "Teachers")">Teachers</a></li>
+                                    <li><a href="@Url.Action("QuestionPaperSuggestions", "Teachers")">Test Suggestions</a></li>
+                                }
                             }
 
                         </ul>

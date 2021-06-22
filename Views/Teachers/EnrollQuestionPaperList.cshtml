@@ -1,0 +1,69 @@
+﻿@model PagedList.IPagedList<OnlineExam.Models.ViewModels.EnrollQuestionPaperViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Question Papers Enrollment Summary";
+}
+
+<div class="page-head">
+    <h3>Question Papers Enrollment Summary</h3>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Home", "Dashboard", "Account")</li>
+        <li class="active">Question Papers Enrollment Summary</li>
+    </ol>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 packs-container">
+            <table id="tblCustom" class="table table-condensed table-hover table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th class="th-inner">Question Paper Title</th>
+                        <th class="th-inner">Student Name</th>
+                        <th class="th-inner">Class</th>
+                        <th class="th-inner">Category</th>
+                        <th class="th-inner">Subject</th>
+                        <th class="th-inner">Questions</th>
+                        <th class="th-inner">Total Marks</th>
+                        <th class="th-inner">Taken Time</th>
+                        <th class="th-inner">Total Obtained Marks</th>
+                        <th class="th-inner">Corrected Answered</th>
+                        <th class="th-inner">InCorrected Answered</th>
+                        <th class="th-inner">Completed</th>
+                        <th class="th-inner">Status</th>
+                        <th class="th-inner">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>@item.QuestionPaperTitle</td>
+                        <td>@item.AttendStudentName</td>
+                        <td>@item.ClassType</td>
+                        <td>@item.CategoryType</td>
+                        <td>@item.SubjectType</td>
+                        <td>@item.TotalQuestions</td>
+                        <td>@item.TotalMarks</td>
+                        <td>@item.TimeTaken</td>
+                        <td>@item.TotalObtainedMarks</td>
+                        <td>@item.TotalCorrectedAnswered</td>
+                        <td>@item.TotalInCorrectedAnswered</td>
+                        <td>@item.IsCompleted</td>
+                        <td>@item.Status</td>
+                        <td>@item.StartDate.ToString("yyyy-MM-dd H:mm:ss")</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div id="contentPager">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("EnrollQuestionPaperList", "Teachers",
+            new { page, sortOrder = ViewBag.CurrentSort }))
+            </div>
+        </div>
+
+    </div>
+</div>
+

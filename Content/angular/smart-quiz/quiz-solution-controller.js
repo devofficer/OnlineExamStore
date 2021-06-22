@@ -21,6 +21,7 @@
     $scope.questionSectionId = 0;
     $scope.questionTitle = "";
     $scope.questionPaperId = $routeParams.id;
+    $scope.questionCreatedBy = "";
     init();
 
     function init() {
@@ -151,6 +152,7 @@
             $scope.questionTitle = $sce.trustAsHtml($scope.currentQuestion.title);
             $scope.questionId = $scope.currentQuestion.id;
             $scope.questionSectionId = $scope.currentQuestion.sectionId;
+            $scope.questionCreatedBy = $scope.currentQuestion.createdBy;
             //alert($scope.questionTitle);
         }
     }
@@ -373,7 +375,7 @@
             $scope.test = data;
             $scope.questionCount = data.questionCount;
             if ($scope.test != "") {
-                //debugger;
+                debugger;
                 $scope.duration = $scope.test.duration;
                 setCurrentQuestion($scope.selectedParentIndex - 1, $scope.selectedIndex - 1);
                // setCurrentOptions($scope.selectedParentIndex - 1, $scope.selectedIndex - 1, null);

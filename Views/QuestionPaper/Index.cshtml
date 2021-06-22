@@ -12,6 +12,11 @@
         }
         strRole = "Teacher";
     }
+
+    if (User.IsInRole("Student"))
+    {
+        strType = Request.QueryString["type"];
+    }
 }
 
 <style>
@@ -62,6 +67,22 @@
                 }
             );
         });
+
+
+        $(document).on('change', '[id*=SelectedSubject]', function () {
+            $.getJSON('/QuestionPaper/GetTeachers/', { classType: $('[id*=SelectedClass]').val(), categoryType: $('[id*=SelectedCategory]').val(), subjectType: $('[id*=SelectedSubject]').val() },
+                function (data) {
+                    var items = '<option>Select Teacher</option>';
+                    $.each(data, function (i, state) {
+                        items += "<option value='" + state.Value + "'>" + state.Text + "</option>";
+                    });
+                    $('[id*=TeachersList]').html(items);
+                }
+            );
+        });
+
+
+
         $('#btnRefresh').click(function () {
             $('[id*=SelectedClass]').find('option:first').attr('selected', 'selected');
 
@@ -70,6 +91,9 @@
 
             $('[id*=SelectedSubject]').empty();
             $('[id*=SelectedSubject]').append("<option>Select Subject</option>");
+
+            $('[id*=TeachersList]').empty();
+            $('[id*=TeachersList]').append("<option>Select Teacher</option>");
 
             $.ajax({
                 url: $(this).attr("href"),
@@ -83,6 +107,8 @@
         });
 
         $('#btnSearch').click(function (e) {
+            $("#divQuestionPapars1").empty();
+            $("#divQuestionPapars2").empty();
             var $tab = $('#myTabContent'), $active = $tab.find('.tab-pane.active'), opType = $active.attr('id');
             var questionFilterViewModel = {
                 "SelectedClass": $("#SelectedClass").val(),
@@ -94,7 +120,7 @@
                 url: '@Url.Action("Index", "QuestionPaper")',
                 type: 'POST',
                 async: true,
-                data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, type: "@strType", opType: opType }),
+                data: JSON.stringify({ questionFilterViewModel: questionFilterViewModel, classType: $("#SelectedClass").val(), categoryType: $("#SelectedCategory").val(), subjectType: $("#SelectedSubject").val(), createdBy: $("#TeachersList").val(), type: "@strType", opType: opType }),
                 datatype: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
@@ -210,15 +236,23 @@
         <div class="col-md-2">
             @Html.DropDownListFor(m => m.SelectedSubject, Model.Subjects, "Select Subject", new { @class = "form-control" })
         </div>
+        @if (User.IsInRole("Student") && strType == "Teacher")
+        {
+        <div class="col-md-2">
+            <select name="TeachersList" id="TeachersList" class = "form-control">
+                <option value="">Select Teacher</option>
+            </select>
+        </div>
+        }
         @*<div class="col-md-2">
-                @Html.DropDownListFor(m => m.SelectedFormat, Model.Formats, "Select Format", new { @class = "form-control" })
-            </div>*@
+            @Html.DropDownListFor(m => m.SelectedFormat, Model.Formats, "Select Format", new { @class = "form-control" })
+        </div>*@
         @*<div class="col-md-2">
-                @Html.DropDownListFor(m => m.SelectedMark, Model.Marks, "Select Mark", new { @class = "form-control" })
-            </div>
-            <div class="col-md-1">
-                @Html.CheckBoxFor(m => m.IsOnline, Model.IsOnline)
-            </div>*@
+            @Html.DropDownListFor(m => m.SelectedMark, Model.Marks, "Select Mark", new { @class = "form-control" })
+        </div>
+        <div class="col-md-1">
+            @Html.CheckBoxFor(m => m.IsOnline, Model.IsOnline)
+        </div>*@
         <div class="col-md-3">
             <button type="button" name="command" value="Search" id="btnSearch" class="btn btn-success" title="Search">
                 Search&nbsp;<i class="fa fa-search"></i>

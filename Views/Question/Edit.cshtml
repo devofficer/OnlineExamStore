@@ -249,6 +249,17 @@
                     @Html.TextAreaFor(model => model.AnswerDescription, new { @class = "form-control ckeditor" })
                 </div>
             </div>
+
+            @if (User.IsInRole("Teacher") && ViewBag.Requeist == "Yes")
+            {
+            <div class="form-group">
+                @Html.Label("Add Question To System", new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <input type="checkbox" id="chRequiest" name="chRequiest" class="checkbox checkbox-inline" value="yes" />
+                </div>
+            </div>
+            }
+
         </fieldset>
     </div>
 }

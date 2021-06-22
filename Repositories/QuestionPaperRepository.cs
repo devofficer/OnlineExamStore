@@ -79,24 +79,49 @@ namespace OnlineExam.Repositories
             public DateTime CreatedOn { get; set; }
         }
 
-        public static IList<QuestionPaperListViewModel> GetAll(string className, string examName, string subject, string opType, string userId, string cbtType)
+        public static IList<QuestionPaperListViewModel> GetAll(string className, string examName, string subject, string opType, string userId, string cbtType,string userType)
         {
             var questionPaperListViewModel = new List<QuestionPaperListViewModel>();
 
-            using (var dbContext = new ApplicationDbContext())
+            if (userType == "Student")
             {
-                var ClassName = new SqlParameter("@ClassName", string.IsNullOrEmpty(className) ? DBNull.Value.ToString() : className);
-                var ExamName = new SqlParameter("@Examname", string.IsNullOrEmpty(examName) ? DBNull.Value.ToString() : examName);
-                var Subject = new SqlParameter("@Subject", string.IsNullOrEmpty(subject) ? DBNull.Value.ToString() : subject);
-                var UserId = new SqlParameter("@UserId", string.IsNullOrEmpty(userId) ? DBNull.Value.ToString() : userId);
-                var OpType = new SqlParameter("@OpType", string.IsNullOrEmpty(opType) ? DBNull.Value.ToString() : opType);
-                var IsACDAStoreUser = new SqlParameter("@IsACDAStoreUser", CustomClaimsPrincipal.Current.IsACDAStoreUser);
-                var CBTType = new SqlParameter("@CBTType", string.IsNullOrEmpty(cbtType) ? DBNull.Value.ToString() : cbtType);
-                questionPaperListViewModel =
+                string currentUserId = CustomClaimsPrincipal.Current.UserId;
+                using (var dbContext = new ApplicationDbContext())
+                {
+                    var ClassName = new SqlParameter("@ClassName", string.IsNullOrEmpty(className) ? DBNull.Value.ToString() : className);
+                    var ExamName = new SqlParameter("@Examname", string.IsNullOrEmpty(examName) ? DBNull.Value.ToString() : examName);
+                    var Subject = new SqlParameter("@Subject", string.IsNullOrEmpty(subject) ? DBNull.Value.ToString() : subject);
+                    var UserId = new SqlParameter("@UserId", string.IsNullOrEmpty(currentUserId) ? DBNull.Value.ToString() : currentUserId);
+                    var TeacherId = new SqlParameter("@TeacherId", string.IsNullOrEmpty(userId) ? DBNull.Value.ToString() : userId);
+                    var OpType = new SqlParameter("@OpType", string.IsNullOrEmpty(opType) ? DBNull.Value.ToString() : opType);
+                    var IsACDAStoreUser = new SqlParameter("@IsACDAStoreUser", CustomClaimsPrincipal.Current.IsACDAStoreUser);
+                    var CBTType = new SqlParameter("@CBTType", string.IsNullOrEmpty(cbtType) ? DBNull.Value.ToString() : cbtType);
+
+                    questionPaperListViewModel =
+                   dbContext.Database
+                    .SqlQuery<QuestionPaperListViewModel>("GetStudentQuestionPaperListViewModel_SP @ClassName, @ExamName, @Subject, @UserId, @TeacherId, @OpType, @CBTType", ClassName, ExamName, Subject, UserId, TeacherId, OpType, CBTType).ToList();
+                }
+                return questionPaperListViewModel;
+            }
+            else
+            {
+                using (var dbContext = new ApplicationDbContext())
+                {
+                    var ClassName = new SqlParameter("@ClassName", string.IsNullOrEmpty(className) ? DBNull.Value.ToString() : className);
+                    var ExamName = new SqlParameter("@Examname", string.IsNullOrEmpty(examName) ? DBNull.Value.ToString() : examName);
+                    var Subject = new SqlParameter("@Subject", string.IsNullOrEmpty(subject) ? DBNull.Value.ToString() : subject);
+                    var UserId = new SqlParameter("@UserId", string.IsNullOrEmpty(userId) ? DBNull.Value.ToString() : userId);
+                    var OpType = new SqlParameter("@OpType", string.IsNullOrEmpty(opType) ? DBNull.Value.ToString() : opType);
+                    var IsACDAStoreUser = new SqlParameter("@IsACDAStoreUser", CustomClaimsPrincipal.Current.IsACDAStoreUser);
+                    var CBTType = new SqlParameter("@CBTType", string.IsNullOrEmpty(cbtType) ? DBNull.Value.ToString() : cbtType);
+
+                    questionPaperListViewModel =
                    dbContext.Database
                     .SqlQuery<QuestionPaperListViewModel>("GetQuestionPaperListViewModel_SP @ClassName, @ExamName, @Subject, @UserId, @OpType, @IsACDAStoreUser, @CBTType", ClassName, ExamName, Subject, UserId, OpType, IsACDAStoreUser, CBTType).ToList();
+                }
+
+                return questionPaperListViewModel;
             }
-            return questionPaperListViewModel;
 
 
             ////var dbContext = new ApplicationDbContext();

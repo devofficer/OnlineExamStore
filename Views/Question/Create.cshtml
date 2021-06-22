@@ -132,168 +132,174 @@
             <div class="col-md-2">
                 @Html.CheckBoxFor(model => model.IsOnline, new { @class = "checkbox checkbox-inline" })@Html.LabelFor(model => model.IsOnline, new { @class = "control-label" })
             </div>
+            @if (User.IsInRole("Teacher"))
+            {
+        <div class="col-md-2">
+            <input type="checkbox" id="chRequiest" name="chRequiest" class="checkbox checkbox-inline" value="yes" />&nbsp;&nbsp;@Html.Label(" Add Question To System", new { @class = "control-label" })
         </div>
-        <div class="row">
-            <hr />
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                @Html.LabelFor(model => model.Decription, new { @class = "col-md-4" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.Decription)
-                    @Html.TextAreaFor(model => model.Decription, new { @class = "form-control" })
+             }
                 </div>
-            </div>
-            @*<div class="col-md-6">
+                <div class="row">
+                    <hr />
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.Decription, new { @class = "col-md-4" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.Decription)
+                            @Html.TextAreaFor(model => model.Decription, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    @*<div class="col-md-6">
                     @Html.LabelFor(model => model.AnswerDescription, new { @class = "col-md-4" })
                     <div class="col-md-12">
                         @Html.ValidationMessageFor(model => model.AnswerDescription)
                         @Html.TextAreaFor(model => model.AnswerDescription, new { @class = "form-control ckeditor" })
                     </div>
                 </div>*@
-        </div>
-        <div class="row">
-            <div id="modal-content" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">×</button>
-                            <h2 class="modal-title">Question Preview:</h2>
-                        </div>
-                        <div class="modal-body">
-                            <div class="table-responsive">
-                                <table class="table table-condensed table-bordered">
-                                    <tr>
-                                        <td><strong>Question Description:</strong></td>
-                                        <td><span id="questionDescription"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Options:</strong></td>
-                                        <td>
-                                            <div class="form-group">
-                                                <div class="col-md-3">
-                                                    <strong>A.</strong>&nbsp;<span id="optionA"></span>
-                                                </div>
-                                                <div class="col-md-3"><strong>B.</strong>&nbsp;<span id="optionB"></span></div>
-                                                <div class="col-md-3">
-                                                    <strong>C.</strong>&nbsp;<span id="optionC"></span>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <strong>D.</strong>&nbsp;<span id="optionD"></span>
-                                                </div>
-                                                @if (!string.IsNullOrWhiteSpace(@Model.OptionE))
-                                                {
-                                                    <div class="col-md-3">
-                                                        <strong>E.</strong>&nbsp;<span id="optionE"></span>
+                </div>
+                <div class="row">
+                    <div id="modal-content" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                    <h2 class="modal-title">Question Preview:</h2>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-condensed table-bordered">
+                                            <tr>
+                                                <td><strong>Question Description:</strong></td>
+                                                <td><span id="questionDescription"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Options:</strong></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <strong>A.</strong>&nbsp;<span id="optionA"></span>
+                                                        </div>
+                                                        <div class="col-md-3"><strong>B.</strong>&nbsp;<span id="optionB"></span></div>
+                                                        <div class="col-md-3">
+                                                            <strong>C.</strong>&nbsp;<span id="optionC"></span>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <strong>D.</strong>&nbsp;<span id="optionD"></span>
+                                                        </div>
+                                                        @if (!string.IsNullOrWhiteSpace(@Model.OptionE))
+                                                        {
+                                                            <div class="col-md-3">
+                                                                <strong>E.</strong>&nbsp;<span id="optionE"></span>
+                                                            </div>
+                                                        }
                                                     </div>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Answer:</strong></td>
-                                        <td>[<span id="answerOption"></span>] &nbsp;<span id="answerDescription"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Class Name:</strong> </td>
-                                        <td><span id="className"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Exam Name:</strong> </td>
-                                        <td><span id="examName"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Subject:</strong></td>
-                                        <td> <span id="subject"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Question Format:</strong> </td>
-                                        <td><span id="questionFormat"></span></td>
-                                    </tr>
-                                </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Answer:</strong></td>
+                                                <td>[<span id="answerOption"></span>] &nbsp;<span id="answerDescription"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Class Name:</strong> </td>
+                                                <td><span id="className"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Exam Name:</strong> </td>
+                                                <td><span id="examName"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Subject:</strong></td>
+                                                <td> <span id="subject"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Question Format:</strong> </td>
+                                                <td><span id="questionFormat"></span></td>
+                                            </tr>
+                                        </table>
 
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        @*<div class="form-group">
+                @*<div class="form-group">
                 @Html.LabelFor(model => model.ImagePath, new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.ImagePath)
                     @Html.ValidationMessageFor(model => model.ImagePath)
                 </div>
             </div>*@
-        <div class="row">
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.OptionA, new { @class = "col-md-3" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.OptionA)
-                    @Html.TextAreaFor(model => model.OptionA, new { @class = "form-control" })
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.OptionA, new { @class = "col-md-3" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.OptionA)
+                            @Html.TextAreaFor(model => model.OptionA, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.OptionB, new { @class = "col-md-3" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.OptionB)
+                            @Html.TextAreaFor(model => model.OptionB, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.OptionC, new { @class = "col-md-3" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.OptionC)
+                            @Html.TextAreaFor(model => model.OptionC, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.OptionD, new { @class = "col-md-3" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.OptionD)
+                            @Html.TextAreaFor(model => model.OptionD, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.OptionE, new { @class = "col-md-3" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.OptionE)
+                            @Html.TextAreaFor(model => model.OptionE, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.AnswerDescription, new { @class = "col-md-4" })
+                        <div class="col-md-12">
+                            @Html.ValidationMessageFor(model => model.AnswerDescription)
+                            @Html.TextAreaFor(model => model.AnswerDescription, new { @class = "form-control", id = "txtAnswerDescription" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.AnswerOption, new { @class = "col-md-12" })
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(model => model.AnswerOption, Enum.GetNames(typeof(Enums.QuestionOptions)).Select(e => new SelectListItem { Text = e }),
+                                "Option", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.AnswerOption)
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.IsActive, new { @class = "col-md-4" })
+                        <div class="col-md-12">
+                            @Html.CheckBoxFor(model => model.IsActive, new { @class = "checkbox-inline" })IsActive?
+                            @Html.ValidationMessageFor(model => model.IsActive)
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.OptionB, new { @class = "col-md-3" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.OptionB)
-                    @Html.TextAreaFor(model => model.OptionB, new { @class = "form-control" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.OptionC, new { @class = "col-md-3" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.OptionC)
-                    @Html.TextAreaFor(model => model.OptionC, new { @class = "form-control" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.OptionD, new { @class = "col-md-3" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.OptionD)
-                    @Html.TextAreaFor(model => model.OptionD, new { @class = "form-control" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.OptionE, new { @class = "col-md-3" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.OptionE)
-                    @Html.TextAreaFor(model => model.OptionE, new { @class = "form-control" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.AnswerDescription, new { @class = "col-md-4" })
-                <div class="col-md-12">
-                    @Html.ValidationMessageFor(model => model.AnswerDescription)
-                    @Html.TextAreaFor(model => model.AnswerDescription, new { @class = "form-control", id = "txtAnswerDescription" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.AnswerOption, new { @class = "col-md-12" })
-                <div class="col-md-4">
-                    @Html.DropDownListFor(model => model.AnswerOption, Enum.GetNames(typeof(Enums.QuestionOptions)).Select(e => new SelectListItem { Text = e }),
-                        "Option", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.AnswerOption)
-                </div>
-            </div>
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.IsActive, new { @class = "col-md-4" })
-                <div class="col-md-12">
-                    @Html.CheckBoxFor(model => model.IsActive, new { @class = "checkbox-inline" })IsActive?
-                    @Html.ValidationMessageFor(model => model.IsActive)
-                </div>
-            </div>
-        </div>
-    </div>
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

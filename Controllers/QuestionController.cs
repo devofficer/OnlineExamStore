@@ -32,6 +32,11 @@ namespace OnlineExam.Controllers
         {
             ViewBag.Subject = "";
             ViewBag.TopicId = "";
+            string userType = "All";
+            if (User.IsInRole("Teacher")) {
+                userType = "Teacher";
+            }
+
             if (!string.IsNullOrWhiteSpace(questionBankSearchViewModel.ClassName))
             {
                 questionBankSearchViewModel.PageIndex = 1;
@@ -61,7 +66,7 @@ namespace OnlineExam.Controllers
             {
                     questions = QuestionBankRepository
                                   .GetAll(questionBankSearchViewModel.ClassName, questionBankSearchViewModel.ExamName, questionBankSearchViewModel.Subject, TopicId,
-                                  questionBankSearchViewModel.QuestionFormat, questionBankSearchViewModel.Mark, questionBankSearchViewModel.IsOnline, CustomClaimsPrincipal.Current.UserId, CustomClaimsPrincipal.Current.IsACDAStoreUser);
+                                  questionBankSearchViewModel.QuestionFormat, questionBankSearchViewModel.Mark, questionBankSearchViewModel.IsOnline, CustomClaimsPrincipal.Current.UserId, CustomClaimsPrincipal.Current.IsACDAStoreUser, userType);
                 ViewBag.Subject = questionBankSearchViewModel.Subject;
                 ViewBag.TopicId = TopicId;
             }
@@ -163,7 +168,6 @@ namespace OnlineExam.Controllers
         [ValidateInput(false)]
         public ActionResult Create(QuestionBank questionBank)
         {
-           
             if (ModelState.IsValid)
             {
                 questionBank.CreatedBy = CustomClaimsPrincipal.Current.UserId;
@@ -172,10 +176,36 @@ namespace OnlineExam.Controllers
                 var questionId = db.QuestionBank.Max(x=>x.QuestionId);
                 questionId = questionId + 1;
                 questionBank.QuestionId = questionId;
+                if (User.IsInRole("Teacher"))
+                {
+                    questionBank.IsSystem = false;
+                }
+                else
+                {
+                    questionBank.IsSystem = true;
+                }
                 db.QuestionBank.Add(questionBank);
                 try
                 {
                     db.SaveChanges();
+
+                    if (User.IsInRole("Teacher"))
+                    {
+                        if (Request.Form["chRequiest"] == "yes")
+                        {
+                            int profileId = CommonRepository.GetCurrentUserProfileId();
+                            var r = new SystemQuestionRequiest();
+                            r.TeacherProfileId = profileId;
+                            r.QuestionId = questionBank.Id;
+                            r.IsRequiest = true;
+                            r.IsApproved = false;
+                            r.CreatedDate = DateTime.Now;
+                            r.ModifiedDate = DateTime.Now;
+
+                            db.SystemQuestionRequiest.Add(r);
+                            db.SaveChanges();
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -212,6 +242,12 @@ namespace OnlineExam.Controllers
             questionBank.ExamTypes = CommonRepository.GetLookups(Enums.LookupType.ClassCategory.ToString(), questionBank.ClassName);// CommonRepository.GetLookups(Enums.LookupType.ExamType.ToString(), questionBank.ClassName);
             questionBank.Subjects = CommonRepository.GetLookups(Enums.LookupType.SubjectCategory.ToString(), questionBank.ExamName);//CommonRepository.GetLookups(Enums.LookupType.Subject.ToString(), questionBank.ExamName);
             questionBank.QuestionFormats = CommonRepository.GetLookups(Enums.LookupType.QuestionFormatType.ToString());
+            ViewBag.Requeist = "No";
+            if(User.IsInRole("Teacher") && db.SystemQuestionRequiest.Where(x=>x.QuestionId == id).Count() == 0)
+            {
+                ViewBag.Requeist = "Yes";
+            }
+
             return View(questionBank);
         }
 
@@ -252,6 +288,24 @@ namespace OnlineExam.Controllers
                     questionBankObj.ModifiedOn = DateTime.UtcNow;
                     db.Entry(questionBankObj).State = EntityState.Modified;
                     await db.SaveChangesAsync();
+
+                    if (User.IsInRole("Teacher"))
+                    {
+                        if (Request.Form["chRequiest"] == "yes")
+                        {
+                            int profileId = CommonRepository.GetCurrentUserProfileId();
+                            var r = new SystemQuestionRequiest();
+                            r.TeacherProfileId = profileId;
+                            r.QuestionId = questionBank.Id;
+                            r.IsRequiest = true;
+                            r.IsApproved = false;
+                            r.CreatedDate = DateTime.Now;
+                            r.ModifiedDate = DateTime.Now;
+
+                            db.SystemQuestionRequiest.Add(r);
+                            db.SaveChanges();
+                        }
+                    }
                 }
                 catch (Exception)
                 {
