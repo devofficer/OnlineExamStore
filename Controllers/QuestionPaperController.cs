@@ -299,7 +299,7 @@ namespace OnlineExam.Controllers
                         }
                         else
                         {
-                            if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+                            if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher"))
                             {
                                 questionPaperDuration = questionListViewModel.Aggregate(questionPaperDuration,
                                     (current, item) => current + item.DurationInSecond);
@@ -330,9 +330,13 @@ namespace OnlineExam.Controllers
                         var subjects = db.Sections.ToList();
 
                         // ADMIN  USER
-                        if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+                        if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher"))
                         {
                             questionPaper.Type = CBTType.Admin.ToString();
+                            if (CustomClaimsPrincipal.Current.CurrentRole == "Teacher")
+                            {
+                                questionPaper.Type = CBTType.Teacher.ToString();
+                            }
                             #region ADMIN USER
                             var selectedSubjects = questionListViewModel.Select(s => new { s.Subject }).ToList().Distinct();
                             var result = (from s in subjects
@@ -357,14 +361,14 @@ namespace OnlineExam.Controllers
                         }
                         else
                         {
-                            if(CustomClaimsPrincipal.Current.CurrentRole == "Teacher" && type=="Teacher")
-                            {
-                                questionPaper.Type = CBTType.Teacher.ToString();
-                            }
-                            else
-                            {
+                            //if(CustomClaimsPrincipal.Current.CurrentRole == "Teacher" && type=="Teacher")
+                            //{
+                            //    questionPaper.Type = CBTType.Teacher.ToString();
+                            //}
+                            //else
+                            //{
                                 questionPaper.Type = CBTType.Custom.ToString();
-                            }
+                            //}
                             // NON- ADMIN USER
                             #region NON ADMIN USER
                             int customCBTCounter = 0;
@@ -387,10 +391,10 @@ namespace OnlineExam.Controllers
                                                     questionFilterViewModel.SelectedMark,
                                                     questionFilterViewModel.IsOnline, customCBTCounter); //db.QuestionBank.OrderBy(q => Guid.NewGuid()).Take(customCBTCounter).Select(x => new { QuestionId = x.Id, Duration = x.DurationInSecond }).ToList();
                             
-                            if(User.IsInRole("Teacher") && type== "Teacher")
-                            {
-                                randomQuestions = randomQuestions.Where(x => x.CreatedBy == CurrentuserId).ToList();
-                            }
+                            //if(User.IsInRole("Teacher") && type== "Teacher")
+                            //{
+                            //    randomQuestions = randomQuestions.Where(x => x.CreatedBy == CurrentuserId).ToList();
+                            //}
                             
                             if (randomQuestions == null || randomQuestions.Count == 0)
                             {

@@ -1,6 +1,13 @@
 ﻿@using Microsoft.Web.Mvc.Controls
 @using OnlineExam.Helpers
 @model OnlineExam.Models.QuestionFilterViewModel
+    @{ 
+        var teacherFlag = "No";
+        if (User.IsInRole("Teacher"))
+        {
+            teacherFlag = "Yes";
+        }
+    }
 <link href="~/Content/bootstrap-table.min.css" rel="stylesheet" />
 <script src="~/Scripts/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="~/Scripts/angular/angular.js"></script>
@@ -207,7 +214,7 @@
         //return detailDiv.html();
     }
     $(document).ready(function () {
-
+        var teacher_flag = "@teacherFlag";
         var selectedRecords = [];
         var quesndata = '';
         // LoadQuestion('QuestionTable');
@@ -414,7 +421,7 @@
                     break;
                 case "btnAdd":
                     command = "Create";
-                    if ($('#hdnIsACDAStoreUser').val() == "True") {
+                    if ($('#hdnIsACDAStoreUser').val() == "True" || teacher_flag == "Yes") {
                         debugger;
                         quesndata = $('#QuestionTablePaper').bootstrapTable('getData');
                         if (quesndata.length > 0) {
@@ -508,7 +515,7 @@
                             debugger;
                             switch (e.currentTarget.id) {
                                 case "btnSearch":
-                                    if ($('#hdnIsACDAStoreUser').val() == "True") {
+                                    if ($('#hdnIsACDAStoreUser').val() == "True" || teacher_flag == "Yes") {
                                         if (data.output.length > 0) {
                                             FillTable('QuestionTable', data.output);
                                         } else {
@@ -620,9 +627,6 @@
                 @Html.DropDownListFor(model => model.SelectedMinute, Model.Minutes, "Duration", new { @class = "form-control", @style = "width:auto" })
                 @Html.ValidationMessageFor(model => model.SelectedMinute)
             </div>
-            <div class="col-md-2">
-                @Html.DropDownListFor(m => m.SelectedNoOfQuestions, Model.NoOfQuestions, "Select No. Of Questions", new { @class = "form-control" })
-            </div>
             <div class="col-md-1">
                 <div class="checkbox-inline">
                     @Html.CheckBoxFor(m => m.IsTrial, Model.IsTrial) @Html.LabelFor(model => model.IsTrial)
@@ -675,7 +679,7 @@
     }
     <div class="row">
         @Html.Hidden("hdnIsACDAStoreUser", CustomClaimsPrincipal.Current.IsACDAStoreUser)
-        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser)
+        @if (CustomClaimsPrincipal.Current.IsACDAStoreUser || User.IsInRole("Teacher"))
         {
             <div class="panel panel-info">
                 <div class="panel-heading">
