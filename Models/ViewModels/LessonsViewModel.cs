@@ -150,6 +150,14 @@ namespace OnlineExam.Models.ViewModels
         public int QuestionId { get; set; }
         public string TeacherName { get; set; }
         public string Description { get; set; }
+        public string OptionA { get; set; }
+        public string OptionB { get; set; }
+        public string OptionC { get; set; }
+        public string OptionD { get; set; }
+        public string OptionE { get; set; }
+        public string AnswerOption { get; set; }
+        public string AnswerDescription { get; set; }
+        public string QuestionFormat { get; set; }
         public string CategoryType { get; set; }
         public string SubjectType { get; set; }
         public DateTime CreatedDate { get; set; }

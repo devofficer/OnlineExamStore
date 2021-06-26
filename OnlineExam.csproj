@@ -1607,7 +1607,6 @@
     <Content Include="images\tweeter.png" />
     <Content Include="packages\angular-block-ui.0.2.0\content\Content\angular-block-ui.css" />
     <Content Include="packages\angular-block-ui.0.2.0\content\Content\angular-block-ui.min.css" />
-    <Content Include="packages\angular-block-ui.0.2.0\content\Scripts\angular-block-ui.js" />
     <Content Include="packages\angular-block-ui.0.2.0\content\Scripts\angular-block-ui.min.js" />
     <Content Include="packages\angular-block-ui.0.2.2\content\Content\angular-block-ui.css" />
     <Content Include="packages\angular-block-ui.0.2.2\content\Content\angular-block-ui.min.css" />
@@ -2961,18 +2960,7 @@
     <Content Include="packages\jQuery.FileUpload.9.11.1\content\Content\jQuery.FileUpload\css\jquery.fileupload.css" />
     <Content Include="packages\jQuery.FileUpload.9.11.1\content\Content\jQuery.FileUpload\img\loading.gif" />
     <Content Include="packages\jQuery.FileUpload.9.11.1\content\Content\jQuery.FileUpload\img\progressbar.gif" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\cors\jquery.postmessage-transport.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\cors\jquery.xdr-transport.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-angular.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-audio.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-image.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-jquery-ui.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-process.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-ui.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-validate.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload-video.js" />
     <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.fileupload.js" />
-    <Content Include="packages\jQuery.FileUpload.9.11.1\content\Scripts\jQuery.FileUpload\jquery.iframe-transport.js" />
     <Content Include="packages\jQuery.Form.3.51\Content\Scripts\jquery.form.js" />
     <Content Include="packages\jQuery.Form.3.51\Content\Scripts\jquery.form.min.js" />
     <Content Include="packages\jQuery.UI.Combined.1.9.2\Content\Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />

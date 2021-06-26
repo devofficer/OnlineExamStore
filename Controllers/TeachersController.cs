@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using OnlineExam.Infrastructure;
 using OnlineExam.Infrastructure.Alerts;
 using OnlineExam.Models;
 using OnlineExam.Models.ViewModels;
@@ -247,9 +248,19 @@ namespace OnlineExam.Controllers
         }
 
         [Authorize(Roles = "StaffAdmin,SchoolAdmin")]
-        public ActionResult QuestionPendingList(int? page)
+        public ActionResult QuestionPendingList(int? page, string strClass, string strCategory, string strSubject, string strFormat)
         {
+            ViewBag.strClass = strClass;
+            ViewBag.strCategory = strCategory;
+            ViewBag.strSubject = strSubject;
+
             var dbContext = new ApplicationDbContext();
+
+            var classes = CommonRepository.GetClasses(Enums.LookupType.ClassType.ToString());
+            var questionFormats = CommonRepository.GetLookups(Enums.LookupType.QuestionFormatType.ToString());
+
+            ViewBag.classTypes = new SelectList(classes, "Text", "Text");
+            ViewBag.questionFormats = new SelectList(questionFormats, "Text", "Text", strFormat);
 
             var info = from t in dbContext.SystemQuestionRequiest
                        where t.IsApproved == false
@@ -263,10 +274,33 @@ namespace OnlineExam.Controllers
                            QuestionId = t.QuestionId,
                            TeacherName = u.FirstName + " " + u.LastName,
                            Description = q.Decription,
+                           OptionA = q.OptionA,
+                           OptionB = q.OptionB,
+                           OptionC = q.OptionC,
+                           OptionD = q.OptionD,
+                           OptionE = q.OptionE,
+                           AnswerOption = q.AnswerOption,
+                           AnswerDescription = q.AnswerDescription,
+                           QuestionFormat = q.QuestionFormat,
                            CategoryType = q.ExamName,
                            SubjectType = q.Subject,
                            CreatedDate = t.CreatedDate
                        };
+
+            if (!string.IsNullOrEmpty(strCategory))
+            {
+                info = info.Where(x => x.CategoryType == strCategory);
+            }
+
+            if (!string.IsNullOrEmpty(strSubject))
+            {
+                info = info.Where(x => x.SubjectType == strSubject);
+            }
+
+            if (!string.IsNullOrEmpty(strFormat))
+            {
+                info = info.Where(x => x.QuestionFormat == strFormat);
+            }
 
             info = info.OrderByDescending(x => x.CreatedDate);
             int pageSize = 20;
@@ -277,22 +311,50 @@ namespace OnlineExam.Controllers
         }
 
         [Authorize(Roles = "StaffAdmin,SchoolAdmin")]
-        public ActionResult SystemQuestionRequiestApprove(int id)
+        [HttpPost]
+        public ActionResult SystemQuestionRequestUpdate(FormCollection f)
         {
-            var dbContext = new ApplicationDbContext();
-            var info = dbContext.SystemQuestionRequiest.Find(id);
-            info.IsApproved = true;
-            info.ModifiedDate = DateTime.Now;
-            dbContext.SaveChanges();
+            string updateType = f["updateType"];
+            string ids = f["Ids"];
+            string[] IdsArray = ids.Split(',');
+            int id = 0;
+            if (updateType == "Approve")
+            {
+                for (int i = 0; i < IdsArray.Length; i++)
+                {
+                    id = int.Parse(IdsArray[i]);
+                    using (var dbContext = new ApplicationDbContext())
+                    {
+                        var info = dbContext.SystemQuestionRequiest.Find(id);
+                        info.IsApproved = true;
+                        info.ModifiedDate = DateTime.Now;
+                        dbContext.SaveChanges();
 
-            int questionId = info.QuestionId;
+                        int questionId = info.QuestionId;
 
-            var q = dbContext.QuestionBank.FirstOrDefault(x => x.QuestionId == questionId);
-            q.IsSystem = true;
-            dbContext.SaveChanges();
+                        var q = dbContext.QuestionBank.FirstOrDefault(x => x.QuestionId == questionId);
+                        q.IsSystem = true;
+                        dbContext.SaveChanges();
+                    }
+                }
+            }
+
+            if (updateType == "Reject")
+            {
+                for (int i = 0; i < IdsArray.Length; i++)
+                {
+                    id = int.Parse(IdsArray[i]);
+                    using (var dbContext = new ApplicationDbContext())
+                    {
+                        var info = dbContext.SystemQuestionRequiest.Find(id);
+                        dbContext.SystemQuestionRequiest.Remove(info);
+                        dbContext.SaveChanges();
+                    }
+                }
+            }
 
 
-            return RedirectToAction("QuestionPendingList");
+                return RedirectToAction("QuestionPendingList");
         }
     }
 }
